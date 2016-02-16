@@ -77,26 +77,34 @@
 			this.startBtn.click(this.startTimer);
 			this.stopBtn.click(this.stopTimer);
 
-			// this.start.change(this.recordTime);
-			// this.stop.change(this.recordTime);
-
 			this.timeField.keyup(this.inputTime);
-			// this.timeField.change(this.checkTimeString);
-			// this.stop.keyup(this.validateTime);
+			this.timeField.focusout(this.checkTimeString);
 
 			$('.ptt-new-timer').click(this.newTimer);
 
+			// Still needs work. this only hides the timer
+			// still need to build the server side piece to 
+			// restructure the array of timers correctly.
 			$('.ptt-delete-time-history').click(function(){
-				console.log('hi')
 				$(this).parent().slideToggle();
 			});
+			
+			// Binds the enter key to add a new timer
+			// not sure if we should keep it.
+			// $('.ptt-timer-fields input').focus(function(){
+			// 	$(document).keydown(function(e) {
+			// 		if(e.which == 13) {
+			// 	        $('.ptt-new-timer').click();
+			// 	    	return false;
+			// 	    }
+			// 	});
+			// });
 		},
 
 
 
 		startTimer: function(){
 			var self = PremiseTimeTrack.resetTimer();
-
 
 			// Check if time stamp has already been recorded
 			if ( self.timestampStart.val() ||
@@ -147,19 +155,12 @@
 			s = "0" + timeStamp.getSeconds();
 			
 			var stop = h + ":" + m.substr(-2);
-			var start = self.start.val().split(':');
-
-			var hDiff = +h - +start[0];
-			
-			var mDiff = +m - +start[1];
-
-
-			var time = hDiff + "h " + mDiff + "m";
+			var start = self.start.val();
 
 			self.timestampStop.val(timeStamp);
 			self.stop.val(stop);
 			
-			self.recordTime();
+			self.timer.val( self.recordTime(start, stop) );
 			
 			self.saveTimer();
 			
@@ -215,14 +216,12 @@
 
 
 
-		validateTime: function( time, el ){
+		validateTime: function( time ){
 			time = time || '';
-
-			var type = $(el).is('.ptt-start') ? 'start' : 'stop';
 
 			var s = time,
 			c     = s.length;
-			
+			console.log(s);
 			// remove any that is not numeric or a colon
 			var r = new RegExp(/[^0-9:]/g);
 			s     = s.replace( r, '' );
@@ -230,40 +229,30 @@
 			// prevent hours from being higher than 24
 			if ( 2 == c && 2 == s.length ) {
 				if ( 24 > +s ) {
-					$(el).val(s+':');
-					$(el).focusout(PremiseTimeTrack.checkTimeString);
+					// $(el).val(s+':');
+					// $(el).focusout(PremiseTimeTrack.checkTimeString);
+					return s+':';
 				}
 				else {
-					$(el).val('00:');
-					$(el).focusout(PremiseTimeTrack.checkTimeString);
+					// $(el).val('00:');
+					// $(el).focusout(PremiseTimeTrack.checkTimeString);
+					return '00:';
 				}
-				return false;
+				// return false;
 			}
 			// prevent minutes being higher than 60
 			if ( 5 == c && 5 == s.length ) {
 				var m = s.substr(-2);
 				if ( 60 > +m ) {
-					$(el).val(s);
+					// $(el).val(s);
+					return s;
 				}
 				else {
-					$(el).val( s.substr(0,3) + "00" );
+					// $(el).val( s.substr(0,3) + "00" );
+					return s.substr(0,3) + "00";
 				}
 
-				if ( 'stop' == type ){
-					var start = $(el).parents('.ptt-fields-wrapper').find('.ptt-start').val();
-					if ( '' !== start ) {
-						var t = $(el).parents('.ptt-fields-wrapper').find('.ptt-timer-field');
-						t.val( self.recordTime( start, s ) );
-					}
-				}
-
-				if ( 'start' == type ){
-					var stop = $(el).parents('.ptt-fields-wrapper').find('.ptt-stop').val();
-					if ( '' !== stop ) {
-						var t = $(el).parents('.ptt-fields-wrapper').find('.ptt-timer-field');
-						t.val( self.recordTime( s, stop ) );
-					}
-				}
+				
 				return false;
 			}
 			// prevent more than 5 chars (12:35)
@@ -272,7 +261,8 @@
 				return  false;
 			}
 
-			$(el).val(s);
+			// $(el).val(s);
+			return s;
 		},
 
 
@@ -281,16 +271,32 @@
 			var self = PremiseTimeTrack;//.resetTimer();
 
 			var time = $(this).val();
+			var _recordIt = $(this).is('.ptt-start') ? false : true;
 
-			self.validateTime(time, this);
-			// self.recordTime();
+			$(this).val( PremiseTimeTrack.validateTime(time) );
+			
+			if ( _recordIt ){
+				var start = $(this).parents('.ptt-fields-wrapper').find('.ptt-start').val();
+				if ( '' !== start ) {
+					var t = $(this).parents('.ptt-fields-wrapper').find('.ptt-timer-field');
+					t.val( self.recordTime( start, time ) );
+				}
+			}
+
+			else {
+				var stop = $(this).parents('.ptt-fields-wrapper').find('.ptt-stop').val();
+				if ( '' !== stop ) {
+					var t = $(this).parents('.ptt-fields-wrapper').find('.ptt-timer-field');
+					t.val( self.recordTime( time, stop ) );
+				}
+			}
 		},
 
 
 
 
 		checkTimeString: function( time ) {
-			str = time || '00:00';
+			str = $(this).val();//time || '00:00';
 
 			if( 5 >= str.length ) {
 
@@ -336,7 +342,7 @@
 			}).
 			done(function(){
 				self.resetTimer(this);
-				self.timeField.keyup(self.validateTime);
+				self.timeField.keyup(self.inputTime);
 			});
 			
 
