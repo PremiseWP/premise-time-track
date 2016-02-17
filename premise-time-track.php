@@ -129,7 +129,7 @@ class Premise_Time_track {
 		wp_register_script( 'ptt_core_js', PTT_URL . 'js/premise-time-track.min.js', array( 'jquery', 'wp-api' ) );
 		wp_enqueue_script( 'ptt_core_js' );
 		
-		wp_localize_script( 'ptt_core_js', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
+		// wp_localize_script( 'ptt_core_js', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
 
 	}
 }
