@@ -116,7 +116,9 @@ class Premise_Time_track {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 
-		add_action( 'wp_ajax_ptt_new_timer', array( PTT_Meta_Box::get_instance(), 'ajax_new_timer' ) );
+		if ( class_exists( 'PTT_Meta_Box' ) ) {
+			add_action( 'wp_ajax_ptt_new_timer', array( PTT_Meta_Box::get_instance(), 'ajax_new_timer' ) );
+		}
 	}
 
 
