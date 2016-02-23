@@ -67,6 +67,8 @@
 			this.resetTimer();
 
 			this.bindEvents();
+
+			console.log('Premise Time Track initiated successfully');
 		},
 
 
