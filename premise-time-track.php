@@ -135,6 +135,10 @@ class Premise_Time_track {
 		wp_register_script( 'ptt_core_js', PTT_URL . 'js/premise-time-track.min.js', array( 'jquery' ) );
 		wp_enqueue_script( 'ptt_core_js' );
 
+		// JQuery UI (datepicker).
+		wp_register_script(	'jquery-ui', PTT_URL . '/js/lib/jquery-ui.min.js', array( 'jquery' ), '4.2.3' );
+		wp_enqueue_script( 'jquery-ui' );
+
 		// wp_localize_script( 'ptt_core_js', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
 	}
 

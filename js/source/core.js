@@ -3,6 +3,14 @@
 
 	$(document).ready(function(){
 		PremiseTimeTrack.init();
+
+		// jQuery UI datepicker
+		if ( typeof $.datepicker === 'object' ) {
+			$( ".datepicker" ).datepicker({
+				inline: true,
+				minDate: 0, // minimum date: today
+			});
+		}
 	});
 
 	var PremiseTimeTrack = {

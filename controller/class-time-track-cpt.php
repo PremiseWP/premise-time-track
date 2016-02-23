@@ -205,7 +205,8 @@ class PTT_Meta_Box {
 				'type' => 'text',
 				'name' => 'ptt_meta[timers]['.$i.'][date]', 
 				'label' => 'Date', 
-				'context' => 'post',	
+				'context' => 'post',
+				'class' => 'datepicker',	
 			),
 			array(
 				'type' => 'text',
