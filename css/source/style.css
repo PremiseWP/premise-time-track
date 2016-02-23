@@ -88,6 +88,7 @@ body.post-type-premise_time_track {}
 .ptt-time-history > div {
 	position: relative;
 	border-top: 1px solid #ccc;
+	padding: 10px 10px 0 10px;
 }
 
 .ptt-time-history > div:last-child {

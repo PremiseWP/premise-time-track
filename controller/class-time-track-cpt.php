@@ -133,17 +133,15 @@ class PTT_Meta_Box {
 	public function render_timer() {
 		$this->reset();
 
-		wp_nonce_field( $this->nonce, 'ptt_nonce_field' );
-		?>
+		wp_nonce_field( $this->nonce, 'ptt_nonce_field' ); ?>
 		<div class="ptt-timer">
-		<?php 
-		$this->the_buttons();
-		
-		$this->working_timer();
-		
-		$this->controls(); ?>
-		</div>
-		<?php 
+			<?php 
+			$this->the_buttons();
+			
+			$this->working_timer();
+			
+			$this->controls(); ?>
+		</div> <?php 
 	}
 
 
@@ -314,8 +312,15 @@ class PTT_Meta_Box {
 			All you recorded time is saved here. You can easily edit previous timers by simply
 			changing the values directly in the fields.
 		</div>
-		<div class="ptt-time-summary">
-			
+		<div class="ptt-time-summary premise-clear-float">
+			<div class="premise-float-left span4">
+				<?php premise_field( 'select', array( 'id' => 'ptabs-filter-by-date' ) ); ?>
+			</div>
+			<div class="premise-float-right span4">
+				<span class="ptabs-filter-total">
+					<?php $this->the_total(); ?>
+				</span>
+			</div>
 		</div>
 		<div class="ptt-time-history">
 			<?php 
@@ -334,7 +339,30 @@ class PTT_Meta_Box {
 			}
 			?>
 		</div>
+		<div class="ptabs-time-summary-footer premise-clear-float">
+			<div class="premise-float-right span4">
+				<span class="ptabs-filter-total">
+					<?php $this->the_total(); ?>
+				</span>
+			</div>
+		</div>
 		<?php 
+	}
+
+
+
+
+	public function the_total() {
+		$total = 0;
+
+		if ( is_array( $this->timers ) && ! empty( $this->timers ) ) {
+
+			foreach ( $this->timers as $k => $timer ) {
+				if ( is_array( $timer ) && isset( $timer['timer'] ) && ! empty( $timer['timer'] ) ) {
+					
+				}
+			}
+		}
 	}
 
 
@@ -346,7 +374,7 @@ class PTT_Meta_Box {
 	 * @return void resets timers and count
 	 */
 	protected function reset() {
-		$this->timers = (array) premise_get_value( 'ptt_meta[timers]', 'post' );
+		$this->timers = premise_get_value( 'ptt_meta[timers]', 'post' ) ? premise_get_value( 'ptt_meta[timers]', 'post' ) : array();
         $this->count = ! empty( $this->timers ) ? count( $this->timers ) : $this->count;
 	}
 
