@@ -3,7 +3,7 @@
  * Plugin Name: Premise Time Track
  * Description: 
  * Plugin URI:	
- * Version:     1.0
+ * Version:     1.0.0
  * Author:      Premise WP
  * Author URI:  http://premisewp.com
  * License:     GPL
@@ -57,6 +57,56 @@ class Premise_Time_track {
 
 
 
+	/**
+	 * Labels for custom post type
+	 * 
+	 * @var array
+	 */
+	public $labels = array(
+		'post_type_name' => 'premise_time_track',
+	    'singular' => 'Timer',
+	    'plural' => 'Timers',
+	    'slug' => 'premise_time_track'
+	);
+
+
+
+
+	/**
+	 * options for custom post type
+	 * 
+	 * @var array
+	 */
+	public $options = array(
+		'public' => false, 
+		'show_in_rest' => true,
+		'rest_base' => 'premise_time_track', 
+		'show_ui' => true, 
+		'supports' => array( 
+			'title', 
+			'editor', 
+		),
+	);
+
+
+
+
+	public $tax_labels = array(
+		'taxonomy_name' => 'premise_time_track_tasklist',
+	    'singular' => 'Task List',
+	    'plural' => 'Task Lists',
+	    'slug' => 'premise_time_track_tasklist'
+	);
+	
+
+
+
+	public $tax_options = array(
+		'hirearchical' => true,
+	);
+
+
+
 
 	/**
 	 * Constructor. Intentionally left empty and public.
@@ -90,13 +140,8 @@ class Premise_Time_track {
 	public function setup() {
 		
 		if ( class_exists( 'PremiseCPT' ) ) {
-			$time_track_cpt = new PremiseCPT( 'premise_time_track', array(
-				'supports' => array( 'title', 'editor' ),
-				'public' => false, 
-				'show_in_rest' => true,
-				'rest_base' => 'premise_time_track', 
-				'show_ui' => true, 
-			) );
+			$time_track_cpt = new PremiseCPT( $this->labels, $this->options );
+			$time_track_cpt->register_taxonomy( $this->tax_labels, $this->tax_options);
 			include 'controller/class-time-track-cpt.php';
 		}
 
