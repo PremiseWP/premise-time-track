@@ -206,7 +206,9 @@ class PTT_Meta_Box {
 				'name' => 'ptt_meta[timers]['.$i.'][date]', 
 				'label' => 'Date', 
 				'context' => 'post',
-				'class' => 'datepicker',	
+				'class' => 'datepicker',
+				'pattern' => '.{10}',
+				'required' => 'required',
 			),
 			array(
 				'type' => 'text',
@@ -215,7 +217,8 @@ class PTT_Meta_Box {
 				'label' => 'From', 
 				'context' => 'post', 
 				'wrapper_class' => 'ptt-left',
-				'maxlength' => '5', 
+				'pattern' => '.{5}',
+				'required' => 'required',
 			),
 			array(
 				'type' => 'text',
@@ -224,14 +227,19 @@ class PTT_Meta_Box {
 				'label' => 'To', 
 				'context' => 'post', 
 				'wrapper_class' => 'ptt-right',
-				'maxlength' => '5', 
+				'pattern' => '.{5}',
+				'required' => 'required',
 			),
 			array(
-				'type' => 'text',
+				'type' => 'number',
 				'name' => 'ptt_meta[timers]['.$i.'][timer]', 
 				'label' => 'Timer', 
 				'context' => 'post',
-				'class' => 'ptt-timer-field'
+				'class' => 'ptt-timer-field',
+				'required' => 'required',
+				'min' => '0.25',
+				'max' => '24',
+				'step' => '0.25',
 			),
 		);
 
