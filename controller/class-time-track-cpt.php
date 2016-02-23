@@ -203,7 +203,8 @@ class PTT_Meta_Box {
 				'type' => 'text',
 				'name' => 'ptt_meta[timers]['.$i.'][date]', 
 				'label' => 'Date', 
-				'context' => 'post',	
+				'context' => 'post',
+				'class' => 'datepicker',
 			),
 			array(
 				'type' => 'text',
@@ -224,11 +225,14 @@ class PTT_Meta_Box {
 				'maxlength' => '5', 
 			),
 			array(
-				'type' => 'text',
+				'type' => 'number',
 				'name' => 'ptt_meta[timers]['.$i.'][timer]', 
 				'label' => 'Timer', 
 				'context' => 'post',
-				'class' => 'ptt-timer-field'
+				'class' => 'ptt-timer-field',
+				'min' => '0.00',
+				'max' => '24',
+				'step' => '0.25',
 			),
 		);
 
