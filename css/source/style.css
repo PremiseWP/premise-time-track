@@ -81,6 +81,18 @@ body.post-type-premise_time_track {}
  */
 #premise_time_track_history {}
 
+.ptt-time-history-header {
+	margin-top: 20px;
+	padding-left: 10px;
+}
+
+.ptt-filter-total-container {
+	font-weight: 700;
+	font-size: 20px;
+	padding-top: 7px;
+	padding-right: 10px;
+}
+
 .ptt-description {
 	margin-bottom: 20px;
 }
@@ -133,4 +145,8 @@ body.post-type-premise_time_track {}
 
 .ptt-time-history > div .premise-field:not(:last-child) {
 	padding-right: 20px;
+}
+
+.ptt-time-history-footer {
+	margin-bottom: 20px;
 }
