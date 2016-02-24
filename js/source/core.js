@@ -82,20 +82,25 @@
 
 
 		bindEvents: function() {
-
+			// Bind start and stop button
 			this.startBtn.click(this.startTimer);
 			this.stopBtn.click(this.stopTimer);
 
+			// Format time correctly
 			this.timeField.keyup(this.inputTime);
 			this.timeField.focusout(this.checkTimeString);
 
+			// Bind new timer functionality
 			$('.ptt-new-timer').click(this.newTimer);
 
+			// Bind filter by date functionality
+			this.filterByDate();
+			
 			// Still needs work. this only hides the timer
 			// still need to build the server side piece to 
 			// restructure the array of timers correctly.
 			$('.ptt-delete-time-history').click(function(){
-				$(this).parent().slideToggle();
+				$(this).parent().slideToggle().remove();
 			});
 			
 			// Binds the enter key to add a new timer
@@ -109,32 +114,50 @@
 			// 	});
 			// });
 
+			
+		},
 
-			$('#ptt-filter-by-date').change(function(){
-				var range = '' !== $(this).val() && $(this).val().match('-') ? $(this).val().split('-') : [];
-				console.log(range);
-				var _from = new Date( range[0] );
-				var _to   = new Date( range[1] );
-				
-				$('.ptt-time-history .datepicker.hasDatepicker').each(function(){
-					var date = $(this).val();
 
-					if ( '' !== date ) {
-						var _date = new Date( date );
 
-						if ( _date >= _from && _date <= _to ) {
-							console.log('match');
-							$(this).parents('.ptt-fields-wrapper').show();
-						}
-						else {
-							$(this).parents('.ptt-fields-wrapper').hide();
-						}
+		filterByDate: function() {
+			$('.ptt-filter-by-date').change(function(){
+				if ( '' !== $('.ptt-filter-by-date.ptt-filter-from').val() && 
+					'' !== $('.ptt-filter-by-date.ptt-filter-to').val() ) {
+
+
+					var _from = new Date( $('.ptt-filter-by-date.ptt-filter-from').val() );
+					var _to   = new Date( $('.ptt-filter-by-date.ptt-filter-to').val() );
+					
+					if( _to >= _from ) {
+						$('.ptt-time-history .datepicker.hasDatepicker').each(function() {
+							var date = $(this).val();
+
+							if ( '' !== date ) {
+								var _date = new Date( date );
+
+								if ( _date >= _from && _date <= _to ) {
+									$(this).parents('.ptt-fields-wrapper').show();
+								}
+								else {
+									$(this).parents('.ptt-fields-wrapper').hide();
+								}
+							}
+							else {
+								$(this).parents('.ptt-fields-wrapper').hide();
+							}
+						});
 					}
 					else {
-						$(this).parents('.ptt-fields-wrapper').hide();
+						$('.ptt-filter-by-date.ptt-filter-to').val('');
+						alert('The "To" date must be greater than (or equal to) the "From" date.');
+						return false;
 					}
-				});
-
+				}
+				// Either from or to field is empty
+				else {
+					$('.ptt-fields-wrapper').show();
+				}
+				// always fire at the end
 				PremiseTimeTrack.updateTimerTotal();
 			});
 		},
