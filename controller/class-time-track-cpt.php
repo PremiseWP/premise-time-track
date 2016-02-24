@@ -231,7 +231,6 @@ class PTT_Meta_Box {
 				'context' => 'post',
 				'class' => 'ptt-timer-field',
 				'min' => '0.00',
-				'max' => '24',
 				'step' => '0.25',
 			),
 		);
@@ -312,27 +311,24 @@ class PTT_Meta_Box {
 	 */
 	public function render_history() {
 		?>
-		<div class="ptt-description">
-			All you recorded time is saved here. You can easily edit previous timers by simply
-			changing the values directly in the fields.
-		</div>
-		<div class="ptt-time-summary premise-clear-float">
-			<div class="premise-row span8 premise-float-left">
+		<div class="ptt-time-history-header premise-clear-float">
+			<p><strong>Filter By Date:</strong></p>
+			<div class="ptt-filter-by-date-container premise-row span8 premise-float-left">
 				<?php 
 				// From Field
 				premise_field( 'text', array( 
-					'class' => 'ptt-filter-by-date datepicker',
+					'class' => 'ptt-filter-by-date datepicker ptt-filter-from',
 					'wrapper_class' => 'premise-float-left span4', 
 					'placeholder' => 'From',
 				) );
 				// To Field
 				premise_field( 'text', array( 
-					'class' => 'ptt-filter-by-date datepicker',
+					'class' => 'ptt-filter-by-date datepicker ptt-filter-to',
 					'wrapper_class' => 'premise-float-left span4', 
 					'placeholder' => 'To',
 				) ); ?>
 			</div>
-			<div class="premise-float-right premise-align-right span4">
+			<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
 				Total: 
 				<span class="ptt-filter-total">
 					<?php echo $this->total; ?>
@@ -356,8 +352,8 @@ class PTT_Meta_Box {
 			}
 			?>
 		</div>
-		<div class="ptt-time-summary-footer premise-clear-float">
-			<div class="premise-float-right premise-align-right span4">
+		<div class="ptt-time-history-footer premise-clear-float">
+			<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
 				Total: 
 				<span class="ptt-filter-total">
 					<?php echo $this->total; ?>
@@ -370,6 +366,11 @@ class PTT_Meta_Box {
 
 
 
+	/**
+	 * save the total of all timers to our object
+	 * 
+	 * @return void saves total to obkect property $total
+	 */
 	public function get_total() {
 		$total = 0;
 
@@ -397,6 +398,40 @@ class PTT_Meta_Box {
 		$this->timers = premise_get_value( 'ptt_meta[timers]', 'post' ) ? premise_get_value( 'ptt_meta[timers]', 'post' ) : array();
         $this->count = ! empty( $this->timers ) ? count( $this->timers ) : $this->count;
         $this->get_total();
+	}
+
+
+
+
+	/**
+	 * Reorganize the ptt_meta timers array to ensure the order does not break
+	 * 
+	 * @return mixed return an array if there is something to save
+	 */
+	public function reset_ptt_meta() {
+		if ( isset( $_POST['ptt_meta']['timers'] ) && is_array( $_POST['ptt_meta']['timers'] ) ) {
+			
+			$_timers = $_POST['ptt_meta']['timers'];
+			$timers_organized = array();
+
+			// Remove the first timer 
+			// For some reason the last timer comes up
+			// first in the array
+			$fst_elmnt = array_shift( $_timers );
+			
+			$i = 0;
+			foreach ( $_timers as $k => $timer ) {
+				$timers_organized[$i] = $timer;
+				$i++;
+			}
+			
+			// Place the first element as the last element 
+			// where it belongs
+			$timers_organized[] = $fst_elmnt;
+
+			$_POST['ptt_meta']['timers'] = $timers_organized;
+		}
+		return $_POST['ptt_meta'];
 	}
 
 
@@ -438,10 +473,14 @@ class PTT_Meta_Box {
         /* OK, it's safe for us to save the data now. */
  
         // Sanitize the user input.
-        $mydata = $_POST['ptt_meta'];
+        $mydata = $this->reset_ptt_meta();
  
         // Update the meta field.
         update_post_meta( $post_id, 'ptt_meta', $mydata );
 	}
+
+
+
+	
 }
 ?>
