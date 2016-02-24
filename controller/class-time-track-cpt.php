@@ -317,12 +317,25 @@ class PTT_Meta_Box {
 			changing the values directly in the fields.
 		</div>
 		<div class="ptt-time-summary premise-clear-float">
-			<div class="premise-float-left span4">
-				<?php premise_field( 'select', array( 'id' => 'ptabs-filter-by-date' ) ); ?>
+			<div class="premise-row span8 premise-float-left">
+				<?php 
+				// From Field
+				premise_field( 'text', array( 
+					'class' => 'ptt-filter-by-date datepicker',
+					'wrapper_class' => 'premise-float-left span4', 
+					'placeholder' => 'From',
+				) );
+				// To Field
+				premise_field( 'text', array( 
+					'class' => 'ptt-filter-by-date datepicker',
+					'wrapper_class' => 'premise-float-left span4', 
+					'placeholder' => 'To',
+				) ); ?>
 			</div>
-			<div class="premise-float-right span4">
-				<span class="ptabs-filter-total">
-					<?php $this->the_total(); ?>
+			<div class="premise-float-right premise-align-right span4">
+				Total: 
+				<span class="ptt-filter-total">
+					<?php echo $this->total; ?>
 				</span>
 			</div>
 		</div>
@@ -343,10 +356,11 @@ class PTT_Meta_Box {
 			}
 			?>
 		</div>
-		<div class="ptabs-time-summary-footer premise-clear-float">
-			<div class="premise-float-right span4">
-				<span class="ptabs-filter-total">
-					<?php $this->the_total(); ?>
+		<div class="ptt-time-summary-footer premise-clear-float">
+			<div class="premise-float-right premise-align-right span4">
+				Total: 
+				<span class="ptt-filter-total">
+					<?php echo $this->total; ?>
 				</span>
 			</div>
 		</div>
@@ -356,17 +370,19 @@ class PTT_Meta_Box {
 
 
 
-	public function the_total() {
+	public function get_total() {
 		$total = 0;
 
 		if ( is_array( $this->timers ) && ! empty( $this->timers ) ) {
 
 			foreach ( $this->timers as $k => $timer ) {
 				if ( is_array( $timer ) && isset( $timer['timer'] ) && ! empty( $timer['timer'] ) ) {
-					
+					$total = $total + (int) $timer['timer'];
 				}
 			}
 		}
+
+		$this->total = $total;
 	}
 
 
@@ -380,6 +396,7 @@ class PTT_Meta_Box {
 	protected function reset() {
 		$this->timers = premise_get_value( 'ptt_meta[timers]', 'post' ) ? premise_get_value( 'ptt_meta[timers]', 'post' ) : array();
         $this->count = ! empty( $this->timers ) ? count( $this->timers ) : $this->count;
+        $this->get_total();
 	}
 
 

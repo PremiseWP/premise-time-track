@@ -8,7 +8,6 @@
 		if ( typeof $.datepicker === 'object' ) {
 			$( ".datepicker" ).datepicker({
 				inline: true,
-				minDate: 0, // minimum date: today
 			});
 		}
 	});
@@ -109,6 +108,49 @@
 			// 	    }
 			// 	});
 			// });
+
+
+			$('#ptt-filter-by-date').change(function(){
+				var range = '' !== $(this).val() && $(this).val().match('-') ? $(this).val().split('-') : [];
+				console.log(range);
+				var _from = new Date( range[0] );
+				var _to   = new Date( range[1] );
+				
+				$('.ptt-time-history .datepicker.hasDatepicker').each(function(){
+					var date = $(this).val();
+
+					if ( '' !== date ) {
+						var _date = new Date( date );
+
+						if ( _date >= _from && _date <= _to ) {
+							console.log('match');
+							$(this).parents('.ptt-fields-wrapper').show();
+						}
+						else {
+							$(this).parents('.ptt-fields-wrapper').hide();
+						}
+					}
+					else {
+						$(this).parents('.ptt-fields-wrapper').hide();
+					}
+				});
+
+				PremiseTimeTrack.updateTimerTotal();
+			});
+		},
+
+
+
+		updateTimerTotal: function() {
+			var total = 0;
+			$('.ptt-time-history .ptt-timer-field').each(function(){
+				if ( $(this).parents('.ptt-fields-wrapper').is(':visible') && '' !== $(this).val() ) {
+					console.log($(this));
+					var time = $(this).val();
+					total += +time;
+				}
+			});
+			$('.ptt-filter-total').html( total );
 		},
 
 
