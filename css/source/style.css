@@ -150,3 +150,55 @@ body.post-type-premise_time_track {}
 .ptt-time-history-footer {
 	margin-bottom: 20px;
 }
+
+
+
+
+/**
+ * Reports Page
+ */
+.ptt-report {
+	max-width: 800px;
+	margin: 20px auto;
+	border: 1px solid #888;
+	padding: 20px;
+	background-color: #fff;
+}
+
+.ptt-table {
+	display: table;
+	width: 100%;
+}
+
+.ptt-table-tr {
+	display: table-row;
+}
+
+.ptt-table-td {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.ptt-report .ptt-table {
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	margin-bottom: 20px;
+}
+
+.ptt-report .ptt-table-td {
+	width: 25%;
+	line-height: 30px;
+	height: 30px;
+	border-bottom: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	padding: 0 5px;
+}
+
+.ptt-cell-value {
+	
+}
+
+.ptt-report-body {
+	max-height: 600px;
+	overflow: auto;
+}
