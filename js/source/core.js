@@ -4,12 +4,7 @@
 	$(document).ready(function(){
 		PremiseTimeTrack.init();
 
-		// jQuery UI datepicker
-		if ( typeof $.datepicker === 'object' ) {
-			$( ".datepicker" ).datepicker({
-				inline: true,
-			});
-		}
+		
 	});
 
 	var PremiseTimeTrack = {
@@ -95,6 +90,8 @@
 
 			// Bind filter by date functionality
 			this.filterByDate();
+
+			this.bindDatepicker();
 			
 			// Still needs work. this only hides the timer
 			// still need to build the server side piece to 
@@ -296,7 +293,7 @@
 
 			var s = time,
 			c     = s.length;
-			console.log(s);
+
 			// remove any that is not numeric or a colon
 			var r = new RegExp(/[^0-9:]/g);
 			s     = s.replace( r, '' );
@@ -418,6 +415,8 @@
 			done(function(){
 				self.resetTimer(this);
 				self.timeField.keyup(self.inputTime);
+				self.bindDatepicker();
+				self.updateTimerTotal();
 			});
 			
 
@@ -458,6 +457,16 @@
 
 		countUp: function() {
 			return self.historyCount+1;
+		},
+
+
+		bindDatepicker: function() {
+			// jQuery UI datepicker
+			if ( typeof $.datepicker === 'object' ) {
+				$( ".ptt-datepicker" ).datepicker({
+					inline: true,
+				});
+			}
 		}
 
 	};
