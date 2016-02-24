@@ -204,7 +204,7 @@ class PTT_Meta_Box {
 				'name' => 'ptt_meta[timers]['.$i.'][date]', 
 				'label' => 'Date', 
 				'context' => 'post',
-				'class' => 'datepicker',
+				'class' => 'ptt-datepicker',
 			),
 			array(
 				'type' => 'text',
@@ -311,56 +311,87 @@ class PTT_Meta_Box {
 	 */
 	public function render_history() {
 		?>
+		<!-- The History Header -->
 		<div class="ptt-time-history-header premise-clear-float">
-			<p><strong>Filter By Date:</strong></p>
-			<div class="ptt-filter-by-date-container premise-row span8 premise-float-left">
-				<?php 
-				// From Field
-				premise_field( 'text', array( 
-					'class' => 'ptt-filter-by-date datepicker ptt-filter-from',
-					'wrapper_class' => 'premise-float-left span4', 
-					'placeholder' => 'From',
-				) );
-				// To Field
-				premise_field( 'text', array( 
-					'class' => 'ptt-filter-by-date datepicker ptt-filter-to',
-					'wrapper_class' => 'premise-float-left span4', 
-					'placeholder' => 'To',
-				) ); ?>
-			</div>
-			<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
-				Total: 
-				<span class="ptt-filter-total">
-					<?php echo $this->total; ?>
-				</span>
-			</div>
+			<?php $this->the_date_filter();
+			$this->the_total(); ?>
 		</div>
+		<!-- The History -->
 		<div class="ptt-time-history">
-			<?php 
-			if ( 1 < $this->count ) {
-				array_pop( $this->timers );
-				$i = 0;
-				foreach( $this->timers as $timer ) {
-					?>
-					<div class="ptt-fields-wrapper ptt-time-history-<?php echo $i+1; ?>">
-						<a href="javascript:;" class="ptt-delete-time-history"><i class="fa fa-trash-o"></i></a>
-						<?php $this->the_fields( $i ); ?>
-					</div>
-					<?php 
-					$i++;
-				}
-			}
-			?>
+			<?php $this->the_history(); ?>
 		</div>
+		<!-- The History Footer -->
 		<div class="ptt-time-history-footer premise-clear-float">
-			<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
-				Total: 
-				<span class="ptt-filter-total">
-					<?php echo $this->total; ?>
-				</span>
-			</div>
+			<?php $this->the_total(); ?>
 		</div>
 		<?php 
+	}
+
+
+
+	/**
+	 * displays the hitory
+	 * 
+	 * @return string the history fields for the history meta box
+	 */
+	public function the_history() {
+		if ( 1 < $this->count ) {
+			array_pop( $this->timers );
+			$i = 0;
+			foreach( $this->timers as $timer ) {
+				?>
+				<div class="ptt-fields-wrapper ptt-time-history-<?php echo $i+1; ?>">
+					<a href="javascript:;" class="ptt-delete-time-history"><i class="fa fa-trash-o"></i></a>
+					<?php $this->the_fields( $i ); ?>
+				</div>
+				<?php 
+				$i++;
+			}
+		}
+	}
+
+
+
+	/**
+	 * displays the fields for date filtering through timers
+	 * 
+	 * @return string html for date filter fields
+	 */
+	public function the_date_filter() {
+		?>
+		<p><strong>Filter By Date:</strong></p>
+		<div class="ptt-filter-by-date-container premise-row span8 premise-float-left">
+			<?php 
+			// From Field
+			premise_field( 'text', array( 
+				'class' => 'ptt-filter-by-date ptt-datepicker ptt-filter-from',
+				'wrapper_class' => 'premise-float-left span4', 
+				'placeholder' => 'From',
+			) );
+			// To Field
+			premise_field( 'text', array( 
+				'class' => 'ptt-filter-by-date ptt-datepicker ptt-filter-to',
+				'wrapper_class' => 'premise-float-left span4', 
+				'placeholder' => 'To',
+			) ); ?>
+		</div>
+		<?php 
+	}
+
+
+
+	/**
+	 * display the total of all timers for a particular task
+	 * 
+	 * @return string html for total
+	 */
+	public function the_total() {
+		echo '<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
+			Total: 
+			<span class="ptt-filter-total">
+				' . esc_html( $this->total ) . '
+			</span>
+		</div>';
 	}
 
 
@@ -372,13 +403,13 @@ class PTT_Meta_Box {
 	 * @return void saves total to obkect property $total
 	 */
 	public function get_total() {
-		$total = 0;
+		$total = 0.00;
 
 		if ( is_array( $this->timers ) && ! empty( $this->timers ) ) {
 
 			foreach ( $this->timers as $k => $timer ) {
 				if ( is_array( $timer ) && isset( $timer['timer'] ) && ! empty( $timer['timer'] ) ) {
-					$total = $total + (int) $timer['timer'];
+					$total = $total + (float) $timer['timer'];
 				}
 			}
 		}
