@@ -3,7 +3,7 @@
  * Plugin Name: Premise Time Track
  * Description: 
  * Plugin URI:	
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Premise WP
  * Author URI:  http://premisewp.com
  * License:     GPL
@@ -134,6 +134,9 @@ class Premise_Time_track {
 	 */
 	public function setup() {
 
+		include 'library/functions.php';
+		include 'controller/class-reports-page.php';
+
 		// Require Premise WP.
 		if ( ! class_exists( 'Premise_WP' ) ) {
 
@@ -166,7 +169,6 @@ class Premise_Time_track {
 			add_action( 'wp_ajax_ptt_new_timer', array( PTT_Meta_Box::get_instance(), 'ajax_new_timer' ) );
 		}
 
-
 		add_action( 'admin_menu', array( $this, 'submenu' ) );
 	}
 
@@ -174,8 +176,14 @@ class Premise_Time_track {
 
 
 	public function submenu() {
-		include 'controller/class-reports-page.php';
-		add_submenu_page( 'edit.php?post_type=premise_time_track', 'Reports', 'Reports', 'manage_options', 'premise_time_track_reports', array( PTT_Reports_Page::get_instance(), 'setup' ) );
+		add_submenu_page( 
+			'edit.php?post_type=premise_time_track',           // menu page to add submenu under
+			'Premise Time Track Reports',                      // page title
+			'Reports',                                         // menu title
+			'manage_options',                                  // capabilities
+			'premise_time_track_reports',                      // slug
+			array( PTT_Reports_Page::get_instance(), 'setup' ) // callback
+		);
 	}
 
 
