@@ -89,7 +89,9 @@
 			$('.ptt-new-timer').click(this.newTimer);
 
 			// Bind filter by date functionality
-			this.filterByDate();
+			( 0 < $('.ptt-filter-by-date').length ) ? this.filterByDate() : false;
+
+			( 0 < $('.ptt-filter-by-task').length ) ? this.filterByTask() : false;
 
 			this.bindDatepicker();
 			
@@ -111,6 +113,34 @@
 			// 	});
 			// });
 
+
+			$('.ptt-report .ptt-new-timesheet').click(function(){
+				var tasks = $('.ptt-report-task:visible');
+				tasks.each(function(){
+					var fields = [];
+					var _task = $(this).find('.ptt-task-name').text().trim();
+					
+					var rows = $(this).find('.ptt-fields-wrapper:visible');
+					rows.each(function(){
+						var fields_indexed = {};
+						var group_fields = {};
+						
+						fields_indexed['date'] = $(this).find('.ptt-cell-value-date').text().trim();
+						fields_indexed['start'] = $(this).find('.ptt-cell-value-start').text().trim();
+						fields_indexed['stop'] = $(this).find('.ptt-cell-value-stop').text().trim();
+						fields_indexed['timer'] = $(this).find('.ptt-cell-value-timer').text().trim();
+						fields_indexed['description'] = $(this).find('.ptt-cell-value-description').text().trim();
+						
+
+						group_fields[_task] = fields_indexed;
+						// fields.push(  );
+					});
+					
+					console.log( fields );
+				});
+
+
+			});
 			
 		},
 
@@ -126,21 +156,21 @@
 					var _to   = new Date( $('.ptt-filter-by-date.ptt-filter-to').val() );
 					
 					if( _to >= _from ) {
-						$('.ptt-time-history .datepicker.hasDatepicker').each(function() {
+						$('.ptt-filterable-by-date .ptt-datepicker.hasDatepicker').each(function() {
 							var date = $(this).val();
 
 							if ( '' !== date ) {
 								var _date = new Date( date );
 
 								if ( _date >= _from && _date <= _to ) {
-									$(this).parents('.ptt-fields-wrapper').show();
+									$(this).parents('.ptt-fields-wrapper').show('fast');
 								}
 								else {
-									$(this).parents('.ptt-fields-wrapper').hide();
+									$(this).parents('.ptt-fields-wrapper').hide('fast');
 								}
 							}
 							else {
-								$(this).parents('.ptt-fields-wrapper').hide();
+								// $(this).parents('.ptt-fields-wrapper').hide('fast');
 							}
 						});
 					}
@@ -156,6 +186,34 @@
 				}
 				// always fire at the end
 				PremiseTimeTrack.updateTimerTotal();
+				return false;
+			});
+		},
+
+
+
+		filterByTask: function(){
+			$('.ptt-filter-by-task').keyup(function(){
+				var s = $(this).val();
+				if ( '' !== s ) {
+					$('.ptt-report-task').each(function() {
+						var name = $(this).find('.ptt-task-name').text().toLowerCase();
+						if ( -1 !== name.search(s) ) {
+							$(this).show('fast');
+							$(this).find('.ptt-fields-wrapper').show('fast');
+						}
+						else {
+							$(this).hide('fast');
+							$(this).find('.ptt-fields-wrapper').hide('fast');
+						}
+					});
+				}
+				else {
+					$('.ptt-report-task').show('fast').removeClass('ptt-task-hidden');
+				}
+				// always fire at the end
+				PremiseTimeTrack.updateTimerTotal();
+				return false;
 			});
 		},
 
@@ -163,7 +221,7 @@
 
 		updateTimerTotal: function() {
 			var total = 0;
-			$('.ptt-time-history .ptt-timer-field').each(function(){
+			$('.ptt-filterable-by-date .ptt-timer-field').each(function(){
 				if ( $(this).parents('.ptt-fields-wrapper').is(':visible') && '' !== $(this).val() ) {
 					console.log($(this));
 					var time = $(this).val();

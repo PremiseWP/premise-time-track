@@ -233,6 +233,14 @@ class PTT_Meta_Box {
 				'min' => '0.00',
 				'step' => '0.25',
 			),
+			array(
+				'type' => 'textarea',
+				'name' => 'ptt_meta[timers]['.$i.'][description]', 
+				'label' => 'Description', 
+				'context' => 'post',
+				'rows' => '1',
+				'wrapper_class' => 'ptt-description-field', 
+			), 
 		);
 
 		premise_field_section( $the_fields );
@@ -313,11 +321,11 @@ class PTT_Meta_Box {
 		?>
 		<!-- The History Header -->
 		<div class="ptt-time-history-header premise-clear-float">
-			<?php $this->the_date_filter();
+			<?php ptt_the_date_filter();
 			$this->the_total(); ?>
 		</div>
 		<!-- The History -->
-		<div class="ptt-time-history">
+		<div class="ptt-time-history ptt-filterable-by-date">
 			<?php $this->the_history(); ?>
 		</div>
 		<!-- The History Footer -->

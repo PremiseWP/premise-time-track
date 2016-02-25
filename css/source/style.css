@@ -55,15 +55,8 @@ body.post-type-premise_time_track {}
 }
 
 /* Timer */
-/*#ptt_meta-date,
-#ptt_meta-timer {
-	text-align: center;
-}*/
-
-/* Expandable fields */
-#premise_time_track .ptt-timer-fields {
-	/*display: none;*/
-	/*margin-top: 20px;*/
+.ptt-fields-wrapper .premise-field .premise-field-textarea textarea {
+	height: auto;
 }
 
 #premise_time_track .ptt-new-timer {
@@ -140,11 +133,16 @@ body.post-type-premise_time_track {}
 .ptt-time-history > div .premise-field:not(.premise-field-type-hidden) {
 	width: 25%;
 	float: left;
-	padding: 0;
+	padding: 0 20px 0 0;
 }
 
-.ptt-time-history > div .premise-field:not(:last-child) {
-	padding-right: 20px;
+/*.ptt-time-history > div .premise-field,
+.ptt-time-history > div .premise-field:last-child {
+	padding-right: 0;
+}*/
+
+.ptt-time-history > div .premise-field.ptt-description-field {
+	width: 100%;
 }
 
 .ptt-time-history-footer {
@@ -158,7 +156,8 @@ body.post-type-premise_time_track {}
  * Reports Page
  */
 .ptt-report {
-	max-width: 800px;
+	position: relative;
+	height: 100%;
 	margin: 20px auto;
 	border: 1px solid #888;
 	padding: 20px;
@@ -186,12 +185,20 @@ body.post-type-premise_time_track {}
 }
 
 .ptt-report .ptt-table-td {
-	width: 25%;
+	width: 15%;
 	line-height: 30px;
 	height: 30px;
 	border-bottom: 1px solid #ccc;
 	border-left: 1px solid #ccc;
 	padding: 0 5px;
+}
+
+.ptt-report .ptt-table-td.ptt-report-cell-description {
+	width: 40%
+}
+
+.ptt-report .ptt-table-td.ptt-report-cell-timer {
+	font-weight: 700
 }
 
 .ptt-cell-value {
@@ -201,4 +208,18 @@ body.post-type-premise_time_track {}
 .ptt-report-body {
 	max-height: 600px;
 	overflow: auto;
+}
+
+/* for the filter to update total timer we need this */
+.ptt-task-hidden .ptt-fields-wrapper {
+	display: none;
+}
+
+.ptt-report-task .ptt-message {
+	display: block;
+	line-height: 30px;
+	height: 30px;
+	border: 1px solid #ccc;
+	vertical-align: middle;
+	padding: 0 10px;
 }
