@@ -291,8 +291,9 @@
 			self.stop.val(stop);
 			
 			self.timer.val( self.recordTime(start, stop) );
+
+			$.when( self.newTimer() ).done( self.saveTimer() );
 			
-			self.saveTimer();
 			
 			return false;
 		},
