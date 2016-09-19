@@ -343,8 +343,8 @@ class PTT_Meta_Box {
 	 * @return string the history fields for the history meta box
 	 */
 	public function the_history() {
-		if ( 1 < $this->count ) {
-			array_pop( $this->timers );
+		if ( 0 < $this->count ) {
+			// array_pop( $this->timers );
 			$i = 0;
 			foreach( $this->timers as $timer ) {
 				?>

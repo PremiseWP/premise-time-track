@@ -292,8 +292,9 @@
 			
 			self.timer.val( self.recordTime(start, stop) );
 
-			$.when( self.newTimer() ).done( self.saveTimer() );
-			
+			// $.when( self.newTimer() ).done( self.saveTimer() );
+
+			self.newTimer(true);
 			
 			return false;
 		},
@@ -454,7 +455,8 @@
 
 
 
-		newTimer: function(){
+		newTimer: function(save){
+			save = save || false;
 			var self = PremiseTimeTrack.resetTimer(this);
 			var count = self.countUp();
 			$('.ptt-time-history').append( '<div class="ptt-fields-wrapper ptt-time-history-'+count+'"></div>' );
@@ -476,6 +478,7 @@
 				self.timeField.keyup(self.inputTime);
 				self.bindDatepicker();
 				self.updateTimerTotal();
+				if ( save ) self.saveTimer();
 			});
 			
 
