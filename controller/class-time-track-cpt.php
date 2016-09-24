@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Display the options neede for the Time Track CPT
  *
@@ -23,7 +23,7 @@ add_action( 'load-post-new.php', array( PTT_Meta_Box::get_instance(), 'hook_box'
 * Prints our meta boxes on the premise time track custom post types
 */
 class PTT_Meta_Box {
-	
+
 	/**
 	 * Plugin instance.
 	 *
@@ -37,7 +37,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * holds nonce action
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $nonce = 'ptt_meta_box';
@@ -48,9 +48,9 @@ class PTT_Meta_Box {
 	/**
 	 * holds timers count
 	 *
-	 * Useful when looping through timer to 
+	 * Useful when looping through timer to
 	 * easily know how many timers have already been saved
-	 * 
+	 *
 	 * @var integer
 	 */
 	public $count = 0;
@@ -59,7 +59,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * Holds an array of all the timer saved
-	 * 
+	 *
 	 * @var array
 	 */
 	public $timers = array();
@@ -75,7 +75,7 @@ class PTT_Meta_Box {
 	 */
 	public function __construct() {}
 
-	
+
 
 
 
@@ -87,7 +87,7 @@ class PTT_Meta_Box {
 	 */
 	public static function get_instance() {
 		NULL === self::$instance and self::$instance = new self;
-		
+
 		return self::$instance;
 	}
 
@@ -95,13 +95,13 @@ class PTT_Meta_Box {
 
 
 	/**
-	 * Hooks our meta boxes
-	 * 
+	 * Register our meta boxes
+	 *
 	 * @return Does not return any values
 	 */
 	public function hook_box() {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-        add_action( 'save_post',      array( $this, 'save'         ) );
+        add_action( 'save_post',      array( $this, 'do_save'         ) );
 	}
 
 
@@ -110,24 +110,105 @@ class PTT_Meta_Box {
 	/**
 	 * creates our meta boxes
 	 *
-	 * Only creates the meta boxes if 
-	 * we are in the correct post type
-	 * 
 	 * @param string $post_type current post type
 	 */
 	public function add_meta_box( $post_type ) {
-		if ( 'premise_time_track' == $post_type ) {
-			add_meta_box( 'premise_time_track', 'Timer', array( $this, 'render_timer' ), $post_type, 'side', 'low' );
-			add_meta_box( 'premise_time_track_history', 'Time History', array( $this, 'render_history' ), $post_type, 'advanced', 'high' );
+		if ( 'premise_time_tracker' == $post_type ) { // premise_time_tracker
+			add_meta_box( 'premise_time_track', 'Timer', array( $this, 'timer_metabox' ), $post_type, 'side', 'high' );
+			// add_meta_box( 'premise_time_track_history', 'Time History', array( $this, 'render_history' ), $post_type, 'advanced', 'high' );
 		}
 	}
+
+
+	/**
+	 * display the timer UI
+	 *
+	 * @return string html for the timer
+	 */
+	public function timer_metabox() {
+		wp_nonce_field( $this->nonce, 'ptt_nonce_field' );
+
+		premise_field( 'text', array(
+			'name'        => 'pwptt_timer[time]',
+			'label'       => 'Enter Time',
+			'placeholder' => '1.75',
+			'tooltip'     => 'Enter in 15 minute increments (15 minutes = 0.25). The example \'1.75\' would equal 1 hour and 45 minutes.',
+			'context'     => 'post',
+		) );
+
+		echo '<div class="premise-clear-float">';
+
+		premise_field( 'button', array(
+			'class' => 'pwptt-timer-btn pwptt-start',
+			'value' => 'Start',
+			'wrapper_class' => 'span5 premise-float-left'
+		) );
+
+		premise_field( 'button', array(
+			'class' => 'pwptt-timer-btn pwptt-stop',
+			'value' => 'Stop',
+			'wrapper_class' => 'span5 premise-float-right premise-align-right'
+		) );
+
+		echo '</div>';
+	}
+
+
+	/**
+	 * save the timer data
+	 *
+	 * @param  int    $post_id the post id for the post being used
+	 *
+	 * @return mixed           the post id if fails. Otherwise nothing
+	 */
+	public function do_save( $post_id ) {
+
+		// Check if our nonce is set.
+        if ( ! isset( $_POST['ptt_nonce_field'] ) ) {
+            return $post_id;
+        }
+
+        $nonce = $_POST['ptt_nonce_field'];
+
+        // Verify that the nonce is valid.
+        if ( ! wp_verify_nonce( $nonce, $this->nonce ) ) {
+            return $post_id;
+        }
+
+        /*
+         * If this is an autosave, our form has not been submitted,
+         * so we don't want to do anything.
+         */
+        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+            return $post_id;
+        }
+
+        // Check the user's permissions.
+        if ( 'premise_time_tracker' !== $_POST['post_type'] ) {
+            return $post_id;
+        }
+
+        /* OK, it's safe for us to save the data now. */
+
+        // Sanitize the user input.
+        $mydata = array_map( 'sanitize_text_field', $_POST['pwptt_timer'] );
+
+        // Update the meta field.
+        update_post_meta( $post_id, 'pwptt_timer', $mydata );
+	}
+
+
+
+	/**
+	 * Old code
+	 */
 
 
 
 
 	/**
 	 * The timer meta box
-	 * 
+	 *
 	 * @return string html for timer meta box
 	 */
 	public function render_timer() {
@@ -135,13 +216,13 @@ class PTT_Meta_Box {
 
 		wp_nonce_field( $this->nonce, 'ptt_nonce_field' ); ?>
 		<div class="ptt-timer">
-			<?php 
+			<?php
 			$this->the_buttons();
-			
+
 			$this->working_timer();
-			
+
 			$this->controls(); ?>
-		</div> <?php 
+		</div> <?php
 	}
 
 
@@ -149,7 +230,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * otputs the timer buttons
-	 * 
+	 *
 	 * @return string html for timer buttons
 	 */
 	protected function the_buttons() {
@@ -179,7 +260,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * otputs the fields
-	 * 
+	 *
 	 * @param  integer $count integer to override the objects count
 	 * @return string         html for fields
 	 */
@@ -190,44 +271,44 @@ class PTT_Meta_Box {
 			// Hidden fields
 			array(
 				'type' => 'hidden',
-				'name' => 'ptt_meta[timers]['.$i.'][timestamp_start]', 
-				'context' => 'post',	
+				'name' => 'ptt_meta[timers]['.$i.'][timestamp_start]',
+				'context' => 'post',
 			),
 			array(
 				'type' => 'hidden',
-				'name' => 'ptt_meta[timers]['.$i.'][timestamp_stop]', 
-				'context' => 'post',	
+				'name' => 'ptt_meta[timers]['.$i.'][timestamp_stop]',
+				'context' => 'post',
 			),
 			// the fields
 			array(
 				'type' => 'text',
-				'name' => 'ptt_meta[timers]['.$i.'][date]', 
-				'label' => 'Date', 
+				'name' => 'ptt_meta[timers]['.$i.'][date]',
+				'label' => 'Date',
 				'context' => 'post',
 				'class' => 'ptt-datepicker',
 			),
 			array(
 				'type' => 'text',
-				'name' => 'ptt_meta[timers]['.$i.'][start]', 
+				'name' => 'ptt_meta[timers]['.$i.'][start]',
 				'class' => 'ptt-time-field ptt-start',
-				'label' => 'From', 
-				'context' => 'post', 
+				'label' => 'From',
+				'context' => 'post',
 				'wrapper_class' => 'ptt-left',
-				'maxlength' => '5', 
+				'maxlength' => '5',
 			),
 			array(
 				'type' => 'text',
-				'name' => 'ptt_meta[timers]['.$i.'][stop]', 
+				'name' => 'ptt_meta[timers]['.$i.'][stop]',
 				'class' => 'ptt-time-field ptt-stop',
-				'label' => 'To', 
-				'context' => 'post', 
+				'label' => 'To',
+				'context' => 'post',
 				'wrapper_class' => 'ptt-right',
-				'maxlength' => '5', 
+				'maxlength' => '5',
 			),
 			array(
 				'type' => 'number',
-				'name' => 'ptt_meta[timers]['.$i.'][timer]', 
-				'label' => 'Timer', 
+				'name' => 'ptt_meta[timers]['.$i.'][timer]',
+				'label' => 'Timer',
 				'context' => 'post',
 				'class' => 'ptt-timer-field',
 				'min' => '0.00',
@@ -235,12 +316,12 @@ class PTT_Meta_Box {
 			),
 			array(
 				'type' => 'textarea',
-				'name' => 'ptt_meta[timers]['.$i.'][description]', 
-				'label' => 'Description', 
+				'name' => 'ptt_meta[timers]['.$i.'][description]',
+				'label' => 'Description',
 				'context' => 'post',
 				'rows' => '1',
-				'wrapper_class' => 'ptt-description-field', 
-			), 
+				'wrapper_class' => 'ptt-description-field',
+			),
 		);
 
 		premise_field_section( $the_fields );
@@ -251,7 +332,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * otputs the controls
-	 * 
+	 *
 	 * @return string htmla for controls
 	 */
 	protected function controls() {
@@ -261,7 +342,7 @@ class PTT_Meta_Box {
 				<i class="fa fa-plus"></i> New Timer
 			</a>
 		</div>
-		<?php 
+		<?php
 	}
 
 
@@ -271,11 +352,11 @@ class PTT_Meta_Box {
 	 * outputs the working timer
 	 *
 	 * The working timer is the timer that is currently active.
-	 * Once the user creates a new timer and saves it, the new one 
+	 * Once the user creates a new timer and saves it, the new one
 	 * becomes the working timer and the old one is moved to history.
 	 *
 	 * @see self::render_history() this function loads the history of timers
-	 * 
+	 *
 	 * @return string html for the working timer
 	 */
 	public function working_timer() {
@@ -283,7 +364,7 @@ class PTT_Meta_Box {
 		echo '<div class="ptt-fields-wrapper ptt-timer-fields">';
 			$this->the_fields( $_count );
 		echo '</div>';
-		
+
 	}
 
 
@@ -294,7 +375,7 @@ class PTT_Meta_Box {
 	 *
 	 * This function allows us to get a new set of timer fields
 	 * from the server.
-	 * 
+	 *
 	 * @param integer $_POST['count'] the count to override current count
 	 * @return string html for timer fields
 	 */
@@ -311,10 +392,10 @@ class PTT_Meta_Box {
 	 * The history meta box
 	 *
 	 * This meta box displays the timer history.
-	 * i.e. The timers that have been saved so far, 
+	 * i.e. The timers that have been saved so far,
 	 * minus the last one. The last timer is always
 	 * the working timer and stays in the timer meta box
-	 * 
+	 *
 	 * @return string html for meta box
 	 */
 	public function render_history() {
@@ -332,14 +413,14 @@ class PTT_Meta_Box {
 		<div class="ptt-time-history-footer premise-clear-float">
 			<?php $this->the_total(); ?>
 		</div>
-		<?php 
+		<?php
 	}
 
 
 
 	/**
 	 * displays the hitory
-	 * 
+	 *
 	 * @return string the history fields for the history meta box
 	 */
 	public function the_history() {
@@ -352,7 +433,7 @@ class PTT_Meta_Box {
 					<a href="javascript:;" class="ptt-delete-time-history"><i class="fa fa-trash-o"></i></a>
 					<?php $this->the_fields( $i ); ?>
 				</div>
-				<?php 
+				<?php
 				$i++;
 			}
 		}
@@ -362,40 +443,40 @@ class PTT_Meta_Box {
 
 	/**
 	 * displays the fields for date filtering through timers
-	 * 
+	 *
 	 * @return string html for date filter fields
 	 */
 	public function the_date_filter() {
 		?>
 		<p><strong>Filter By Date:</strong></p>
 		<div class="ptt-filter-by-date-container premise-row span8 premise-float-left">
-			<?php 
+			<?php
 			// From Field
-			premise_field( 'text', array( 
+			premise_field( 'text', array(
 				'class' => 'ptt-filter-by-date ptt-datepicker ptt-filter-from',
-				'wrapper_class' => 'premise-float-left span4', 
+				'wrapper_class' => 'premise-float-left span4',
 				'placeholder' => 'From',
 			) );
 			// To Field
-			premise_field( 'text', array( 
+			premise_field( 'text', array(
 				'class' => 'ptt-filter-by-date ptt-datepicker ptt-filter-to',
-				'wrapper_class' => 'premise-float-left span4', 
+				'wrapper_class' => 'premise-float-left span4',
 				'placeholder' => 'To',
 			) ); ?>
 		</div>
-		<?php 
+		<?php
 	}
 
 
 
 	/**
 	 * display the total of all timers for a particular task
-	 * 
+	 *
 	 * @return string html for total
 	 */
 	public function the_total() {
 		echo '<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
-			Total: 
+			Total:
 			<span class="ptt-filter-total">
 				' . esc_html( $this->total ) . '
 			</span>
@@ -407,7 +488,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * save the total of all timers to our object
-	 * 
+	 *
 	 * @return void saves total to obkect property $total
 	 */
 	public function get_total() {
@@ -430,7 +511,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * Reset the object
-	 * 
+	 *
 	 * @return void resets timers and count
 	 */
 	protected function reset() {
@@ -444,27 +525,27 @@ class PTT_Meta_Box {
 
 	/**
 	 * Reorganize the ptt_meta timers array to ensure the order does not break
-	 * 
+	 *
 	 * @return mixed return an array if there is something to save
 	 */
 	public function reset_ptt_meta() {
 		if ( isset( $_POST['ptt_meta']['timers'] ) && is_array( $_POST['ptt_meta']['timers'] ) ) {
-			
+
 			$_timers = $_POST['ptt_meta']['timers'];
 			$timers_organized = array();
 
-			// Remove the first timer 
+			// Remove the first timer
 			// For some reason the last timer comes up
 			// first in the array
 			$fst_elmnt = array_shift( $_timers );
-			
+
 			$i = 0;
 			foreach ( $_timers as $k => $timer ) {
 				$timers_organized[$i] = $timer;
 				$i++;
 			}
-			
-			// Place the first element as the last element 
+
+			// Place the first element as the last element
 			// where it belongs
 			$timers_organized[] = $fst_elmnt;
 
@@ -478,7 +559,7 @@ class PTT_Meta_Box {
 
 	/**
 	 * Save the ptt_meta if it is safe
-	 * 
+	 *
 	 * @param  integer $post_id the post id
 	 * @return mixed          returns the post id on failure.
 	 */
@@ -488,14 +569,14 @@ class PTT_Meta_Box {
         if ( ! isset( $_POST['ptt_nonce_field'] ) ) {
             return $post_id;
         }
- 
+
         $nonce = $_POST['ptt_nonce_field'];
- 
+
         // Verify that the nonce is valid.
         if ( ! wp_verify_nonce( $nonce, $this->nonce ) ) {
             return $post_id;
         }
- 
+
         /*
          * If this is an autosave, our form has not been submitted,
          * so we don't want to do anything.
@@ -503,23 +584,23 @@ class PTT_Meta_Box {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return $post_id;
         }
- 
+
         // Check the user's permissions.
-        if ( 'premise_time_track' !== $_POST['post_type'] ) {
+        if ( 'premise_time_tracker' !== $_POST['post_type'] ) {
             return $post_id;
         }
- 
+
         /* OK, it's safe for us to save the data now. */
- 
+
         // Sanitize the user input.
-        $mydata = $this->reset_ptt_meta();
- 
+        $mydata = $_POST['pwptt_timer'];//$this->reset_ptt_meta();
+
         // Update the meta field.
-        update_post_meta( $post_id, 'ptt_meta', $mydata );
+        update_post_meta( $post_id, 'pwptt_timer', $mydata );
 	}
 
 
 
-	
+
 }
 ?>
