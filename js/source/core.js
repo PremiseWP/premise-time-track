@@ -1,10 +1,37 @@
+(function($){
+	$(document).ready(function(){
+
+		var pwpttAdminTimer = function() {
+
+			// save our elements to our object
+			this.start = $( '.pwptt-timer-btn.pwtt-start' ),
+
+			this.stop  = $( '.pwptt-timer-btn.pwtt-stop' );
+
+			var timer = this;
+
+			timer.start.click( function() {
+				alert( 'yo');
+			});
+
+			consle.log( ' ;skjhfg;wl' );
+		}
+
+		new pwpttAdminTimer();
+
+	});
+});
+
+
+
+
 
 (function($){
 
 	$(document).ready(function(){
 		PremiseTimeTrack.init();
 
-		
+
 	});
 
 	var PremiseTimeTrack = {
@@ -94,14 +121,14 @@
 			( 0 < $('.ptt-filter-by-task').length ) ? this.filterByTask() : false;
 
 			this.bindDatepicker();
-			
+
 			// Still needs work. this only hides the timer
-			// still need to build the server side piece to 
+			// still need to build the server side piece to
 			// restructure the array of timers correctly.
 			$('.ptt-delete-time-history').click(function(){
 				$(this).parent().slideToggle().remove();
 			});
-			
+
 			// Binds the enter key to add a new timer
 			// not sure if we should keep it.
 			// $('.ptt-timer-fields input').focus(function(){
@@ -119,42 +146,42 @@
 				tasks.each(function(){
 					var fields = [];
 					var _task = $(this).find('.ptt-task-name').text().trim();
-					
+
 					var rows = $(this).find('.ptt-fields-wrapper:visible');
 					rows.each(function(){
 						var fields_indexed = {};
 						var group_fields = {};
-						
+
 						fields_indexed['date'] = $(this).find('.ptt-cell-value-date').text().trim();
 						fields_indexed['start'] = $(this).find('.ptt-cell-value-start').text().trim();
 						fields_indexed['stop'] = $(this).find('.ptt-cell-value-stop').text().trim();
 						fields_indexed['timer'] = $(this).find('.ptt-cell-value-timer').text().trim();
 						fields_indexed['description'] = $(this).find('.ptt-cell-value-description').text().trim();
-						
+
 
 						group_fields[_task] = fields_indexed;
 						// fields.push(  );
 					});
-					
+
 					console.log( fields );
 				});
 
 
 			});
-			
+
 		},
 
 
 
 		filterByDate: function() {
 			$('.ptt-filter-by-date').change(function(){
-				if ( '' !== $('.ptt-filter-by-date.ptt-filter-from').val() && 
+				if ( '' !== $('.ptt-filter-by-date.ptt-filter-from').val() &&
 					'' !== $('.ptt-filter-by-date.ptt-filter-to').val() ) {
 
 
 					var _from = new Date( $('.ptt-filter-by-date.ptt-filter-from').val() );
 					var _to   = new Date( $('.ptt-filter-by-date.ptt-filter-to').val() );
-					
+
 					if( _to >= _from ) {
 						$('.ptt-filterable-by-date .ptt-datepicker.hasDatepicker').each(function() {
 							var date = $(this).val();
@@ -252,10 +279,10 @@
 			h = timeStamp.getHours(),
 			m = "0" + timeStamp.getMinutes(),
 			s = "0" + timeStamp.getSeconds();
-			
+
 			var start = h + ":" + m.substr(-2);
 			var date = M + "/" + D + "/" + Y;
-			
+
 			self.timestampStart.val(timeStamp);
 			self.start.val(start);
 			self.date.val(date);
@@ -264,7 +291,7 @@
 			self.timestampStop.val('');
 
 			self.saveTimer();
-			
+
 			return false;
 		},
 
@@ -283,18 +310,18 @@
 			h = timeStamp.getHours(),
 			m = "0" + timeStamp.getMinutes(),
 			s = "0" + timeStamp.getSeconds();
-			
+
 			var stop = h + ":" + m.substr(-2);
 			var start = self.start.val();
 
 			self.timestampStop.val(timeStamp);
 			self.stop.val(stop);
-			
+
 			self.timer.val( self.recordTime(start, stop) );
 
 			$.when( self.newTimer() ).done( self.saveTimer() );
-			
-			
+
+
 			return false;
 		},
 
@@ -383,7 +410,7 @@
 					return s.substr(0,3) + "00";
 				}
 
-				
+
 				return false;
 			}
 			// prevent more than 5 chars (12:35)
@@ -405,7 +432,7 @@
 			var _recordIt = $(this).is('.ptt-start') ? false : true;
 
 			$(this).val( PremiseTimeTrack.validateTime(time) );
-			
+
 			if ( _recordIt ){
 				var start = $(this).parents('.ptt-fields-wrapper').find('.ptt-start').val();
 				if ( '' !== start ) {
@@ -477,7 +504,7 @@
 				self.bindDatepicker();
 				self.updateTimerTotal();
 			});
-			
+
 
 
 			// bind time fields again
