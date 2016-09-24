@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Premise Time Track
- * Description: 
- * Plugin URI:	
+ * Description:
+ * Plugin URI:
  * Version:     1.0.1
  * Author:      Premise WP
  * Author URI:  http://premisewp.com
@@ -50,58 +50,6 @@ class Premise_Time_track {
 	protected static $instance = null;
 
 
-
-	/**
-	 * Labels for custom post type
-	 * 
-	 * @var array
-	 */
-	public $labels = array(
-		'post_type_name' => 'premise_time_track',
-	    'singular' => 'Timer',
-	    'plural' => 'Timers',
-	    'slug' => 'premise_time_track'
-	);
-
-
-
-
-	/**
-	 * options for custom post type
-	 * 
-	 * @var array
-	 */
-	public $options = array(
-		'public' => false, 
-		'show_in_rest' => true,
-		'rest_base' => 'premise_time_track', 
-		'show_ui' => true, 
-		'supports' => array( 
-			'title', 
-			'editor', 
-		),
-	);
-
-
-
-
-	public $tax_labels = array(
-		'taxonomy_name' => 'premise_time_track_tasklist',
-	    'singular' => 'Task List',
-	    'plural' => 'Task Lists',
-	    'slug' => 'premise_time_track_tasklist'
-	);
-	
-
-
-
-	public $tax_options = array(
-		'hirearchical' => true,
-	);
-
-
-
-
 	/**
 	 * Constructor. Intentionally left empty and public.
 	 *
@@ -109,9 +57,6 @@ class Premise_Time_track {
 	 * @since 	1.0
 	 */
 	public function __construct() {}
-
-
-
 
 
 	/**
@@ -127,16 +72,11 @@ class Premise_Time_track {
 	}
 
 
-
 	/**
 	 * Require Premise WP
 	 * Registers our custom post type and registers our hooks
 	 */
 	public function setup() {
-
-		include 'library/functions.php';
-		include 'controller/class-reports-page.php';
-
 		// Require Premise WP.
 		if ( ! class_exists( 'Premise_WP' ) ) {
 
@@ -146,44 +86,70 @@ class Premise_Time_track {
 			add_action( 'tgmpa_register', array( $this, 'ptt_register_required_plugins' ) );
 		}
 
-		if ( class_exists( 'PremiseCPT' ) ) {
-
-			$time_track_cpt = new PremiseCPT( $this->labels, $this->options );
-			$time_track_cpt->register_taxonomy( $this->tax_labels, $this->tax_options);
-			include 'controller/class-time-track-cpt.php';
-		}
-
-		$this->do_hooks();
-	}
+		include 'library/functions.php';
+		include 'controller/class-reports-page.php';
 
 
-
-	/**
-	 * Register our hooks
-	 */
-	public function do_hooks() {
+		$this->register_cpt();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
-
-		if ( class_exists( 'PTT_Meta_Box' ) ) {
-			add_action( 'wp_ajax_ptt_new_timer', array( PTT_Meta_Box::get_instance(), 'ajax_new_timer' ) );
-		}
-
-		add_action( 'admin_menu', array( $this, 'submenu' ) );
 	}
 
 
 
+	public function register_cpt() {
+		if ( class_exists( 'PremiseCPT' ) ) {
 
-	public function submenu() {
-		add_submenu_page( 
-			'edit.php?post_type=premise_time_track',           // menu page to add submenu under
-			'Premise Time Track Reports',                      // page title
-			'Reports',                                         // menu title
-			'manage_options',                                  // capabilities
-			'premise_time_track_reports',                      // slug
-			array( PTT_Reports_Page::get_instance(), 'setup' ) // callback
-		);
+			$time_track_cpt = new PremiseCPT( array(
+				'post_type_name' => 'premise_time_tracker',
+				'singular'       => 'Timer',
+				'plural'         => 'Timers',
+				'slug'           => 'time-tracker'
+			),
+			array(
+				'public'       => true,
+				'show_in_rest' => true,
+				'rest_base'    => 'premise_time_tracker',
+				'show_ui'      => true,
+				'supports'     => array(
+					'title',
+					'editor',
+				),
+				'menu_icon'    => 'dashicons-clock',
+			) );
+
+			$time_track_cpt->register_taxonomy( array(
+				'taxonomy_name' => 'premise_time_tracker_client',
+				'singular'      => 'Client',
+				'plural'        => 'Clients',
+				'slug'          => 'time-traker-client',
+			),
+			array(
+				'hierarchical' => true,
+			) );
+
+			$time_track_cpt->register_taxonomy( array(
+				'taxonomy_name' => 'premise_time_tracker_project',
+				'singular'      => 'Project',
+				'plural'        => 'Projects',
+				'slug'          => 'time-traker-project',
+			),
+			array(
+				'hierarchical' => false,
+			) );
+
+			$time_track_cpt->register_taxonomy( array(
+				'taxonomy_name' => 'premise_time_tracker_timesheet',
+				'singular'      => 'Timesheet',
+				'plural'        => 'Timesheets',
+				'slug'          => 'timesheet',
+			),
+			array(
+				'hierarchical' => false,
+			) );
+
+			include 'controller/class-time-track-cpt.php';
+		}
 	}
 
 
@@ -193,18 +159,11 @@ class Premise_Time_track {
 	 */
 	public function scripts() {
 
-		wp_register_style( 'ptt_style', PTT_URL . 'css/premise-time-track.min.css' );
-		wp_enqueue_style( 'ptt_style' );
+		wp_register_style( 'pwptt_css', PTT_URL . 'css/premise-time-track.min.css' );
+		wp_enqueue_style( 'pwptt_css' );
 
-		// wp_register_script( 'ptt_core_js', PTT_URL . 'js/premise-time-track.min.js', array( 'jquery', 'wp-api' ) );
-		wp_register_script( 'ptt_core_js', PTT_URL . 'js/premise-time-track.min.js', array( 'jquery' ) );
-		wp_enqueue_script( 'ptt_core_js' );
-
-		// JQuery UI (datepicker).
-		wp_register_script(	'jquery-ui', PTT_URL . '/js/lib/jquery-ui.min.js', array( 'jquery' ), '4.2.3' );
-		wp_enqueue_script( 'jquery-ui' );
-
-		// wp_localize_script( 'ptt_core_js', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
+		wp_register_script( 'pwptt_js', PTT_URL . 'js/premise-time-track.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'pwptt_js' );
 	}
 
 
