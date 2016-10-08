@@ -1,38 +1,31 @@
 <?php
 /**
  * Plugin Name: Premise Time Track
- * Description:
+ * Description: Create and track different timers. Perfect to manage freelancers.
  * Plugin URI:
- * Version:     1.0.1
+ * Version:     2.0.0
  * Author:      Premise WP
  * Author URI:  http://premisewp.com
  * License:     GPL
- * Text Domain: ptt-text-domain
+ * Text Domain: pwptt-text-domain
  *
- * @package PTT
+ * @package Premise Time Track
  */
 
 /**
  * Define constants for plugin's url and path
  */
 define( 'PTT_PATH', plugin_dir_path( __FILE__ ) );
-define( 'PTT_URL', plugin_dir_url( __FILE__ ) );
-
-
-
-
-/**
- * Check for required plugins
- */
-require PTT_PATH . 'plugins/premise-plugin-require.php';
-
-
+define( 'PTT_URL',  plugin_dir_url(  __FILE__ ) );
 
 
 /**
  * Intantiate and setup Premise Boxes
+ *
+ * @todo check for premise wp before running plugin
  */
 add_action( 'plugins_loaded', array( Premise_Time_track::get_instance(), 'setup' ) );
+
 
 /**
  * Premise Time Track class.
@@ -73,30 +66,46 @@ class Premise_Time_track {
 
 
 	/**
-	 * Require Premise WP
-	 * Registers our custom post type and registers our hooks
+	 * works as our construct function.
 	 */
 	public function setup() {
-		// Require Premise WP.
-		if ( ! class_exists( 'Premise_WP' ) ) {
-
-			// Require Premise WP plugin with the help of TGM Plugin Activation.
-			require_once PTT_PATH . 'plugins/class-tgm-plugin-activation.php';
-
-			add_action( 'tgmpa_register', array( $this, 'ptt_register_required_plugins' ) );
-		}
-
-		include 'library/functions.php';
-		include 'controller/class-reports-page.php';
-
-
+		// 1. do includes
+		$this->do_includes();
+		// 2. do hooks
+		$this->do_hooks();
+		// 3. register our CPT
 		$this->register_cpt();
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 	}
 
 
+	/**
+	 * Includes all our required files
+	 */
+	public function do_includes() {
+		include 'library/functions.php';
+		include 'controller/class-time-track-cpt.php';
+		include 'controller/class.render.php';
+		// include 'controller/class-reports-page.php';
+	}
 
+
+	/**
+	 * Registers our hooks
+	 */
+	public function do_hooks() {
+		add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
+
+		add_action( 'load-post.php',     array( PTT_Meta_Box::get_instance(), 'hook_box' ) );
+		add_action( 'load-post-new.php', array( PTT_Meta_Box::get_instance(), 'hook_box' ) );
+
+		add_filter( 'template_include', array( PTT_Render::get_instance(), 'init' ), 99 );
+	}
+
+
+	/**
+	 * Register the cpt if premise wp exists
+	 */
 	public function register_cpt() {
 		if ( class_exists( 'PremiseCPT' ) ) {
 
@@ -147,8 +156,6 @@ class Premise_Time_track {
 			array(
 				'hierarchical' => false,
 			) );
-
-			include 'controller/class-time-track-cpt.php';
 		}
 	}
 
@@ -158,63 +165,11 @@ class Premise_Time_track {
 	 * Register and enqueue styles and scripts for the backend.
 	 */
 	public function scripts() {
-
+		// register styles
 		wp_register_style( 'pwptt_css', PTT_URL . 'css/premise-time-track.min.css' );
+		wp_register_script( 'pwptt_js', PTT_URL . 'js/premise-time-track.min.js' );
+		// enqueue styles
 		wp_enqueue_style( 'pwptt_css' );
-
-		wp_register_script( 'pwptt_js', PTT_URL . 'js/premise-time-track.min.js', array( 'jquery' ) );
 		wp_enqueue_script( 'pwptt_js' );
-	}
-
-
-
-
-
-	/**
-	 * Register the required plugins for this theme.
-	 *
-	 * We register one plugin:
-	 * - Premise-WP from a GitHub repository
-	 *
-	 * @link https://github.com/PremiseWP/Premise-WP
-	 */
-	function ptt_register_required_plugins() {
-		/*
-		 * Array of plugin arrays. Required keys are name and slug.
-		 * If the source is NOT from the .org repo, then source is also required.
-		 */
-		$plugins = array(
-
-			// Include Premise-WP plugin.
-			array(
-				'name'               => 'Premise-WP', // The plugin name.
-				'slug'               => 'Premise-WP', // The plugin slug (typically the folder name).
-				'source'             => 'https://github.com/PremiseWP/Premise-WP/archive/master.zip', // The plugin source.
-				'required'           => true, // If false, the plugin is only 'recommended' instead of required.
-				'version'            => '1.2', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-				'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-				// 'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-				// 'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-				// 'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-			),
-		);
-
-		/*
-		 * Array of configuration settings.
-		 */
-		$config = array(
-			'id'           => 'ptabs-tgmpa',         // Unique ID for hashing notices for multiple instances of TGMPA.
-			'default_path' => '',                      // Default absolute path to bundled plugins.
-			'menu'         => 'tgmpa-install-plugins', // Menu slug.
-			'parent_slug'  => 'plugins.php',            // Parent menu slug.
-			'capability'   => 'install_plugins',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-			'has_notices'  => true,                    // Show admin notices or not.
-			'dismissable'  => false,                    // If false, a user cannot dismiss the nag message.
-			'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
-			'is_automatic' => true,                   // Automatically activate plugins after installation or not.
-			'message'      => '',                      // Message to output right before the plugins table.
-		);
-
-		tgmpa( $plugins, $config );
 	}
 }

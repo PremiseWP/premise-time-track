@@ -7,16 +7,6 @@
  */
 
 
-
-/**
- * Register our hooks to load our class when posts are being edited
- */
-add_action( 'load-post.php',     array( PTT_Meta_Box::get_instance(), 'hook_box' ) );
-add_action( 'load-post-new.php', array( PTT_Meta_Box::get_instance(), 'hook_box' ) );
-
-
-
-
 /**
 * The premise time track meta box class
 *
