@@ -166,8 +166,11 @@ class Premise_Time_track {
 	 */
 	public function scripts() {
 		// register styles
-		wp_register_style( 'pwptt_css', PTT_URL . 'css/premise-time-track.min.css' );
-		wp_register_script( 'pwptt_js', PTT_URL . 'js/premise-time-track.min.js' );
+		wp_register_style( 'pwptt_jquery_ui_css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css' );
+		wp_register_style( 'pwptt_css'          , PTT_URL . 'css/premise-time-track.min.css', array( 'pwptt_jquery_ui_css' ) );
+		// register scripts
+		wp_register_script( 'pwptt_jquery_ui'   , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' );
+		wp_register_script( 'pwptt_js'          , PTT_URL . 'js/premise-time-track.min.js'  , array( 'pwptt_jquery_ui' ) );
 		// enqueue styles
 		wp_enqueue_style( 'pwptt_css' );
 		wp_enqueue_script( 'pwptt_js' );

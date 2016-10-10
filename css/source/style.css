@@ -1,225 +1,25 @@
-body.post-type-premise_time_track {}
-
-/* premise field hidden fix (adds additional margin) */
-#premise_time_track .premise-field-type-hidden {
-	margin-bottom: 0;
-}
+/**
+ * CSS for the front end of Premise Time Tracker
+ *
+ * @Taxonomies scope: body[class*="tax-premise_time_tracker_"]
+ */
 
 /**
- * the meta box
+ * @Taxonomies
  */
-#premise_time_track {
-	position: relative;
-}
-#premise_time_track:after {
-	content: '';
-	display: table;
-	clear: both;
-}
-
-.premise-field.ptt-left,
-.premise-field.ptt-right {
-	width: 50%;
-	display: inline-block;
-}
-.premise-field.ptt-left {
-	padding-right: 10px;
-}
-.premise-field.ptt-right {
-	padding-left: 10px;
-}
-
-/* Start button */
-#ptt_start {
-	background-color: #43A743;
-	border: 1px solid #43A743;
-}
-
-/* Stop button */
-.premise-field-type-button.ptt-right {
-	text-align: right
-}
-
-#ptt_stop {
-	background-color: #CA0D0D;
-	border: 1px solid #CA0D0D;
-}
-
-#ptt_start,
-#ptt_stop {
-	color: #fff;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	border-radius: 3px;
-	margin: 10px 5px 0;
-}
-
-/* Timer */
-.ptt-fields-wrapper .premise-field .premise-field-textarea textarea {
-	height: auto;
-}
-
-#premise_time_track .ptt-new-timer {
-	display: inline-block;
-	text-decoration: none;
-	vertical-align: middle;
-	line-height: 20px;
-	font-size: 16px;
-}
-
-
-
-/**
- * The History Meta Box
- */
-#premise_time_track_history {}
-
-.ptt-time-history-header {
-	margin-top: 20px;
-	padding-left: 10px;
-}
-
-.ptt-filter-total-container {
-	font-weight: 700;
-	font-size: 20px;
-	padding-top: 7px;
-	padding-right: 10px;
-}
-
-.ptt-description {
-	margin-bottom: 20px;
-}
-
-.ptt-time-history > div {
-	position: relative;
+body[class*="tax-premise_time_tracker_"] .pwptt-footer {
+	/*margin-top: 25px;*/
+	padding-top: 15px;
 	border-top: 1px solid #ccc;
-	padding: 10px 10px 0 10px;
 }
 
-.ptt-time-history > div:last-child {
+body[class*="tax-premise_time_tracker_"] .pwptt-header {
+	/*margin-bottom: 25px;*/
 	border-bottom: 1px solid #ccc;
-	margin-bottom: 20px;
 }
 
-.ptt-time-history > div > .ptt-delete-time-history {
-	content: "\f014";
-	font-family: 'FontAwesome';
-	width: 30px;
-	height: 30px;
-	position: absolute;
-	z-index: 9999;
-	top: 1px;
-	right: -30px;
-	text-align: center;
-	line-height: 30px;
-	font-size: 20px;
-	color: #444;
-	cursor: pointer;
-	transition: all .4s ease;
-	opacity: 0;
-}
-
-.ptt-time-history > div:hover > .ptt-delete-time-history {
-	right: 0;
-	opacity: 1;
-}
-
-.ptt-time-history > div:after {
-	content: '';
-	display: table;
-	clear: both;
-}
-
-.ptt-time-history > div .premise-field:not(.premise-field-type-hidden) {
-	width: 25%;
-	float: left;
-	padding: 0 20px 0 0;
-}
-
-/*.ptt-time-history > div .premise-field,
-.ptt-time-history > div .premise-field:last-child {
-	padding-right: 0;
-}*/
-
-.ptt-time-history > div .premise-field.ptt-description-field {
-	width: 100%;
-}
-
-.ptt-time-history-footer {
-	margin-bottom: 20px;
-}
-
-
-
-
-/**
- * Reports Page
- */
-.ptt-report {
-	position: relative;
-	height: 100%;
-	margin: 20px auto;
-	border: 1px solid #888;
-	padding: 20px;
-	background-color: #fff;
-}
-
-.ptt-table {
-	display: table;
-	width: 100%;
-}
-
-.ptt-table-tr {
-	display: table-row;
-}
-
-.ptt-table-td {
-	display: table-cell;
-	vertical-align: middle;
-}
-
-.ptt-report .ptt-table {
-	border-top: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	margin-bottom: 20px;
-}
-
-.ptt-report .ptt-table-td {
-	width: 15%;
-	line-height: 30px;
-	height: 30px;
-	border-bottom: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	padding: 0 5px;
-}
-
-.ptt-report .ptt-table-td.ptt-report-cell-description {
-	width: 40%
-}
-
-.ptt-report .ptt-table-td.ptt-report-cell-timer {
-	font-weight: 700
-}
-
-.ptt-cell-value {
-	
-}
-
-.ptt-report-body {
-	max-height: 600px;
-	overflow: auto;
-}
-
-/* for the filter to update total timer we need this */
-.ptt-task-hidden .ptt-fields-wrapper {
-	display: none;
-}
-
-.ptt-report-task .ptt-message {
-	display: block;
-	line-height: 30px;
-	height: 30px;
-	border: 1px solid #ccc;
-	vertical-align: middle;
-	padding: 0 10px;
+body[class*="tax-premise_time_tracker_"] .pwptt-time-tracker {
+	/*background-color: #eeeeee;*/
+	padding: 20px 10px;
+	box-sizing: border-box;
 }
