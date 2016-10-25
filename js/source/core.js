@@ -1,8 +1,8 @@
 (function($){
-	$(document).ready(function(){
-		console.log( 'premise Time Track' );
+	$(window).load(function(){
+		console.log( $( '.pwptt-datepicker' ).length );
 
 		$( '.pwptt-datepicker' ).datepicker();
 
 	});
-});
+})(jQuery);
