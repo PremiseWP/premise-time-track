@@ -5,42 +5,49 @@
  * @package Premise Time Tracker\View
  */
 
-get_header(); ?>
+get_header();
+
+ob_start();
+
+if ( have_posts() ) :
+
+	$total = 0.00;
+
+	while ( have_posts() ) : the_post();
+		$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
+
+		$total = $total + $time;
+
+		?><article <?php post_class( 'pwptt-time-tracker' ); ?>>
+
+			<div class="premise-row">
+				<div class="span3">
+					<h3><?php the_title(); ?></h3>
+				</div>
+				<div class="span7">
+					<?php the_content(); ?>
+					<p class="premise-float-right"><i><?php the_time( 'm/d/y' ); ?></i></p>
+				</div>
+				<div class="span2 premise-align-right">
+					<p><?php echo (float) $time . ' hour(s)'; ?></p>
+				</div>
+			</div>
+
+		</article><?php
+	endwhile;
+
+else :
+
+	?><p>Sorry, it looks like there are no timers to display here. :(</p><?php
+
+endif;
+
+// get the HTML from the loop
+$pwptt_loop = ob_get_clean(); ?>
 
 <section id="pwptt-taxonomy-page">
 
 	<div class="pwptt-container">
-
-		<?php if ( have_posts() ) : ?>
-
-			<?php ob_start();
-			$total = 0.00;
-			while ( have_posts() ) : the_post();
-				$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
-
-				$total = $total + $time; ?>
-
-				<article <?php post_class( 'pwptt-time-tracker' ); ?>>
-
-					<div class="premise-row">
-						<div class="span3">
-							<h3><?php the_title(); ?></h3>
-						</div>
-						<div class="span7">
-							<?php the_content(); ?>
-							<p class="premise-float-right"><i><?php the_time( 'm/d/y' ); ?></i></p>
-						</div>
-						<div class="span2 premise-align-right">
-							<p><?php echo (float) $time . ' hour(s)'; ?></p>
-						</div>
-					</div>
-
-				</article>
-
-			<?php endwhile;
-			$pwptt_loop = ob_get_clean(); ?>
-
-			<h1><?php single_term_title(''); ?></h1>
 
 			<div class="pwptt-header">
 				<div class="premise-row">
@@ -70,7 +77,11 @@ get_header(); ?>
 				</div>
 			</div>
 
-			<?php echo $pwptt_loop; ?>
+			<h1><?php single_term_title(''); ?></h1>
+
+			<div class="pwptt-body">
+				<?php echo $pwptt_loop; ?>
+			</div>
 
 			<div class="pwptt-footer">
 				<div class="premise-row">
@@ -81,12 +92,6 @@ get_header(); ?>
 					</div>
 				</div>
 			</div>
-
-		<?php else : ?>
-
-			<p>Sorry, it looks like there are no timers to display here. :(</p>
-
-		<?php endif; ?>
 
 	</div>
 
