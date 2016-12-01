@@ -5,40 +5,36 @@
  * @package Premise Time Tracker\View
  */
 
+defined( 'ABSPATH' ) or die();
+
 get_header();
 
 ob_start();
 
 if ( have_posts() ) :
+	// check if the user can view this
+	if ( ! current_user_can( 'administrator' ) && ! current_user_can( 'pwptt_client' ) ) {
+		?><p class="pwptt-error-message">You do not have enough permissions to see this.</p><?
+	}
+	// User can view this
+	else {
 
-	$total = 0.00;
+		$total = 0.00;
 
-	while ( have_posts() ) : the_post();
-		$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
+		while ( have_posts() ) : the_post();
+			$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
 
-		$total = $total + $time;
+			$total = $total + $time;
 
-		?><article <?php post_class( 'pwptt-time-tracker' ); ?>>
+			include 'content-ptt-time-card.php';
 
-			<div class="premise-row">
-				<div class="span3">
-					<h3><?php the_title(); ?></h3>
-				</div>
-				<div class="span7">
-					<?php the_content(); ?>
-					<p class="premise-float-right"><i><?php the_time( 'm/d/y' ); ?></i></p>
-				</div>
-				<div class="span2 premise-align-right">
-					<p><?php echo (float) $time . ' hour(s)'; ?></p>
-				</div>
-			</div>
+		endwhile;
 
-		</article><?php
-	endwhile;
+	}
 
 else :
 
-	?><p>Sorry, it looks like there are no timers to display here. :(</p><?php
+	?><p class="pwptt-error-message">Sorry, it looks like there are no timers to display here.</p><?
 
 endif;
 
@@ -49,47 +45,35 @@ $pwptt_loop = ob_get_clean(); ?>
 
 	<div class="pwptt-container">
 
-			<div class="pwptt-header">
-				<div class="premise-row">
-					<div class="span3">
+			<h1><?php single_term_title(''); ?></h1>
+
+			<div class="pwptt-header premise-clear-float">
+					<div class="pwptt-search-wrapper">
 						<?php premise_field( 'text', array(
-							'id' => 'pwptt-search',
-							'placeholder' => 'search..'
+							'id'          => 'pwptt-search-timesheet',
+							'placeholder' => 'search, filter or sort',
+							'class'       => 'pwptt-search',
 						) ); ?>
 					</div>
-					<div class="span3">
-						<?php premise_field( 'text', array(
-							'name' => 'pwptt-filter[date-from]',
-							'class' => 'pwptt-datepicker'
-						) ); ?>
-					</div>
-					<div class="span3">
-						<?php premise_field( 'text', array(
-							'name' => 'pwptt-filter[date-to]',
-							'class' => 'pwptt-datepicker'
-						) ); ?>
-					</div>
-					<div class="span3 premise-align-right">
-						<p>
-							<strong><?php echo 'Total: ' . (float) $total . ' hour(s)'; ?></strong>
+					<div class="pwptt-total-wrapper">
+						<p class="pwptt-total">
+							<?php echo '' . (float) $total . ' hour(s)'; ?>
 						</p>
 					</div>
 				</div>
 			</div>
 
-			<h1><?php single_term_title(''); ?></h1>
-
-			<div class="pwptt-body">
+			<div id="pwptt-body" class="pwptt-body">
 				<?php echo $pwptt_loop; ?>
 			</div>
 
-			<div class="pwptt-footer">
+			<div class="pwptt-footer premise-clear-float">
+				<div class="premise-align-right">
+					<p class="pwptt-total">
+						<?php echo '' . (float) $total . ' hour(s)'; ?>
+					</p>
+				</div>
 				<div class="premise-row">
-					<div class="span12 premise-align-right">
-						<p>
-							<strong><?php echo 'Total: ' . (float) $total . ' hour(s)'; ?></strong>
-						</p>
-					</div>
 				</div>
 			</div>
 
