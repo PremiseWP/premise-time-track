@@ -125,22 +125,6 @@ class PTT_Meta_Box {
 			'tooltip'     => 'Enter in 15 minute increments (15 minutes = 0.25). The example \'1.75\' would equal 1 hour and 45 minutes.',
 			'context'     => 'post',
 		) );
-
-		echo '<div class="premise-clear-float">';
-
-		premise_field( 'button', array(
-			'class' => 'pwptt-timer-btn pwptt-start',
-			'value' => 'Start',
-			'wrapper_class' => 'span5 premise-float-left'
-		) );
-
-		premise_field( 'button', array(
-			'class' => 'pwptt-timer-btn pwptt-stop',
-			'value' => 'Stop',
-			'wrapper_class' => 'span5 premise-float-right premise-align-right'
-		) );
-
-		echo '</div>';
 	}
 
 
