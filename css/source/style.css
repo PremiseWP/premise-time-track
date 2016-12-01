@@ -1,25 +1,126 @@
 /**
  * CSS for the front end of Premise Time Tracker
  *
- * @Taxonomies scope: body[class*="tax-premise_time_tracker_"]
+ * @Taxonomies   scope: #pwptt-taxonomy-page
+ * @Single Timer scope: #pwptt-single-timer
  */
+
+/**
+ * @global
+ */
+
+p.pwptt-error-message {
+	padding: 30px 15px;
+	text-align: center;
+}
 
 /**
  * @Taxonomies
  */
-body[class*="tax-premise_time_tracker_"] .pwptt-footer {
-	/*margin-top: 25px;*/
-	padding-top: 15px;
-	border-top: 1px solid #ccc;
+
+#pwptt-taxonomy-page {
+	font-size: inherit; /* this controls the size of every element within this container */
 }
 
-body[class*="tax-premise_time_tracker_"] .pwptt-header {
-	/*margin-bottom: 25px;*/
-	border-bottom: 1px solid #ccc;
+/* header */
+#pwptt-taxonomy-page .pwptt-header {
+	padding: 10px 10px 0 10px;
 }
 
-body[class*="tax-premise_time_tracker_"] .pwptt-time-tracker {
-	/*background-color: #eeeeee;*/
-	padding: 20px 10px;
-	box-sizing: border-box;
+#pwptt-taxonomy-page .pwptt-total-wrapper,
+#pwptt-taxonomy-page .pwptt-search-wrapper {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+}
+
+#pwptt-taxonomy-page .pwptt-search-wrapper {
+	width: 68%;
+	float: left;
+}
+
+#pwptt-taxonomy-page .premise-field {
+	margin-bottom: 0;
+}
+
+#pwptt-taxonomy-page #pwptt-search-timesheet {
+	border: 0;
+	outline: 0;
+	padding: 5px 0;
+	margin-bottom: 10px;
+	border-right: 1px solid #ddd;
+	background-color: transparent;
+}
+
+#pwptt-taxonomy-page .pwptt-total-wrapper {
+	width: 30%;
+	float: right;
+	text-align: right;
+}
+
+#pwptt-taxonomy-page .pwptt-total {
+	margin: 5px 0;
+	font-size: 1em;
+	display: inline-block;
+}
+
+/* body */
+#pwptt-taxonomy-page .pwptt-body {
+	box-shadow: 0 0 1px #666;
+}
+
+/* time card */
+#pwptt-taxonomy-page .pwptt-time-card {
+	display: block;
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+#pwptt-taxonomy-page .pwptt-time-card:nth-child(odd) {
+	background-color: #f6f6f6
+}
+
+#pwptt-taxonomy-page .pwptt-time-card:last-child {
+	border-bottom: 0;
+}
+
+#pwptt-taxonomy-page .pwptt-time-card-intro {
+	/*cursor: pointer  required for JS to work on mobile */
+}
+
+#pwptt-taxonomy-page .pwptt-time-card-title {
+	font-size: 1.3em;
+	line-height: 1;
+	margin-bottom: 5px;
+}
+
+#pwptt-taxonomy-page .pwptt-time-card-date {
+	font-size: .85em;
+	opacity: 0.4;
+}
+
+#pwptt-taxonomy-page .pwptt-time-card-time {
+	font-size: 1em;
+	float: right;
+	margin: 0;
+}
+
+/* footer */
+#pwptt-taxonomy-page .pwptt-footer {
+	padding: 5px 10px 10px 10px;
+}
+
+
+/**
+ * @Single Timer
+ */
+
+#pwptt-single-timer .pwptt-timer-meta {
+	padding: 10px;
+	background-color: #f6f6f6;
+	margin-bottom: 20px;
+}
+
+.pwptt-timer-description {
+	padding: 0 10px;
 }
