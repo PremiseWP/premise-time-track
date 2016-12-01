@@ -1,74 +1,41 @@
-<?php 
-
-
-function ptt_the_date_filter( $task = false ) {
-	?>
-	<p><strong>Filter by date<?php if ( $task ) echo ' or task name'; ?>:</strong></p>
-	<div class="ptt-filter-by-date-container premise-row span8 premise-float-left">
-		<?php 
-		// From Field
-		premise_field( 'text', array( 
-			'class' => 'ptt-filter-by-date ptt-datepicker ptt-filter-from',
-			'wrapper_class' => 'premise-float-left span4', 
-			'placeholder' => 'From',
-		) );
-		// To Field
-		premise_field( 'text', array( 
-			'class' => 'ptt-filter-by-date ptt-datepicker ptt-filter-to',
-			'wrapper_class' => 'premise-float-left span4', 
-			'placeholder' => 'To',
-		) );
-		// To Field
-		if ( $task ) {
-			premise_field( 'text', array( 
-				'class' => 'ptt-filter-by-task',
-				'wrapper_class' => 'premise-float-left span4', 
-				'placeholder' => 'Task Name',
-			) );
-		} ?>
-	</div>
-	<?php 
-}
-
-
-
+<?php
 /**
- * display the total of all timers for a particular task
- * 
- * @return string html for total
+ * Premise Time Tracker functions
+ *
+ * @package Premise Time Tracker\Library
  */
-function ptt_the_total( $timers = array() ) {
-	echo '<div class="ptt-filter-total-container premise-float-right premise-align-right span4">
-		Total: 
-		<span class="ptt-filter-total">
-			' . esc_html( ptt_get_total( $timers ) ) . '
-		</span>
-	</div>';
-}
 
 
+function ptt_search_timers() {
 
+	if ( isset( $_POST['date_range'] ) && is_array( $_POST['date_range'] ) ) {
+		$date_range = array_map( sanitize_text_field, $_POST['date_range'] );
 
-/**
- * save the total of all timers to our object
- * 
- * @return void saves total to obkect property $total
- */
-function ptt_get_total( $timers = array() ) {
-	$total = 0.00;
+		$_posts = new WP_Query( array(
+			'posts_per_page' => -1,
+			'post_type'      => 'premise_time_tracker',
+			'date_query'     => array(
+				'inclusive' => true,
+				'after'     => ( ! empty( $date_range['from'] ) ) ? $date_range['from'] : '',
+				'before'    => ( ! empty( $date_range['to'] ) )   ? $date_range['to']   : '',
+			)
+		) );
 
-	if ( is_array( $timers ) && ! empty( $timers ) ) {
+		if ( $_posts->have_posts() ) {
+			while( $_posts->have_posts() ) { $_posts->the_post();
+				$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
 
-		foreach ( $timers as $k => $timer ) {
-			if ( is_array( $timer ) && isset( $timer['timer'] ) && ! empty( $timer['timer'] ) ) {
-				$total = $total + (float) $timer['timer'];
+				$total = $total + $time;
+
+				include PTT_PATH . '/view/content-ptt-time-card.php';
 			}
+		}
+		else {
+			echo '<p>No posts where found.</p>';
 		}
 	}
 
-	return $total;
+	die();
 }
-
-
 
 ?>
