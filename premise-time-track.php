@@ -86,7 +86,7 @@ class Premise_Time_track {
 		include 'library/functions.php';
 		include 'controller/class-time-track-cpt.php';
 		include 'controller/class.render.php';
-		// include 'controller/class-reports-page.php';
+		include 'model/class.user-profile.php';
 	}
 
 
@@ -99,7 +99,16 @@ class Premise_Time_track {
 		add_action( 'load-post.php',     array( PTT_Meta_Box::get_instance(), 'hook_box' ) );
 		add_action( 'load-post-new.php', array( PTT_Meta_Box::get_instance(), 'hook_box' ) );
 
-		add_filter( 'template_include', array( PTT_Render::get_instance(), 'init' ), 99 );
+		add_action( 'wp_ajax_ptt_search_timers', 'ptt_search_timers' );
+		add_action( 'wp_ajax_nopriv_ptt_search_timers', 'ptt_search_timers' );
+
+		add_filter( 'template_include',  array( PTT_Render::get_instance(), 'init' ), 99 );
+
+		add_action( 'show_user_profile', array( PTT_User_Profile::get_inst(), 'custom_fields' ) );
+		add_action( 'edit_user_profile', array( PTT_User_Profile::get_inst(), 'custom_fields' ) );
+
+		// add_action( 'personal_options_update', 'tm_save_profile_fields' );
+		// add_action( 'edit_user_profile_update', 'tm_save_profile_fields' );
 	}
 
 
@@ -165,14 +174,11 @@ class Premise_Time_track {
 	 * Register and enqueue styles and scripts for the backend.
 	 */
 	public function scripts() {
-		// register styles
-		wp_register_style( 'pwptt_jquery_ui_css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css' );
-		wp_register_style( 'pwptt_css'          , PTT_URL . 'css/premise-time-track.min.css', array( 'pwptt_jquery_ui_css' ) );
-		// register scripts
-		wp_register_script( 'pwptt_jquery_ui'   , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' );
-		wp_register_script( 'pwptt_js'          , PTT_URL . 'js/premise-time-track.min.js'  , array( 'pwptt_jquery_ui' ) );
-		// enqueue styles
-		wp_enqueue_style( 'pwptt_css' );
+		// register
+		wp_register_style(  'pwptt_css', PTT_URL . 'css/premise-time-track.min.css' );
+		wp_register_script( 'pwptt_js' , PTT_URL . 'js/premise-time-track.min.js' );
+		// enqueue
+		wp_enqueue_style(  'pwptt_css' );
 		wp_enqueue_script( 'pwptt_js' );
 	}
 }
