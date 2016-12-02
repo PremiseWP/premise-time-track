@@ -15,6 +15,14 @@ class PTT_User_Profile {
 
 
 	/**
+	 * holds the profile fields saved for each user
+	 *
+	 * @var array
+	 */
+	protected $profile = array();
+
+
+	/**
 	 * instantiate this class and return instance
 	 *
 	 * @return object instance of this class
@@ -39,17 +47,25 @@ class PTT_User_Profile {
 	 * @return string html for client checkboxes
 	 */
 	public function list_clients() {
-		$terms = get_terms( 'premise_time_tracker_client' );
+
+		$terms = get_terms( array(
+			'taxonomy'   => 'premise_time_tracker_client',
+			'hide_empty' => false,
+			'orderby'    => 'name',
+		) );
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
-		 echo '<ul>';
-		 foreach ( $terms as $term ) {
-		   echo '<li>' . premise_field( 'checkbox', array(
-		   	'name'  => '',
-		   	'label' => $term->name,
-		   	'value_att' => $term->ID,
-		   ) ) . '</li>';
-		 }
-		 echo '</ul>';
+			echo '<ul>';
+			$i = 0;
+			foreach ( $terms as $term ) {
+				echo '<li>' . premise_field( 'checkbox', array(
+					'name'      => 'ptt_user_profile[client-access]['.$term->slug.']',
+					'label'     => $term->name,
+					// 'value_att' => $term->ID,
+					'value'     => $this->profile['client-access'][$term->slug],
+				) ) . '</li>';
+				$i++;
+			}
+			echo '</ul>';
 		}
 	}
 
@@ -64,6 +80,10 @@ class PTT_User_Profile {
 		if ( ! is_object( $user ) )
 			return false;
 
+		// set the profile fields for this user
+		$this->profile = get_user_meta( $user->ID, 'ptt_user_profile', true );
+
+		// display the fields table
 		?><h3>Premise Time Tracker Options</h3>
 		<table class="form-table">
 		<tr>
@@ -73,5 +93,10 @@ class PTT_User_Profile {
 			</td>
 		</tr>
 		</table><?
+	}
+
+
+	public function save_custom_fields( $user_id ) {
+		update_user_meta( $user_id, 'ptt_user_profile', $_POST['ptt_user_profile'] );
 	}
 }
