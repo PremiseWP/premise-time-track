@@ -109,6 +109,8 @@ class Premise_Time_track {
 
 		add_action( 'personal_options_update', array( PTT_User_Profile::get_inst(), 'save_custom_fields' ) );
 		add_action( 'edit_user_profile_update', array( PTT_User_Profile::get_inst(), 'save_custom_fields' ) );
+
+		add_filter( 'pre_get_posts', 'ptt_filter_main_loop' );
 	}
 
 
