@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Premise Time Track
- * Description: Create and track different timers. Perfect to manage freelancers.
+ * Plugin Name: Premise Time Tracker
+ * Description: Easily track time spent in tasks and projects.
  * Plugin URI:
  * Version:     2.0.0
  * Author:      Premise WP
@@ -9,7 +9,7 @@
  * License:     GPL
  * Text Domain: pwptt-text-domain
  *
- * @package Premise Time Track
+ * @package Premise Time Tracker
  */
 
 /**
@@ -107,8 +107,8 @@ class Premise_Time_track {
 		add_action( 'show_user_profile', array( PTT_User_Profile::get_inst(), 'custom_fields' ) );
 		add_action( 'edit_user_profile', array( PTT_User_Profile::get_inst(), 'custom_fields' ) );
 
-		// add_action( 'personal_options_update', 'tm_save_profile_fields' );
-		// add_action( 'edit_user_profile_update', 'tm_save_profile_fields' );
+		add_action( 'personal_options_update', array( PTT_User_Profile::get_inst(), 'save_custom_fields' ) );
+		add_action( 'edit_user_profile_update', array( PTT_User_Profile::get_inst(), 'save_custom_fields' ) );
 	}
 
 
