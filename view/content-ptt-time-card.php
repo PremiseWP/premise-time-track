@@ -5,8 +5,6 @@
  * @package Premise Time Tracker\View
  */
 
-global $time;
-
 ?><article <?php post_class( 'pwptt-time-card premise-clear-float' ); ?>>
 
 	<div class="pwptt-time-card-intro">
@@ -20,7 +18,7 @@ global $time;
 			<i><?php the_time( 'm/d/y' ); ?></i>
 		</span>
 
-		<p class="pwptt-time-card-time"><?php echo (float) $time . ' hour(s)'; ?></p>
+		<p class="pwptt-time-card-time"><?php echo (float) premise_get_value( 'pwptt_timer[time]', 'post' ); ?></p>
 	</div>
 
 	<div class="pwptt-time-card-description premise-hide-on-mobile">
