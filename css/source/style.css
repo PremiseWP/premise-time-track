@@ -14,6 +14,12 @@ p.pwptt-error-message {
 	text-align: center;
 }
 
+p.pwptt-loading {
+	padding: 10% 15px;
+	text-align: center;
+	font-size: 30px;
+}
+
 /**
  * @Taxonomies
  */
