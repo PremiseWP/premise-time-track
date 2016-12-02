@@ -46,7 +46,7 @@ $pwptt_loop = ob_get_clean(); ?>
 						</div>
 						<div class="pwptt-total-wrapper">
 							<p class="pwptt-total">
-								Total Hours: <?php echo '<span class="pwptt-total-hours">' . (float) $total . '</span>'; ?>
+								Total<span class="premise-hide-on-mobile">&nbsp;hours</span>: <?php echo '<span class="pwptt-total-hours">' . (float) $total . '</span>'; ?>
 							</p>
 						</div>
 					</div>
