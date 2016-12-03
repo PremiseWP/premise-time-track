@@ -43,14 +43,18 @@ function ptt_search_timers() {
 
 	$data = $_POST;
 
-	if ( ( isset( $data['taxonomy'] ) && ! empty( $data['taxonomy'] ) )
-		&& ( isset( $data['slug'] ) && ! empty( $data['slug'] ) )
-		&& ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) ) {
+	// if ( ( isset( $data['taxonomy'] ) && ! empty( $data['taxonomy'] ) )
+	// 	&& ( isset( $data['slug'] ) && ! empty( $data['slug'] ) )
+	// 	&& ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) ) {
 
-		// sanitize the data
-		$date_range = array_map( sanitize_text_field, $data['date_range'] );
 
-		$_posts = new WP_Query( array(
+	// }
+
+
+	if ( ( isset( $data['taxonomy'] ) && ! empty( $data['taxonomy'] ) ) &&
+		 ( isset( $data['slug'] ) && ! empty( $data['slug'] ) ) ) {
+
+		$_query_args = array(
 			'posts_per_page' => -1,
 			'post_type'      => 'premise_time_tracker',
 			'tax_query'     => array(
@@ -58,12 +62,29 @@ function ptt_search_timers() {
 				'field'    => 'slug',
 				'terms'    => esc_attr( $data['slug'] ),
 			),
-			'date_query'     => array(
-				'inclusive' => true,
-				'after'     => ( ! empty( $date_range['from'] ) ) ? $date_range['from'] : '',
-				'before'    => ( ! empty( $date_range['to'] ) )   ? $date_range['to']   : '',
-			)
-		) );
+		);
+
+		if ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) {
+			// sanitize the data
+			$date_range = array_map( sanitize_text_field, $data['date_range'] );
+
+			if ( $date_range ) {
+				$_query_args['date_query'] = array(
+					'inclusive' => true,
+					'after'     => ( ! empty( $date_range['from'] ) ) ? $date_range['from'] : '',
+					'before'    => ( ! empty( $date_range['to'] ) )   ? $date_range['to']   : '',
+				);
+			}
+		}
+
+		if ( isset( $data['current_week'] ) && (bool) $data['current_week'] ) {
+			$_query_args['date_query'] = array(
+				'week' => date('W')
+			);
+		}
+var_dump($_query_args);
+		$_posts = new WP_Query( $_query_args );
+
 
 		if ( $_posts->have_posts() ) {
 			while( $_posts->have_posts() ) { $_posts->the_post();
@@ -77,7 +98,6 @@ function ptt_search_timers() {
 		else {
 			echo '<p>No posts where found.</p>';
 		}
-
 	}
 
 	die();
