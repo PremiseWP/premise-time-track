@@ -41,6 +41,7 @@ $pwptt_loop = ob_get_clean(); ?>
 
 			<div id="pwptt-loop-wrapper">
 				<div class="pwptt-header premise-clear-float">
+						<p><i>viewing last week | <a href="#" class="pwptt-show-this-week">view this week</a>.</i></p>
 						<div class="pwptt-search-wrapper">
 							<?php ptt_the_search_field(); ?>
 						</div>
