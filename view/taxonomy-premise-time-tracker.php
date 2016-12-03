@@ -37,11 +37,10 @@ $pwptt_loop = ob_get_clean(); ?>
 
 	<div class="pwptt-container">
 
-			<h1><?php single_term_title(''); ?></h1>
+			<h1><?php single_term_title( '' ); ?></h1>
 
 			<div id="pwptt-loop-wrapper">
 				<div class="pwptt-header premise-clear-float">
-						<i>viewing last week | <a href="#" class="pwptt-show-this-week">view this week</a>.</i>
 						<div class="pwptt-search-wrapper">
 							<?php ptt_the_search_field(); ?>
 						</div>
@@ -58,13 +57,7 @@ $pwptt_loop = ob_get_clean(); ?>
 				</div>
 
 				<div class="pwptt-footer premise-clear-float">
-					<div class="premise-align-right">
-						<p class="pwptt-total">
-							<?php // echo '<span class="pwptt-total-hours">' . (float) $total . '</span> hour(s)'; ?>
-						</p>
-					</div>
-					<div class="premise-row">
-					</div>
+					<p><a href="#" class="pwptt-show-this-week">view this week</a></p>
 				</div>
 
 			</div>

@@ -37,7 +37,7 @@
 
 				$.post( wpajaxurl, {
 					action: 'ptt_search_timers',
-					currrent_week: true,
+					current_week: true,
 					taxonomy: tcSearch.attr( 'data-tax' ),
 					slug: tcSearch.attr( 'data-slug' )
 				}, ajaxSearch );

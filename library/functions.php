@@ -77,12 +77,12 @@ function ptt_search_timers() {
 			}
 		}
 
-		if ( isset( $data['current_week'] ) && (bool) $data['current_week'] ) {
+		if ( isset( $data['current_week'] ) && $data['current_week'] ) {
 			$_query_args['date_query'] = array(
 				'week' => date('W')
 			);
 		}
-var_dump($_query_args);
+
 		$_posts = new WP_Query( $_query_args );
 
 
