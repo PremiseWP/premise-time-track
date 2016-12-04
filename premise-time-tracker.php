@@ -152,7 +152,7 @@ class Premise_Time_tracker {
 				'taxonomy_name' => 'premise_time_tracker_client',
 				'singular'      => 'Client',
 				'plural'        => 'Clients',
-				'slug'          => 'time-traker-client',
+				'slug'          => 'time-tracker-client',
 			),
 			array(
 				'hierarchical' => true,
@@ -162,7 +162,7 @@ class Premise_Time_tracker {
 				'taxonomy_name' => 'premise_time_tracker_project',
 				'singular'      => 'Project',
 				'plural'        => 'Projects',
-				'slug'          => 'time-traker-project',
+				'slug'          => 'time-tracker-project',
 			),
 			array(
 				'hierarchical' => false,
@@ -172,14 +172,13 @@ class Premise_Time_tracker {
 				'taxonomy_name' => 'premise_time_tracker_timesheet',
 				'singular'      => 'Timesheet',
 				'plural'        => 'Timesheets',
-				'slug'          => 'timesheet',
+				'slug'          => 'time-tracker-timesheet',
 			),
 			array(
 				'hierarchical' => false,
 			) );
 		}
 	}
-
 
 
 	/**
