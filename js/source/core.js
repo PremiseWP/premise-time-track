@@ -9,7 +9,6 @@
 		pwpTimeTracker();
 	} );
 
-
 	/**
 	 * Premise Time Tracker main object
 	 *
