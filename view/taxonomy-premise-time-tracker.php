@@ -5,74 +5,43 @@
  * @package Premise Time Tracker\View
  */
 
-defined( 'ABSPATH' ) or die();
-
 get_header();
 
-ob_start();
-
-if ( have_posts() ) :
-
-	$total = 0.00;
-
-	while ( have_posts() ) : the_post();
-		$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
-
-		$total = $total + $time;
-
-		include 'content-ptt-time-card.php';
-
-	endwhile;
-
-else :
-
-	pwptt_no_timers();
-
-endif;
-
-// get the HTML from the loop
-$pwptt_loop = ob_get_clean(); ?>
+// call the loop before-hand so we can have the right total later.
+$pwp_loop = pwptt_get_loop(); ?>
 
 <section id="pwptt-taxonomy-page">
 
 	<div class="pwptt-container">
 
-			<h1><?php single_term_title( '' ); ?></h1>
+		<h1><?php single_term_title( '' ); ?></h1>
 
-			<div id="pwptt-loop-wrapper">
-				<div class="pwptt-header premise-clear-float">
-						<div class="pwptt-search-wrapper">
-							<?php ptt_the_search_field(); ?>
-						</div>
-						<div class="pwptt-quick-change-wrapper">
-							<?
-							$week_num = date('W');
-							premise_field( 'select', array(
-								'id' => 'pwptt-quick-change',
-								'options' => array(
-									'this week' => $week_num,
-									'last week' => $week_num - 1,
-								),
-								'value' => $week_num - 1,
-							) ); ?>
-						</div>
-						<div class="pwptt-total-wrapper">
-							<p class="pwptt-total">
-								Total<span class="premise-hide-on-mobile">&nbsp;hours</span>: <?php echo '<span class="pwptt-total-hours">' . (float) $total . '</span>'; ?>
-							</p>
-						</div>
+		<div id="pwptt-loop-wrapper">
+			<div class="pwptt-header premise-clear-float">
+					<div class="pwptt-search-wrapper">
+						<?php pwptt_the_search_field(); ?>
+					</div>
+					<div class="pwptt-quick-change-wrapper">
+						<?php pwptt_the_quick_change_field(); ?>
+					</div>
+					<div class="pwptt-total-wrapper">
+						<p class="pwptt-total">
+							Total<span class="premise-hide-on-mobile">&nbsp;hours</span>:
+							<?php pwptt_the_total(); ?>
+						</p>
 					</div>
 				</div>
-
-				<div id="pwptt-body" class="pwptt-body">
-					<?php echo $pwptt_loop; ?>
-				</div>
-
-				<div class="pwptt-footer premise-clear-float">
-					<!-- <p><a href="#" class="pwptt-show-this-week">view this week</a></p> -->
-				</div>
-
 			</div>
+
+			<div id="pwptt-body" class="pwptt-body">
+				<?php echo $pwp_loop; ?>
+			</div>
+
+			<div class="pwptt-footer premise-clear-float">
+				<?php pwptt_the_disclaimer(); ?>
+			</div>
+
+		</div>
 
 	</div>
 

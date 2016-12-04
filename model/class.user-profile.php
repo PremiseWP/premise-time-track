@@ -1,6 +1,6 @@
 <?php
 /**
- * User Profile Model
+ * User Profile Model. Adds custom fields to the user profile and saves it on profile update.
  *
  * @package Premise Time Tracker\Model
  */
@@ -55,16 +55,15 @@ class PTT_User_Profile {
 		) );
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
 			echo '<ul>';
-			$i = 0;
-			foreach ( $terms as $term ) {
-				echo '<li>' . premise_field( 'checkbox', array(
-					'name'      => 'ptt_user_profile[client-access]['.$term->slug.']',
-					'label'     => $term->name,
-					// 'value_att' => $term->ID,
-					'value'     => $this->profile['client-access'][$term->slug],
-				) ) . '</li>';
-				$i++;
-			}
+				foreach ( $terms as $term ) {
+					echo '<li>';
+						premise_field( 'checkbox', array(
+							'name'  => 'ptt_user_profile[client-access]['.$term->slug.']',
+							'label' => $term->name,
+							'value' => $this->profile['client-access'][$term->slug],
+						) );
+					echo '</li>';
+				}
 			echo '</ul>';
 		}
 	}
@@ -73,7 +72,7 @@ class PTT_User_Profile {
 	/**
 	 * display the custom fields for the user profile
 	 *
-	 * @param  objcet $user the user object fort he uer profile being viewed
+	 * @param  objcet $user the user object for the uer profile being viewed
 	 * @return string       html for the table of fields.
 	 */
 	public function custom_fields( $user ) {
@@ -86,16 +85,20 @@ class PTT_User_Profile {
 		// display the fields table
 		?><h3>Premise Time Tracker Options</h3>
 		<table class="form-table">
-		<tr>
-			<th><label for="birth-date-day">Assign Client Access</label></th>
-			<td>
-				<?php $this->list_clients(); ?>
-			</td>
-		</tr>
+			<tr>
+				<th>Assign Client Access:</th>
+				<td><?php $this->list_clients(); ?></td>
+			</tr>
 		</table><?
 	}
 
 
+	/**
+	 * saves the user custom fields.
+	 *
+	 * @param  int  $user_id user id for user being saved
+	 * @return void          does not return anything
+	 */
 	public function save_custom_fields( $user_id ) {
 		update_user_meta( $user_id, 'ptt_user_profile', $_POST['ptt_user_profile'] );
 	}

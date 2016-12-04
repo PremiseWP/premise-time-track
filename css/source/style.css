@@ -1,23 +1,31 @@
 /**
  * CSS for the front end of Premise Time Tracker
  *
+ * @Global       scope: Global to any page that has premise_time_traker as a class or part of a class in the body
  * @Taxonomies   scope: #pwptt-taxonomy-page
  * @Single Timer scope: #pwptt-single-timer
+ * @Responsive   adjustments for tablet and desktop
  */
 
 /**
- * @global
+ * @Global
  */
 
-p.pwptt-error-message {
-	padding: 30px 15px;
+body[class*="premise_time_tracker"] p.pwptt-error-message {
+	padding: 2em 1em;
 	text-align: center;
 }
 
-p.pwptt-loading {
-	padding: 10% 15px;
+body[class*="premise_time_tracker"] p.pwptt-loading {
+	padding: 10% 1em;
 	text-align: center;
-	font-size: 30px;
+	font-size: 2em;
+}
+
+body[class*="premise_time_tracker"] p.pwptt-disclaimer {
+	font-size: 0.7em;
+	line-height: 1.3;
+	margin: 0.8em 0;
 }
 
 /**
@@ -59,6 +67,7 @@ p.pwptt-loading {
 #pwptt-taxonomy-page #pwptt-quick-change {
 	border: 0;
 	padding-bottom: 8px;
+	background-color: transparent;
 }
 
 #pwptt-taxonomy-page #pwptt-search-timesheet {
@@ -142,10 +151,18 @@ p.pwptt-loading {
 }
 
 
-@media screen and (min-width: 700px) {
+/**
+ * @Responsive
+ */
+
+/* iPad portrait >= 768px */
+@media screen and (min-width: 768px) {
+
+	/* Taxonomy page */
 	#pwptt-taxonomy-page .pwptt-search-wrapper {
 		border-right: 1px solid #ddd;
 	}
+
 	#pwptt-taxonomy-page .pwptt-search-wrapper,
 	#pwptt-taxonomy-page .pwptt-quick-change-wrapper,
 	#pwptt-taxonomy-page .pwptt-total-wrapper {

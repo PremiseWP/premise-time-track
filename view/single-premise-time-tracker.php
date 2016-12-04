@@ -23,7 +23,7 @@ get_header(); ?>
 					</span>
 
 					<span class="pwptt-timer-time premise-float-right premise-align-right">
-						<?php echo (float) premise_get_value( 'pwptt_timer[time]', 'post' ) . ' hour(s)'; ?>
+						<?php echo pwptt_get_timer() . ' hour(s)'; ?>
 					</span>
 				</div>
 
@@ -33,7 +33,7 @@ get_header(); ?>
 			</article>
 
 		<?php endwhile; else:
-			echo '<p>Sorry the timer was not found.</p>';
+			echo '<p class="pwptt-error-message">Sorry, the timer was not found.</p>';
 		endif; ?>
 
 	</div>

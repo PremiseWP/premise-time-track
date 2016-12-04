@@ -11,7 +11,7 @@
  *
  * @return string html for search field
  */
-function ptt_the_search_field() {
+function pwptt_the_search_field() {
 	$queried_object = get_queried_object();
 	$ptt_taxonomies = array(
 		'premise_time_tracker_client',
@@ -43,21 +43,13 @@ function ptt_search_timers() {
 
 	$data = $_POST;
 
-	// if ( ( isset( $data['taxonomy'] ) && ! empty( $data['taxonomy'] ) )
-	// 	&& ( isset( $data['slug'] ) && ! empty( $data['slug'] ) )
-	// 	&& ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) ) {
-
-
-	// }
-
-
 	if ( ( isset( $data['taxonomy'] ) && ! empty( $data['taxonomy'] ) ) &&
 		 ( isset( $data['slug'] ) && ! empty( $data['slug'] ) ) ) {
 
 		$_query_args = array(
 			'posts_per_page' => -1,
 			'post_type'      => 'premise_time_tracker',
-			'tax_query'     => array(
+			'tax_query'      => array(
 				'taxonomy' => esc_attr( $data['taxonomy'] ),
 				'field'    => 'slug',
 				'terms'    => esc_attr( $data['slug'] ),
@@ -85,14 +77,10 @@ function ptt_search_timers() {
 
 		$_posts = new WP_Query( $_query_args );
 
-
 		if ( $_posts->have_posts() ) {
-			while( $_posts->have_posts() ) { $_posts->the_post();
-				$time = (float) premise_get_value( 'pwptt_timer[time]', 'post' );
-
-				$total = $total + $time;
-
-				include PTT_PATH . '/view/content-ptt-time-card.php';
+			while( $_posts->have_posts() ) {
+				$_posts->the_post();
+				PTT_Render::the_timer_card();
 			}
 		}
 		else {
@@ -101,6 +89,24 @@ function ptt_search_timers() {
 	}
 
 	die();
+}
+
+
+/**
+ * outpus the quick change field
+ *
+ * @return string html for the quick change field
+ */
+function pwptt_the_quick_change_field() {
+	$week_num = date('W');
+	premise_field( 'select', array(
+		'id'      => 'pwptt-quick-change',
+		'value'   => $week_num - 1,
+		'options' => array(
+			'this week' => $week_num,
+			'last week' => $week_num - 1,
+		),
+	) );
 }
 
 
@@ -129,6 +135,59 @@ function ptt_filter_main_loop( $wp_query ) {
  */
 function pwptt_no_timers() {
 	?><p class="pwptt-error-message">It looks like no time has been entered for the time period specified. Enter a different date range above in the following format M/D/YY to broaden up your search.</p><?
+}
+
+
+/**
+ * return the timer for a particular post. Must be ran within the loop.
+ *
+ * @return float i.e 1.75 (hours)
+ */
+function pwptt_get_timer() {
+	return (float) premise_get_value( 'pwptt_timer[time]', 'post' );
+}
+
+
+/**
+ * returns the loop for the timers html as a string
+ *
+ * @return string the loop of timers in html
+ */
+function pwptt_get_loop() {
+	ob_start();
+
+	if ( have_posts() ) {
+		while ( have_posts() ) {
+			the_post();
+			PTT_Render::the_timer_card();
+		}
+	}
+	else {
+		pwptt_no_timers();
+	}
+
+	// get the HTML from the loop
+	return ob_get_clean();
+}
+
+
+/**
+ * outputs the total for the timers in the loop. Must be called after pwptt_get_loop().
+ *
+ * @return string the total hours with needed class to be updated via JS
+ */
+function pwptt_the_total() {
+	echo '<span class="pwptt-total-hours">' . (float) PTT_Render::$total . '</span>';
+}
+
+
+/**
+ * output the disclaimer for our timers loop
+ *
+ * @return string html for disclaimer
+ */
+function pwptt_the_disclaimer() {
+	echo '<p class="pwptt-disclaimer"><i>Timers may not appear on current time and can be added at later dates. Keep this in mind and always verify with the freelancer if there are no timers entered for a specific time period. To avoid conflicts, it helps to set a due date when hours need to be entered. This way the freelancer can commit to having all their hours entered by the time the employer needs them.</i></p>';
 }
 
 ?>
