@@ -17,7 +17,7 @@
 		tcWrapper   = $( '#pwptt-body' ),
 		tcTime      = $( '.pwptt-time-card-time' ),
 		totalHours  = $( '.pwptt-total-hours' ),
-		getThisWeek = $ ( '.pwptt-show-this-week' ),
+		quickChange = $( '#pwptt-quick-change' ),
 		// html for loading icon
 		loadingIcon = '<p class="pwptt-loading"><i class="fa fa-spin fa-spinner"></i></p>',
 		wpajaxurl   = '/wp-admin/admin-ajax.php';
@@ -30,14 +30,16 @@
 				( 13 === e.keyCode ) ? doSearch : false;
 			} );
 
-			getThisWeek.click( function( e ) {
+			quickChange.change( function( e ) {
 				e.preventDefault();
+				// display loading icon
+				loading();
 
 				tcSearch.val('');
 
 				$.post( wpajaxurl, {
 					action: 'ptt_search_timers',
-					current_week: true,
+					quick_change: $(this).val(),
 					taxonomy: tcSearch.attr( 'data-tax' ),
 					slug: tcSearch.attr( 'data-slug' )
 				}, ajaxSearch );
@@ -57,7 +59,7 @@
 
 			if ( '' !== s && null !== _m ) {
 				// display loading icon
-				tcWrapper.html( loadingIcon );
+				loading();
 				// prepare our data
 				var dr = _m[0].split( '-' ),
 				data   = {
@@ -93,6 +95,14 @@
 		};
 
 		init();
+
+		/*
+			Helpers
+		 */
+
+		function loading() {
+			tcWrapper.html( loadingIcon );
+		}
 	};
 
 })(jQuery);

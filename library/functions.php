@@ -77,9 +77,9 @@ function ptt_search_timers() {
 			}
 		}
 
-		if ( isset( $data['current_week'] ) && $data['current_week'] ) {
+		if ( isset( $data['quick_change'] ) && is_numeric( $data['quick_change'] ) ) {
 			$_query_args['date_query'] = array(
-				'week' => date('W')
+				'week' => $data['quick_change']
 			);
 		}
 
@@ -96,7 +96,7 @@ function ptt_search_timers() {
 			}
 		}
 		else {
-			echo '<p>No posts where found.</p>';
+			pwptt_no_timers();
 		}
 	}
 
@@ -119,6 +119,16 @@ function ptt_filter_main_loop( $wp_query ) {
 			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
 		}
 	}
+}
+
+
+/**
+ * displays the message when there are no timers
+ *
+ * @return string html for no timers message
+ */
+function pwptt_no_timers() {
+	?><p class="pwptt-error-message">It looks like no time has been entered for the time period specified. Enter a different date range above in the following format M/D/YY to broaden up your search.</p><?
 }
 
 ?>

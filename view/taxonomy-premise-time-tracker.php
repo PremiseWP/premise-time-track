@@ -26,7 +26,7 @@ if ( have_posts() ) :
 
 else :
 
-	?><p class="pwptt-error-message">Sorry, it looks like there are no timers to display here.</p><?
+	pwptt_no_timers();
 
 endif;
 
@@ -41,9 +41,20 @@ $pwptt_loop = ob_get_clean(); ?>
 
 			<div id="pwptt-loop-wrapper">
 				<div class="pwptt-header premise-clear-float">
-						<p><i>viewing last week | <a href="#" class="pwptt-show-this-week">view this week</a>.</i></p>
 						<div class="pwptt-search-wrapper">
 							<?php ptt_the_search_field(); ?>
+						</div>
+						<div class="pwptt-quick-change-wrapper">
+							<?
+							$week_num = date('W');
+							premise_field( 'select', array(
+								'id' => 'pwptt-quick-change',
+								'options' => array(
+									'this week' => $week_num,
+									'last week' => $week_num - 1,
+								),
+								'value' => $week_num - 1,
+							) ); ?>
 						</div>
 						<div class="pwptt-total-wrapper">
 							<p class="pwptt-total">
@@ -58,7 +69,7 @@ $pwptt_loop = ob_get_clean(); ?>
 				</div>
 
 				<div class="pwptt-footer premise-clear-float">
-					<p><a href="#" class="pwptt-show-this-week">view this week</a></p>
+					<!-- <p><a href="#" class="pwptt-show-this-week">view this week</a></p> -->
 				</div>
 
 			</div>
