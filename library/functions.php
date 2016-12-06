@@ -50,9 +50,11 @@ function ptt_search_timers() {
 			'posts_per_page' => -1,
 			'post_type'      => 'premise_time_tracker',
 			'tax_query'      => array(
-				'taxonomy' => esc_attr( $data['taxonomy'] ),
-				'field'    => 'slug',
-				'terms'    => esc_attr( $data['slug'] ),
+				array(
+					'taxonomy' => esc_attr( $data['taxonomy'] ),
+					'field'    => 'slug',
+					'terms'    => esc_attr( $data['slug'] ),
+				),
 			),
 		);
 
