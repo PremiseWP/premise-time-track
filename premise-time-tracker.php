@@ -94,6 +94,7 @@ class Premise_Time_tracker {
 	public function do_includes() {
 		include 'model/class.user-profile.php';
 		include 'model/class.time-tracker-mb.php';
+		include 'model/class.rest-api.php';
 		include 'controller/class.render.php';
 		include 'library/functions.php';
 	}
@@ -113,14 +114,15 @@ class Premise_Time_tracker {
 		add_action( 'wp_ajax_nopriv_ptt_search_timers' , 'ptt_search_timers' );
 		// switch the template to display ours whenever we are showing a premise time tracker page
 		add_filter( 'template_include'                 , array( PTT_Render::get_instance()   , 'init' )                  , 99 );
+		// Filter the main query when we are loading a premise time tracker taxnomy page
+		add_filter( 'pre_get_posts'                    , 'ptt_filter_main_loop' );
+		/* The following hooks are commented out for now. Will be used later to set ACL */
 		// Edit the user profile page and insert our custom fields at the bottom
 		// add_action( 'show_user_profile'                , array( PTT_User_Profile::get_inst() , 'custom_fields' ) );
 		// add_action( 'edit_user_profile'                , array( PTT_User_Profile::get_inst() , 'custom_fields' ) );
 		// Register the hook to save our fields in the user profile pages
 		// add_action( 'personal_options_update'          , array( PTT_User_Profile::get_inst() , 'save_custom_fields' ) );
 		// add_action( 'edit_user_profile_update'         , array( PTT_User_Profile::get_inst() , 'save_custom_fields' ) );
-		// Filter the main query when we are loading a premise time tracker taxnomy page
-		add_filter( 'pre_get_posts'                    , 'ptt_filter_main_loop' );
 	}
 
 
@@ -192,6 +194,9 @@ class Premise_Time_tracker {
 			// enqueue
 			wp_enqueue_style(  'pwptt_css' );
 			wp_enqueue_script( 'pwptt_js' );
+		}
+		else {
+			wp_enqueue_script( 'wp-api');
 		}
 	}
 }

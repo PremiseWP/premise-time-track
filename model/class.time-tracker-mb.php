@@ -98,6 +98,16 @@ class PTT_Meta_Box {
 			'tooltip'     => 'Enter in 15 minute increments (15 minutes = 0.25). The example \'1.75\' would equal 1 hour and 45 minutes.',
 			'context'     => 'post',
 		) );
+
+		// You cannot pass serialized data to the restful api
+		// so we will have to integrate this field for entering time.
+		// for now, lets test the restful api project (chrome extension)
+		// to fill out this field 'pwptt_hours'. Once we get it working
+		// we can figure out how to integrate it.
+		premise_field( 'text', array(
+			'name'        => 'pwptt_hours',
+			'context'     => 'post',
+		) );
 	}
 
 
