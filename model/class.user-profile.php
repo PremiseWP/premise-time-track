@@ -89,7 +89,7 @@ class PTT_User_Profile {
 				<th>Assign Client Access:</th>
 				<td><?php $this->list_clients(); ?></td>
 			</tr>
-		</table><?
+		</table><?php
 	}
 
 
