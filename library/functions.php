@@ -136,7 +136,7 @@ function ptt_filter_main_loop( $wp_query ) {
  * @return string html for no timers message
  */
 function pwptt_no_timers() {
-	?><p class="pwptt-error-message">It looks like no time has been entered for the time period specified. Enter a different date range above in the following format M/D/YY to broaden up your search.</p><?
+	?><p class="pwptt-error-message">It looks like no time has been entered for the time period specified. Enter a different date range above in the following format M/D/YY to broaden up your search.</p><?php
 }
 
 
