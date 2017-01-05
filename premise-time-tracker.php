@@ -146,6 +146,7 @@ class Premise_Time_tracker {
 				'supports'     => array(
 					'title',
 					'editor',
+					'custom-fields',
 				),
 				'menu_icon'    => 'dashicons-clock',
 			) );
