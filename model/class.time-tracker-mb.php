@@ -67,7 +67,7 @@ class PTT_Meta_Box {
 	 */
 	public function hook_box() {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-        add_action( 'save_post',      array( $this, 'do_save'         ) );
+		add_action( 'save_post',      array( $this, 'do_save'         ) );
 	}
 
 
@@ -120,37 +120,41 @@ class PTT_Meta_Box {
 	public function do_save( $post_id ) {
 
 		// Check if our nonce is set.
-        if ( ! isset( $_POST['ptt_nonce_field'] ) ) {
-            return $post_id;
-        }
+		if ( ! isset( $_POST['ptt_nonce_field'] ) ) {
+			return $post_id;
+		}
 
-        $nonce = $_POST['ptt_nonce_field'];
+		$nonce = $_POST['ptt_nonce_field'];
 
-        // Verify that the nonce is valid.
-        if ( ! wp_verify_nonce( $nonce, $this->nonce ) ) {
-            return $post_id;
-        }
+		// Verify that the nonce is valid.
+		if ( ! wp_verify_nonce( $nonce, $this->nonce ) ) {
+			return $post_id;
+		}
 
-        /*
-         * If this is an autosave, our form has not been submitted,
-         * so we don't want to do anything.
-         */
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-            return $post_id;
-        }
+		/*
+		 * If this is an autosave, our form has not been submitted,
+		 * so we don't want to do anything.
+		 */
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return $post_id;
+		}
 
-        // Check the user's permissions.
-        if ( 'premise_time_tracker' !== $_POST['post_type'] ) {
-            return $post_id;
-        }
+		// Check the user's permissions.
+		if ( 'premise_time_tracker' !== $_POST['post_type'] ) {
+			return $post_id;
+		}
 
-        /* OK, it's safe for us to save the data now. */
+		/* OK, it's safe for us to save the data now. */
 
-        // Sanitize the user input.
-        $mydata = array_map( 'sanitize_text_field', $_POST['pwptt_timer'] );
+		// Sanitize the user input.
+		$mydata = array_map( 'sanitize_text_field', $_POST['pwptt_timer'] );
 
-        // Update the meta field.
-        update_post_meta( $post_id, 'pwptt_timer', $mydata );
+		// Sanitize the user input.
+		$pwptt_hours = sanitize_text_field( $_POST['pwptt_hours'] );
+
+		// Update the meta field.
+		update_post_meta( $post_id, 'pwptt_timer', $mydata );
+
+		update_post_meta( $post_id, 'pwptt_hours', $pwptt_hours );
 	}
 }
-?>
