@@ -157,4 +157,61 @@ class PTT_Meta_Box {
 
 		update_post_meta( $post_id, 'pwptt_hours', $pwptt_hours );
 	}
+
+
+	/**
+	 * Register our custom meta fields for the REST API.
+	 *
+	 * @link https://www.sitepoint.com/wp-api/
+	 *
+	 * @return void
+	 */
+	public function register_meta_fields() {
+
+		$meta_keys = array( 'pwptt_hours' );
+
+		foreach ( $meta_keys as $meta_key ) {
+			register_rest_field( $this->post_type,
+				$meta_key,
+				array(
+					'get_callback'    => array( PTT_Meta_Box::get_instance() , 'get_meta_field' ),
+					'update_callback' => array( PTT_Meta_Box::get_instance() , 'update_meta_field' ),
+					'schema'          => null,
+				)
+			);
+		}
+	}
+
+
+	/**
+	 * Get meta field to expose to the REST API.
+	 *
+	 * @param array           $object The object from the response
+	 * @param string          $field_name Name of field
+	 * @param WP_REST_Request $request Current request
+	 *
+	 * @return mixed
+	 */
+	public function get_meta_field( $object, $field_name, $request ) {
+
+		return get_post_meta( $object['id'], $field_name, true );
+	}
+
+
+	/**
+	 * Update meta field to exposed to the REST API.
+	 *
+	 * @param mixed  $value The value of the field
+	 * @param object $object The object from the response
+	 * @param string $field_name Name of field
+	 *
+	 * @return mixed
+	 */
+	function update_meta_field( $value, $object, $field_name ) {
+		if ( ! $value || ! is_string( $value ) ) {
+			return;
+		}
+
+		return update_post_meta( $object->ID, $field_name, strip_tags( $value ) );
+	}
 }
