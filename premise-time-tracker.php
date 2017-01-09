@@ -161,6 +161,7 @@ class Premise_Time_tracker {
 			),
 			array(
 				'hierarchical' => true,
+				'show_in_rest' => true,
 			) );
 			// register our project taxnomy
 			$time_track_cpt->register_taxonomy( array(
@@ -171,6 +172,7 @@ class Premise_Time_tracker {
 			),
 			array(
 				'hierarchical' => false,
+				'show_in_rest' => true,
 			) );
 			// register our timesheets taxnomy
 			$time_track_cpt->register_taxonomy( array(
@@ -181,6 +183,7 @@ class Premise_Time_tracker {
 			),
 			array(
 				'hierarchical' => false,
+				'show_in_rest' => true,
 			) );
 		}
 	}
