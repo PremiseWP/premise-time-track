@@ -5,7 +5,11 @@
  * @package Premise Time Tracker\View
  */
 
-get_header(); ?>
+// No header if viewed from Chrome extension / iframe.
+if ( isset( $_GET['iframe'] )
+	&& $_GET['iframe'] ) {
+	get_header();
+} ?>
 
 <section id="pwptt-single-timer">
 
@@ -40,4 +44,8 @@ get_header(); ?>
 
 </section>
 
-<?php get_footer(); ?>
+<?php // No footer if viewed from Chrome extension / iframe.
+if ( isset( $_GET['iframe'] )
+	&& $_GET['iframe'] ) {
+	get_footer();
+} ?>

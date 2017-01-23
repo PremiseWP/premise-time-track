@@ -5,7 +5,11 @@
  * @package Premise Time Tracker\View
  */
 
-get_header();
+// No header if viewed from Chrome extension / iframe.
+if ( isset( $_GET['iframe'] )
+	&& $_GET['iframe'] ) {
+	get_header();
+}
 
 // call the loop before-hand so we can have the right total later.
 $pwp_loop = pwptt_get_loop(); ?>
@@ -47,4 +51,8 @@ $pwp_loop = pwptt_get_loop(); ?>
 
 </section>
 
-<?php get_footer(); ?>
+<?php // No footer if viewed from Chrome extension / iframe.
+if ( isset( $_GET['iframe'] )
+	&& $_GET['iframe'] ) {
+	get_footer();
+} ?>
