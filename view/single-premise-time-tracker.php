@@ -8,6 +8,9 @@
 // No header if viewed from Chrome extension / iframe.
 if ( isset( $_GET['iframe'] )
 	&& $_GET['iframe'] ) {
+	wp_head();
+} else {
+
 	get_header();
 } ?>
 
@@ -47,5 +50,11 @@ if ( isset( $_GET['iframe'] )
 <?php // No footer if viewed from Chrome extension / iframe.
 if ( isset( $_GET['iframe'] )
 	&& $_GET['iframe'] ) {
+	wp_footer(); ?>
+</body>
+</html>
+<?php
+} else {
+
 	get_footer();
 } ?>
