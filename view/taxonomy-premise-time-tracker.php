@@ -10,6 +10,7 @@ if ( isset( $_GET['iframe'] )
 	&& $_GET['iframe'] ) {
 
 	$is_iframe = true;
+
 	wp_head();
 } else {
 

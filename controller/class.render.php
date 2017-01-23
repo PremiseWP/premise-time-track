@@ -79,6 +79,13 @@ class PTT_Render {
 	 * @return string           the new template we are telling Wordpress to load. (may be different or the same as the original).
 	 */
 	public function init( $template ) {
+		// No admin bar if viewed from Chrome extension / iframe.
+		if ( isset( $_GET['iframe'] )
+			&& $_GET['iframe'] ) {
+
+			add_filter( 'show_admin_bar', '__return_false' );
+		}
+
 		// if Wordpress is about to load one of our taxonomies
 		if ( is_tax( $this->taxonomies ) ) {
 			$new_template = locate_template( array( 'premise-time-tracker/taxonomy-premise-time-tracker.php' ) );
