@@ -8,16 +8,19 @@
 // No header if viewed from Chrome extension / iframe.
 if ( isset( $_GET['iframe'] )
 	&& $_GET['iframe'] ) {
+
+	$is_iframe = true;
 	wp_head();
 } else {
 
+	$is_iframe = false;
 	get_header();
 }
 
 // call the loop before-hand so we can have the right total later.
 $pwp_loop = pwptt_get_loop(); ?>
 
-<section id="pwptt-taxonomy-page">
+<section id="pwptt-taxonomy-page" <?php if ( $is_iframe ) echo 'class="iframe"'; ?>>
 
 	<div class="pwptt-container">
 

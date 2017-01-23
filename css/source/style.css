@@ -152,6 +152,19 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 
 
 /**
+ * When viewed from Chrome extension / iframe.
+ */
+#pwptt-single-timer.iframe,
+#pwptt-taxonomy-page.iframe {
+	background-color: #fff;
+}
+
+.iframe .pwptt-container {
+	padding: 4.7% 6%;
+}
+
+
+/**
  * @Responsive
  */
 

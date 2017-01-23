@@ -8,13 +8,16 @@
 // No header if viewed from Chrome extension / iframe.
 if ( isset( $_GET['iframe'] )
 	&& $_GET['iframe'] ) {
+
+	$is_iframe = true;
 	wp_head();
 } else {
 
+	$is_iframe = false;
 	get_header();
 } ?>
 
-<section id="pwptt-single-timer">
+<section id="pwptt-single-timer" <?php if ( $is_iframe ) echo 'class="iframe"'; ?>>
 
 	<div class="pwptt-container">
 
