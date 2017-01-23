@@ -19,6 +19,15 @@ function pwptt_the_search_field() {
 		'premise_time_tracker_timesheet'
 	);
 
+	// Last week.
+	$value = date( 'm/d/y', strtotime( "monday last week" ) ) . ' - ' . date( 'm/d/y', strtotime( "last sunday" ) );
+
+	// If Timesheet or Project: show all Timers.
+	if ( $queried_object->taxonomy !== 'premise_time_tracker_client' ) {
+
+		$value = '';
+	}
+
 	if ( isset( $queried_object->taxonomy ) &&
 		 in_array( $queried_object->taxonomy, $ptt_taxonomies ) ) {
 
@@ -28,7 +37,7 @@ function pwptt_the_search_field() {
 			'id'          => 'pwptt-search-timesheet',
 			'data-slug'   => $queried_object->slug,
 			'data-tax'    => $queried_object->taxonomy,
-			'value'       => date( 'm/d/y', strtotime( "monday last week" ) ) . ' - ' . date( 'm/d/y', strtotime( "last sunday" ) ),
+			'value'       => $value,
 		) );
 	}
 }
@@ -60,7 +69,7 @@ function ptt_search_timers() {
 
 		if ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) {
 			// sanitize the data
-			$date_range = array_map( sanitize_text_field, $data['date_range'] );
+			$date_range = array_map( 'sanitize_text_field', $data['date_range'] );
 
 			if ( $date_range ) {
 				$_query_args['date_query'] = array(
@@ -113,16 +122,14 @@ function pwptt_the_quick_change_field() {
 
 
 /**
- * displays the default view (current week)
+ * displays the default view (current week for clients)
  *
  * @param  object $wp_query the current query
  * @return object           the new query
  */
 function ptt_filter_main_loop( $wp_query ) {
 	if ( ! is_admin() ) {
-		if ( is_tax( 'premise_time_tracker_client' ) ||
-			 is_tax( 'premise_time_tracker_project' ) ||
-			 is_tax( 'premise_time_tracker_timesheet' ) ) {
+		if ( is_tax( 'premise_time_tracker_client' ) ) {
 
 			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
 		}
@@ -192,4 +199,3 @@ function pwptt_the_disclaimer() {
 	echo '<p class="pwptt-disclaimer"><i>Timers may not appear on current time and can be added at later dates. Keep this in mind and always verify with the freelancer if there are no timers entered for a specific time period. To avoid conflicts, it helps to set a due date when hours need to be entered. This way the freelancer can commit to having all their hours entered by the time the employer needs them.</i></p>';
 }
 
-?>
