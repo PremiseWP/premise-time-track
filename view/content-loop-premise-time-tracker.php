@@ -18,7 +18,7 @@
 			<i><?php the_time( 'm/d/y' ); ?></i>
 		</span>
 
-		<p class="pwptt-time-card-time"><?php echo (float) premise_get_value( 'pwptt_timer[time]', 'post' ); ?></p>
+		<p class="pwptt-time-card-time"><?php echo pwptt_get_timer(); ?></p>
 	</div>
 
 	<div class="pwptt-time-card-description premise-hide-on-mobile">

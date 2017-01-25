@@ -153,7 +153,15 @@ function pwptt_no_timers() {
  * @return float i.e 1.75 (hours)
  */
 function pwptt_get_timer() {
-	return (float) premise_get_value( 'pwptt_timer[time]', 'post' );
+	$hours = premise_get_value( 'pwptt_hours', 'post' );
+
+	if ( false === $hours ) {
+
+		// FJ remove serialized Time field.
+		$hours = premise_get_value( 'pwptt_timer[time]', 'post' );
+	}
+
+	return (float) $hours;
 }
 
 

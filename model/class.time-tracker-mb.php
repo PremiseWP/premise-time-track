@@ -91,13 +91,14 @@ class PTT_Meta_Box {
 	public function timer_metabox() {
 		wp_nonce_field( $this->nonce, 'ptt_nonce_field' );
 
-		premise_field( 'text', array(
+		// FJ remove serialized Time field.
+		/*premise_field( 'text', array(
 			'name'        => 'pwptt_timer[time]',
 			'label'       => 'Enter Time',
 			'placeholder' => '1.75',
 			'tooltip'     => 'Enter in 15 minute increments (15 minutes = 0.25). The example \'1.75\' would equal 1 hour and 45 minutes.',
 			'context'     => 'post',
-		) );
+		) );*/
 
 		// You cannot pass serialized data to the restful api
 		// so we will have to integrate this field for entering time.
@@ -106,7 +107,11 @@ class PTT_Meta_Box {
 		// we can figure out how to integrate it.
 		premise_field( 'text', array(
 			'name'        => 'pwptt_hours',
+			'label'       => 'Enter Time',
+			'placeholder' => '1.75',
+			'tooltip'     => 'Enter in 15 minute increments (15 minutes = 0.25). The example \'1.75\' would equal 1 hour and 45 minutes.',
 			'context'     => 'post',
+			'value'       => pwptt_get_timer(),
 		) );
 	}
 
@@ -147,13 +152,7 @@ class PTT_Meta_Box {
 		/* OK, it's safe for us to save the data now. */
 
 		// Sanitize the user input.
-		$mydata = array_map( 'sanitize_text_field', $_POST['pwptt_timer'] );
-
-		// Sanitize the user input.
 		$pwptt_hours = sanitize_text_field( $_POST['pwptt_hours'] );
-
-		// Update the meta field.
-		update_post_meta( $post_id, 'pwptt_timer', $mydata );
 
 		update_post_meta( $post_id, 'pwptt_hours', $pwptt_hours );
 	}
