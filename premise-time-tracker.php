@@ -200,6 +200,13 @@ class Premise_Time_tracker {
 			// enqueue
 			wp_enqueue_style(  'pwptt_css' );
 			wp_enqueue_script( 'pwptt_js' );
+
+			// Localize.
+			$localized = array( 'wpajaxurl' => admin_url( 'admin-ajax.php' ) );
+
+			// Allows pwptt_js file to access 'pwptt_localized'.
+			wp_localize_script( 'pwptt_js', 'pwptt_localized', $localized );
+
 		}
 		else {
 			wp_enqueue_script( 'wp-api');

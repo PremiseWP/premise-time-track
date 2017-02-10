@@ -21,38 +21,33 @@
 		quickChange    = $( '#pwptt-quick-change' ),                                           // the quick change select element
 		tcWrapper      = $( '#pwptt-body' ),                                                   // the timers loop wrapper
 		totalHours     = $( '.pwptt-total-hours' ),                                            // the element that holds the total hours
-		chromeExtensionEdit = $( '.pwptt-chrome-extension-edit' ),                             // the element that holds the edit button
+		isIframe       = $( '.iframe' ).length,                                                // Is viewed inside Chrome extension iframe?
 		restClientFrame,
 
   		loadingIcon    = '<p class="pwptt-loading"><i class="fa fa-spin fa-spinner"></i></p>', // loading icon html
-		wpajaxurl      = '/wp-admin/admin-ajax.php';                                           // url for WP admin ajax
+		wpajaxurl      = pwptt_localized.wpajaxurl;                                            // url for WP admin ajax
 
 		// run our code
 		var init = function() {
 
-			if ( chromeExtensionEdit.length ) {
+			if ( isIframe ) {
 
 				window.addEventListener("message", receiveEditMessage, false);
 
-				chromeExtensionEditClick();
+				iframeEditClick();
 			}
 
 			( timersLoop.length ) ? bindEvents() : false;
 		};
 
-		var chromeExtensionEditClick = function() {
+		var iframeEditClick = function() {
 
-			if ( ! chromeExtensionEdit.length ) {
-
-				return false;
-			}
-
-			chromeExtensionEdit.find('a').click(function( e ) {
+			$( '.pwptt-iframe-edit a' ).on( 'click', function( e ) {
 
 				e.preventDefault();
 
 				// Get URL.
-				var url = this.href;
+				var url = $(this).attr('href');
 
 				// Open URL in parent frame:
 				// Send message with URL.
@@ -66,7 +61,7 @@
 			console.log(event.origin);
 
 			// Do we trust the sender of this message?
-			/*if (event.origin.indexOf( "chrome-extension://" ) !== 0 )
+			/*if (event.origin.indexOf( "iframe://" ) !== 0 )
 				return;*/
 
 			// console.log(event.data);
@@ -98,12 +93,19 @@
 					// empty the search field
 					tcSearch.val('');
 
-					$.post( wpajaxurl, {
+					var ajaxPost = {
 						action:       'ptt_search_timers',
 						quick_change: $(this).val(),
 						taxonomy:     tcSearch.attr( 'data-tax' ),
 						slug:         tcSearch.attr( 'data-slug' )
-					}, updateLoop );
+					};
+
+					if ( isIframe ) {
+
+						ajaxPost.iframe = true;
+					}
+
+					$.post( wpajaxurl, ajaxPost, updateLoop );
 
 					return false;
 				} );
@@ -124,8 +126,8 @@
 				loading();
 				// get date range
 				var dateRange = _isDate[0].split( '-' );
-				// call our ajax search
-				$.post( wpajaxurl, {
+
+				var ajaxPost = {
 					action:     'ptt_search_timers',
 					taxonomy:   _taxonomy,
 					slug:       _slug,
@@ -133,7 +135,15 @@
 						from: dateRange[0],
 						to:   dateRange[1],
 					},
-				}, updateLoop );
+				};
+
+				if ( isIframe ) {
+
+					ajaxPost.iframe = true;
+				}
+
+				// call our ajax search
+				$.post( wpajaxurl, ajaxPost, updateLoop );
 			}
 
 			return false;
@@ -154,6 +164,9 @@
 		function updateLoop( r ) {
 			tcWrapper.html( r );
 			updateTotal();
+			if ( isIframe ) {
+				iframeEditClick();
+			}
 			return false;
 		};
 

@@ -5,19 +5,12 @@
  * @package Premise Time Tracker\View
  */
 
-// No header if viewed from Chrome extension / iframe.
-if ( isset( $_GET['iframe'] )
-	&& $_GET['iframe'] ) {
+// No header & edit button if viewed from Chrome extension / iframe.
+if ( isset( $_REQUEST['iframe'] )
+	&& $_REQUEST['iframe'] ) {
 
 	$is_iframe = true;
 
-	$rest_client_url = '';
-
-	if ( isset( $_GET['rest-client-url'] )
-		&& $_GET['rest-client-url'] ) {
-
-		$rest_client_url = $_GET['rest-client-url'];
-	}
 } else {
 
 	$is_iframe = false;
@@ -41,9 +34,9 @@ if ( isset( $_GET['iframe'] )
 	<div class="pwptt-time-card-description premise-hide-on-mobile">
 		<?php the_content(); ?>
 	</div>
-	<?php if ( $is_iframe && $rest_client_url ) : ?>
-		<div class="pwptt-chrome-extension-edit">
-			<a href="<?php echo esc_url( $rest_client_url ); ?>?step=ptt-form&amp;ptt-id=<?php the_ID(); ?>"
+	<?php if ( $is_iframe ) : ?>
+		<div class="pwptt-iframe-edit">
+			<a href="?step=ptt-form&amp;ptt-id=<?php the_ID(); ?>"
 				title="Edit">
 				<i class="fa fa-pencil"></i>
 			</a>

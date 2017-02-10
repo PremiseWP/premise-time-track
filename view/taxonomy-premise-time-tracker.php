@@ -5,9 +5,9 @@
  * @package Premise Time Tracker\View
  */
 
-// No header if viewed from Chrome extension / iframe.
-if ( isset( $_GET['iframe'] )
-	&& $_GET['iframe'] ) {
+// No header & edit button if viewed from Chrome extension / iframe.
+if ( isset( $_REQUEST['iframe'] )
+	&& $_REQUEST['iframe'] ) {
 
 	$is_iframe = true;
 
