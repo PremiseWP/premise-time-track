@@ -150,6 +150,12 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 	padding: 0 10px;
 }
 
+.pwptt-chrome-extension-edit {
+	margin-top: 20px;
+	padding: 10px;
+	padding-top: 0;
+}
+
 
 /**
  * When viewed from Chrome extension / iframe.

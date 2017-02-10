@@ -11,6 +11,14 @@ if ( isset( $_GET['iframe'] )
 
 	$is_iframe = true;
 
+	$rest_client_url = '';
+
+	if ( isset( $_GET['rest-client-url'] )
+		&& $_GET['rest-client-url'] ) {
+
+		$rest_client_url = $_GET['rest-client-url'];
+	}
+
 	wp_head();
 } else {
 
@@ -41,6 +49,15 @@ if ( isset( $_GET['iframe'] )
 				<div class="pwptt-timer-description">
 					<?php the_content(); ?>
 				</div>
+
+				<?php if ( $is_iframe && $rest_client_url ) : ?>
+					<div class="pwptt-chrome-extension-edit">
+						<a href="<?php echo esc_url( $rest_client_url ); ?>?step=ptt-form&amp;ptt-id=<?php the_ID(); ?>"
+							title="Edit">
+							<i class="fa fa-pencil"></i>
+						</a>
+					</div>
+				<?php endif; ?>
 			</article>
 
 		<?php endwhile; else:

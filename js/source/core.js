@@ -21,14 +21,64 @@
 		quickChange    = $( '#pwptt-quick-change' ),                                           // the quick change select element
 		tcWrapper      = $( '#pwptt-body' ),                                                   // the timers loop wrapper
 		totalHours     = $( '.pwptt-total-hours' ),                                            // the element that holds the total hours
+		chromeExtensionEdit = $( '.pwptt-chrome-extension-edit' ),                             // the element that holds the edit button
+		restClientFrame,
 
   		loadingIcon    = '<p class="pwptt-loading"><i class="fa fa-spin fa-spinner"></i></p>', // loading icon html
 		wpajaxurl      = '/wp-admin/admin-ajax.php';                                           // url for WP admin ajax
 
 		// run our code
 		var init = function() {
+
+			if ( chromeExtensionEdit.length ) {
+
+				window.addEventListener("message", receiveEditMessage, false);
+
+				chromeExtensionEditClick();
+			}
+
 			( timersLoop.length ) ? bindEvents() : false;
 		};
+
+		var chromeExtensionEditClick = function() {
+
+			if ( ! chromeExtensionEdit.length ) {
+
+				return false;
+			}
+
+			chromeExtensionEdit.find('a').click(function( e ) {
+
+				e.preventDefault();
+
+				// Get URL.
+				var url = this.href;
+
+				// Open URL in parent frame:
+				// Send message with URL.
+				restClientFrame.postMessage(url, '*');
+
+				return false;
+			});
+		};
+
+		var receiveEditMessage = function(event) {
+			console.log(event.origin);
+
+			// Do we trust the sender of this message?
+			/*if (event.origin.indexOf( "chrome-extension://" ) !== 0 )
+				return;*/
+
+			// console.log(event.data);
+
+			if (event.data !== 'edit')
+				return;
+
+			restClientFrame = event.source;
+
+			window.removeEventListener("message", receiveEditMessage);
+		};
+
 
 		// bind events for elements that exist in DOM
 		var bindEvents = function() {
