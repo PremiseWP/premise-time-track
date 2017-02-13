@@ -25,13 +25,20 @@ define( 'PTT_PATH', plugin_dir_path( __FILE__ ) );
  *
  * @var constant PTT_URL
  */
-define( 'PTT_URL',  plugin_dir_url(  __FILE__ ) );
+define( 'PTT_URL',  plugin_dir_url( __FILE__ ) );
+
+
+/**
+ * When activating plugin, create Freelancer role.
+ */
+register_activation_hook( __FILE__, array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
 
 
 /**
  * Intiate and setup the plugin
  *
  * @todo check for premise wp before running plugin
+ * TODO: require PremiseWP, Oauth server, REST api...
  */
 add_action( 'plugins_loaded', array( Premise_Time_tracker::get_instance(), 'setup' ) );
 
@@ -209,7 +216,35 @@ class Premise_Time_tracker {
 
 		}
 		else {
-			wp_enqueue_script( 'wp-api');
+			wp_enqueue_script( 'wp-api' );
 		}
+	}
+
+
+	/**
+	 * Add our Freelancer role.
+	 *
+	 * @link https://developer.wordpress.org/reference/functions/add_role/
+	 *
+	 * @link https://codex.wordpress.org/Roles_and_Capabilities#Author
+	 * Author – somebody who can publish and manage their own posts.
+	 */
+	public function add_freelancer_role() {
+
+		remove_role( 'pwptt_freelancer' );
+
+		add_role(
+			'pwptt_freelancer',
+			'Freelancer',
+			array(
+				'edit_published_posts' => true,
+				'upload_files' => true,
+				'publish_posts' => true,
+				'delete_published_posts' => true,
+				'edit_posts' => true,
+				'delete_posts' => true,
+				'read' => true,
+			)
+		);
 	}
 }

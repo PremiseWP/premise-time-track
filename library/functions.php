@@ -122,17 +122,30 @@ function pwptt_the_quick_change_field() {
 
 
 /**
- * displays the default view (current week for clients)
+ * Filter the main query
  *
  * @param  object $wp_query the current query
  * @return object           the new query
  */
 function ptt_filter_main_loop( $wp_query ) {
+
+	if ( is_tax( PTT_Render::get_instance()->taxonomies ) ||
+		$wp_query->query['post_type'] === 'premise_time_tracker' ) {
+
+		if ( ! current_user_can( 'edit_others_posts' ) ) {
+
+			// Deny read access to others posts to Freelancers, authors.
+			$wp_query->set( 'author', get_current_user_id() );
+		}
+	}
+
 	if ( ! is_admin() ) {
 		if ( is_tax( 'premise_time_tracker_client' ) ) {
 
+			// Displays the default view (current week for clients).
 			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
 		}
+
 	}
 }
 
