@@ -29,6 +29,12 @@ $pwp_loop = pwptt_get_loop(); ?>
 
 		<div id="pwptt-loop-wrapper">
 			<div class="pwptt-header premise-clear-float">
+					<?php // Search by author, unless logged in as Freelancer.
+					if ( current_user_can( 'edit_others_posts' ) ) : ?>
+						<div class="pwptt-author-wrapper">
+							<?php pwptt_the_author_field(); ?>
+						</div>
+					<?php endif; ?>
 					<div class="pwptt-search-wrapper">
 						<?php pwptt_the_search_field(); ?>
 					</div>

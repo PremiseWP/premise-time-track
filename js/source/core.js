@@ -19,6 +19,7 @@
 		var timersLoop = $( '#pwptt-loop-wrapper'),                                            // the loop wrapper
 		tcSearch       = $( '.pwptt-search' ),                                                 // the search field
 		quickChange    = $( '#pwptt-quick-change' ),                                           // the quick change select element
+		tcAuthor       = $( '#pwptt-author' ),                                                 // the author select element
 		tcWrapper      = $( '#pwptt-body' ),                                                   // the timers loop wrapper
 		totalHours     = $( '.pwptt-total-hours' ),                                            // the element that holds the total hours
 		isIframe       = $( '.iframe' ).length,                                                // Is viewed inside Chrome extension iframe?
@@ -98,6 +99,32 @@
 						quick_change: $(this).val(),
 						taxonomy:     tcSearch.attr( 'data-tax' ),
 						slug:         tcSearch.attr( 'data-slug' )
+					};
+
+					if ( isIframe ) {
+
+						ajaxPost.iframe = true;
+					}
+
+					$.post( wpajaxurl, ajaxPost, updateLoop );
+
+					return false;
+				} );
+			}
+			// bind author if the field exists
+			if ( tcAuthor.length ) {
+				tcAuthor.change( function( e ) {
+					e.preventDefault();
+					// display loading icon
+					loading();
+					// empty the search field
+					tcSearch.val('');
+
+					var ajaxPost = {
+						action:   'ptt_search_timers',
+						author:   $(this).val(),
+						taxonomy: tcSearch.attr( 'data-tax' ),
+						slug:     tcSearch.attr( 'data-slug' )
 					};
 
 					if ( isIframe ) {

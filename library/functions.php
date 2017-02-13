@@ -86,6 +86,10 @@ function ptt_search_timers() {
 			);
 		}
 
+		if ( isset( $data['author'] ) && is_numeric( $data['author'] ) ) {
+			$_query_args['author'] = $data['author'];
+		}
+
 		$_posts = new WP_Query( $_query_args );
 
 		if ( $_posts->have_posts() ) {
@@ -117,6 +121,46 @@ function pwptt_the_quick_change_field() {
 			'this week' => $week_num,
 			'last week' => $week_num - 1,
 		),
+	) );
+}
+
+
+/**
+ * Outputs the author field
+ *
+ * @return string html for the author field
+ */
+function pwptt_the_author_field() {
+
+	$authors = array(
+		'All freelancers' => '',
+	);
+
+
+	$author_query = new WP_Query( array(
+		'post_type' => 'premise_time_tracker',
+		'tax_query' => array(
+			array(
+				'taxonomy' => get_queried_object()->taxonomy, // Current taxonomy.
+				'terms' => get_queried_object()->term_id, // Current term.
+			),
+		),
+	) );
+
+	// Get all authors for that taxonomy.
+	while ( $author_query->have_posts() ) {
+
+		$author_query->the_post();
+
+		$authors[ get_the_author_meta( 'display_name', get_the_author_meta( 'ID' ) ) ] = get_the_author_meta( 'ID' );
+	}
+
+	wp_reset_postdata();
+
+	premise_field( 'select', array(
+		'id'      => 'pwptt-author',
+		'value'   => '',
+		'options' => $authors,
 	) );
 }
 
