@@ -244,6 +244,8 @@ class Premise_Time_tracker {
 				'edit_posts' => true,
 				'delete_posts' => true,
 				'read' => true,
+				// Needed for Freelancers to add Client / Project / Timesheet to Timer in REST.
+				'manage_categories' => true,
 			)
 		);
 	}
