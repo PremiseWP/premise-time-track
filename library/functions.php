@@ -80,10 +80,23 @@ function ptt_search_timers() {
 			}
 		}
 
-		if ( isset( $data['quick_change'] ) && is_numeric( $data['quick_change'] ) ) {
-			$_query_args['date_query'] = array(
-				'week' => $data['quick_change']
-			);
+		if ( isset( $data['quick_change'] ) && ! empty( $data['quick_change'] ) ) {
+
+			if ( strpos( $data['quick_change'], 'n' ) === 0 ) {
+
+				$month_num = substr( $data['quick_change'], 1 );
+
+				$_query_args['date_query'] = array(
+					'month' => $month_num,
+				);
+			} elseif ( strpos( $data['quick_change'], 'W' ) === 0 ) {
+
+				$week_num = substr( $data['quick_change'], 1 );
+
+				$_query_args['date_query'] = array(
+					'week' => $week_num,
+				);
+			}
 		}
 
 		if ( isset( $data['author'] ) && is_numeric( $data['author'] ) ) {
@@ -113,13 +126,18 @@ function ptt_search_timers() {
  * @return string html for the quick change field
  */
 function pwptt_the_quick_change_field() {
-	$week_num = date('W');
+	$week_num = date( 'W' );
+	$month_num = date( 'n' );
+
 	premise_field( 'select', array(
 		'id'      => 'pwptt-quick-change',
-		'value'   => $week_num - 1,
+		'value'   => ( is_tax( 'premise_time_tracker_client' ) ? 'W' . ( $week_num - 1 ) : '' ),
 		'options' => array(
-			'this week' => $week_num,
-			'last week' => $week_num - 1,
+			'All timers' => '',
+			'This month' => 'n' . $month_num,
+			'Last month' => 'n' . ( $month_num - 1 ),
+			'This week' => 'W' . $week_num,
+			'Last week' => 'W' . ( $week_num - 1 ),
 		),
 	) );
 }
