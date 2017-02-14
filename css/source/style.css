@@ -60,9 +60,14 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 }
 
 #pwptt-taxonomy-page .pwptt-quick-change-wrapper{
-	width: 68%;
+	width: 98%;
 	float: left;
-	border-right: 1px solid #ddd;
+}
+
+#pwptt-taxonomy-page .pwptt-search-wrapper,
+#pwptt-taxonomy-page .pwptt-quick-change-wrapper,
+#pwptt-taxonomy-page .pwptt-author-wrapper {
+		border-bottom: 1px solid #ccc;
 }
 
 #pwptt-taxonomy-page #pwptt-quick-change,
@@ -75,20 +80,23 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 #pwptt-taxonomy-page #pwptt-search-timesheet {
 	border: 0;
 	outline: 0;
-	padding: 5px 0;
+	padding: 8px;
 	background-color: transparent;
+	line-height: 1.437em;
 }
 
 #pwptt-taxonomy-page .pwptt-total-wrapper {
-	width: 30%;
-	float: right;
+	width: 98%;
+	float: left;
 	text-align: right;
 }
 
 #pwptt-taxonomy-page .pwptt-total {
-	margin: 5px 0;
+	padding: 8px;
 	font-size: 1em;
 	display: inline-block;
+	line-height: 1.437em;
+	margin: 0;
 }
 
 /* body */
@@ -181,6 +189,7 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 
 	/* Taxonomy page */
 	#pwptt-taxonomy-page .pwptt-search-wrapper,
+	#pwptt-taxonomy-page .pwptt-quick-change-wrapper,
 	#pwptt-taxonomy-page .pwptt-author-wrapper {
 		border-right: 1px solid #ddd;
 	}
@@ -193,5 +202,6 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 		margin: 10px 0;
 		padding: 0 10px;
 		box-sizing: border-box;
+		border-bottom: 0;
 	}
 }
