@@ -192,7 +192,8 @@ function pwptt_the_author_field() {
 function ptt_filter_main_loop( $wp_query ) {
 
 	if ( is_tax( PTT_Render::get_instance()->taxonomies ) ||
-		$wp_query->query['post_type'] === 'premise_time_tracker' ) {
+		( isset( $wp_query->query['post_type'] ) &&
+			$wp_query->query['post_type'] === 'premise_time_tracker' ) ) {
 
 		if ( ! current_user_can( 'edit_others_posts' ) ) {
 
