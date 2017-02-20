@@ -123,6 +123,10 @@ class Premise_Time_tracker {
 		add_filter( 'template_include'                 , array( PTT_Render::get_instance()   , 'init' )                  , 99 );
 		// Filter the main query when we are loading a premise time tracker taxnomy page
 		add_filter( 'pre_get_posts'                    , 'ptt_filter_main_loop' );
+
+		// Filter the terms for Freelancer profile.
+		add_filter( 'get_terms_args', 'pwptt_filter_terms', 10, 2 );
+
 		// REST API init.
 		add_action( 'rest_api_init'                    , array( PTT_Meta_Box::get_instance() , 'register_meta_fields' ) );
 		/* The following hooks are commented out for now. Will be used later to set ACL */

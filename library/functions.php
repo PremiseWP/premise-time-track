@@ -208,8 +208,56 @@ function ptt_filter_main_loop( $wp_query ) {
 			// Displays the default view (current week for clients).
 			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
 		}
-
 	}
+}
+
+
+/**
+ * Filter terms
+ * For Freelancer profile
+ *
+ * @param  array $args       get_terms arguments.
+ * @param  array $taxonomies Taxomomies.
+ *
+ * @return array             Arguments.
+ */
+function pwptt_filter_terms( $args, $taxonomies ) {
+
+	global $pagenow;
+
+	if ( ! current_user_can( 'edit_others_posts' )
+		// && 'edit-tags.php' == $pagenow
+		&& 'premise_time_tracker_timesheet' == $taxonomies[0] ) {
+
+		// Limit Timesheets to those belonging to Freelancer.
+		$args['include'] = array();
+
+		$author_query = new WP_Query( array(
+			'post_type' => 'premise_time_tracker',
+			'author' => get_current_user_id(),
+		) );
+
+		// Get all timesheet terms for that author.
+		while ( $author_query->have_posts() ) {
+
+			$author_query->the_post();
+			$terms = get_the_terms( $author_query->get_the_ID(), 'premise_time_tracker_timesheet' );
+
+			foreach ( (array) $terms as $term ) {
+
+				$args['include'][ $term->term_id ] = $term->term_id;
+			}
+		}
+
+		if ( ! $args['include'] ) {
+			// Return no terms.
+			$args['include'][] = 9999999;
+		}
+
+		wp_reset_postdata();
+	}
+
+	return $args;
 }
 
 
