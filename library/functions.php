@@ -208,6 +208,33 @@ function ptt_filter_main_loop( $wp_query ) {
 			// Displays the default view (current week for clients).
 			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
 		}
+
+		if ( is_tax( 'premise_time_tracker_timesheet' ) ) {
+
+			if ( ! current_user_can( 'edit_others_posts' )
+				&& is_object( $wp_query->queried_object ) ) {
+
+				$author_query = new WP_Query( array(
+					'post_type' => 'premise_time_tracker',
+					'author' => get_current_user_id(),
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'premise_time_tracker_timesheet',
+							'field' => 'slug',
+							'terms' => array( $wp_query->queried_object->term_id ),
+						),
+					),
+				) );
+
+				if ( ! $author_query->have_posts() ) {
+
+					// Deny access to others Timesheets to Freelancers.
+					wp_die( 'You are not allowed to view this Timesheet.' );
+				}
+
+				wp_reset_postdata();
+			}
+		}
 	}
 }
 
@@ -224,7 +251,7 @@ function ptt_filter_main_loop( $wp_query ) {
 function pwptt_filter_terms( $args, $taxonomies ) {
 
 	global $pagenow;
-
+//echo json_encode(var_dump(current_user_can( 'edit_others_posts' )));
 	if ( ! current_user_can( 'edit_others_posts' )
 		// && 'edit-tags.php' == $pagenow
 		&& 'premise_time_tracker_timesheet' == $taxonomies[0] ) {

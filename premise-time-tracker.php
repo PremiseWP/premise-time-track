@@ -195,6 +195,7 @@ class Premise_Time_tracker {
 			array(
 				'hierarchical' => false,
 				'show_in_rest' => true,
+				'rest_controller_class' => 'PWPTT_REST_Timesheet_Controller',
 			) );
 		}
 	}
