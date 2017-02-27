@@ -12,6 +12,7 @@
  * @package Premise Time Tracker
  */
 
+//TODO: require Premise plugin
 /**
  * Plugin path
  *
@@ -99,6 +100,17 @@ class Premise_Time_tracker {
 	 * Includes all our required files
 	 */
 	public function do_includes() {
+		// Require Premise WP.
+		if ( ! class_exists( 'Premise_WP' ) ) {
+
+			// Require Premise WP plugin with the help of TGM Plugin Activation.
+			require_once PTT_PATH . 'includes/class-tgm-plugin-activation.php';
+
+			add_action( 'tgmpa_register', array( $this, 'register_required_plugins' ) );
+
+			return;
+		}
+
 		include 'model/class.user-profile.php';
 		include 'model/class.time-tracker-mb.php';
 		include 'model/class.rest-api.php';
@@ -111,6 +123,11 @@ class Premise_Time_tracker {
 	 * Registers our hooks
 	 */
 	public function do_hooks() {
+
+		if ( ! class_exists( 'PTT_Meta_Box' ) ) {
+			return;
+		}
+
 		// Register scripts
 		add_action( 'wp_enqueue_scripts'               , array( $this                        , 'scripts' ) );
 		// Hook the metabox used in the post edit screen
@@ -253,5 +270,51 @@ class Premise_Time_tracker {
 				'manage_categories' => true,
 			)
 		);
+	}
+
+
+
+
+	/**
+	 * Register the required plugins for this theme.
+	 *
+	 * We register one plugin:
+	 * - Premise-WP from a GitHub repository
+	 *
+	 * @link https://github.com/PremiseWP/Premise-WP
+	 */
+	public function register_required_plugins() {
+		/*
+		 * Array of plugin arrays. Required keys are name and slug.
+		 * If the source is NOT from the .org repo, then source is also required.
+		 */
+		$plugins = array(
+
+			array(
+				'name'             => 'Premise-WP',
+				'slug'             => 'Premise-WP',
+				'source'           => 'https://github.com/PremiseWP/Premise-WP/archive/master.zip',
+				'required'         => true,
+				'force_activation' => false,
+			),
+		);
+
+		/*
+		 * Array of configuration settings.
+		 */
+		$config = array(
+			'id'           => 'ptt-tgmpa',
+			'default_path' => '',
+			'menu'         => 'tgmpa-install-plugins',
+			'parent_slug'  => 'plugins.php',
+			'capability'   => 'install_plugins',
+			'has_notices'  => true,
+			'dismissable'  => false,
+			'dismiss_msg'  => '',
+			'is_automatic' => true,
+			'message'      => '',
+		);
+
+		tgmpa( $plugins, $config );
 	}
 }
