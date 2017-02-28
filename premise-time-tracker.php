@@ -30,9 +30,10 @@ define( 'PTT_URL',  plugin_dir_url( __FILE__ ) );
 
 
 /**
- * When activating plugin, create Freelancer role.
+ * When activating plugin, create Freelancer & Client roles.
  */
 register_activation_hook( __FILE__, array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
+register_activation_hook( __FILE__, array( Premise_Time_tracker::get_instance(), 'add_client_role' ) );
 
 
 /**
@@ -268,6 +269,30 @@ class Premise_Time_tracker {
 				'read' => true,
 				// Needed for Freelancers to add Client / Project / Timesheet to Timer in REST.
 				'manage_categories' => true,
+			)
+		);
+	}
+
+
+
+
+	/**
+	 * Add our Client role.
+	 *
+	 * @link https://developer.wordpress.org/reference/functions/add_role/
+	 *
+	 * @link https://codex.wordpress.org/Roles_and_Capabilities#Subscriber
+	 * Subscriber – somebody who can only manage their profile.
+	 */
+	public function add_client_role() {
+
+		remove_role( 'pwptt_client' );
+
+		add_role(
+			'pwptt_client',
+			'Client',
+			array(
+				'read' => true,
 			)
 		);
 	}
