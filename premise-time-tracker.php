@@ -12,7 +12,6 @@
  * @package Premise Time Tracker
  */
 
-//TODO: require Premise plugin
 /**
  * Plugin path
  *
@@ -147,6 +146,7 @@ class Premise_Time_tracker {
 
 		// REST API init.
 		add_action( 'rest_api_init'                    , array( PTT_Meta_Box::get_instance() , 'register_meta_fields' ) );
+		add_action( 'rest_api_init'                    , array( PTT_Client_Fields::get_instance() , 'register_meta_fields' ) );
 
 		// Edit the Client user profile page and insert our custom fields at the bottom.
 		add_action( 'init'                             , array( PTT_Client_Fields::get_instance(), 'init' ) );
@@ -209,7 +209,6 @@ class Premise_Time_tracker {
 			array(
 				'hierarchical' => false,
 				'show_in_rest' => true,
-				'rest_controller_class' => 'PWPTT_REST_Timesheet_Controller',
 			) );
 		}
 	}
