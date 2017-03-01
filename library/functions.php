@@ -197,8 +197,11 @@ function ptt_filter_main_loop( $wp_query ) {
 
 		if ( ! current_user_can( 'edit_others_posts' ) ) {
 
-			// Deny read access to others posts to Freelancers, authors.
-			$wp_query->set( 'author', get_current_user_id() );
+			// Is client?
+			if ( ! pwptt_is_client_profile( get_current_user_id() ) ) {
+				// Deny read access to others posts to Freelancers, authors.
+				$wp_query->set( 'author', get_current_user_id() );
+			}
 		}
 	}
 
@@ -404,4 +407,29 @@ function pwptt_the_total() {
 function pwptt_the_disclaimer() {
 	echo '<p class="pwptt-disclaimer"><i>Timers may not appear on current time and can be added at later dates. Keep this in mind and always verify with the freelancer if there are no timers entered for a specific time period. To avoid conflicts, it helps to set a due date when hours need to be entered. This way the freelancer can commit to having all their hours entered by the time the employer needs them.</i></p>';
 }
+
+
+
+
+/**
+ * Is Client profile?
+ *
+ * @link http://wordpress.stackexchange.com/questions/5047/how-to-check-if-a-user-is-in-a-specific-role
+ *
+ * @return boolean
+ */
+function pwptt_is_client_profile( $user_id ) {
+
+	if ( ! $user_id ) {
+
+		return false;
+	}
+
+	$user_data = get_userdata( $user_id );
+
+	$user_roles = empty( $user_data ) ? array() : $user_data->roles;
+
+	return in_array( 'pwptt_client', $user_roles );
+}
+
 

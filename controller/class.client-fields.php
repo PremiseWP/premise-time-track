@@ -46,7 +46,7 @@ class PTT_Client_Fields {
 	 *
 	 */
 	public function init() {
-		if ( $this->is_client_profile() ) {
+		if ( pwptt_is_client_profile( $this->get_user_id() ) ) {
 			$this->build_client_fields();
 		}
 	}
@@ -80,30 +80,6 @@ class PTT_Client_Fields {
 
 		return 0;
 	}
-
-	/**
-	 * Is Client profile?
-	 *
-	 * @link http://wordpress.stackexchange.com/questions/5047/how-to-check-if-a-user-is-in-a-specific-role
-	 *
-	 * @return boolean
-	 */
-	protected function is_client_profile() {
-
-		$user_id = $this->get_user_id();
-
-		if ( ! $user_id ) {
-
-			return false;
-		}
-
-		$user_data = get_userdata( $user_id );
-
-		$user_roles = empty( $user_data ) ? array() : $user_data->roles;
-
-		return in_array( 'pwptt_client', $user_roles );
-	}
-
 
 	/**
 	 * Build client fields.
