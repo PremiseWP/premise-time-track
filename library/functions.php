@@ -236,6 +236,53 @@ function ptt_filter_main_loop( $wp_query ) {
 			}
 		}
 	}
+
+
+	// Client profile: limit access to its assigned client(s).
+	if ( ! is_admin() &&
+		! current_user_can( 'edit_posts' ) ) {
+
+		$die = false;
+
+		if ( is_tax( 'premise_time_tracker_client' ) ) {
+
+			// Displays the default view (current week for clients).
+			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
+
+			$user_clients_meta = get_user_meta( get_current_user_id(), 'pwptt_clients', true );
+
+			$user_clients = array();
+
+			foreach ( (array) $user_clients_meta as $slug => $yes ) {
+
+				if ( $yes ) {
+					$user_clients[] = $slug;
+				}
+			}
+
+			if ( ! $user_clients ) {
+
+				$die = true;
+			}
+
+			$queried_client = get_query_var( 'premise_time_tracker_client' );
+
+			// Limit access to its assigned client(s).
+			if ( ! in_array( $queried_client, $user_clients ) ) {
+
+				$die = true;
+			}
+
+		} elseif ( is_tax( PTT_Render::get_instance()->taxonomies ) ) {
+
+			$die = true;
+		}
+
+		if ( $die ) {
+			// Deny access to others Timesheets to Freelancers.
+			wp_die( 'You are not allowed to view this page.' );
+		}
+	}
 }
 
 

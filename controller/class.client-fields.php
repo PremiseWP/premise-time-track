@@ -68,9 +68,7 @@ class PTT_Client_Fields {
 
 		/*if ( 'profile.php' === $pagenow ) {
 
-			$user = wp_get_current_user();
-
-			return $user->ID;
+			return get_current_user_id();
 
 		} else*/
 		if ( 'user-edit.php' === $pagenow &&
@@ -79,6 +77,8 @@ class PTT_Client_Fields {
 
 			return (int) $_REQUEST['user_id'];
 		}
+
+		return 0;
 	}
 
 	/**
