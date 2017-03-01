@@ -89,10 +89,10 @@ class Premise_Time_tracker {
 	public function setup() {
 		// 1. do includes
 		$this->do_includes();
-		// 2. do hooks
-		$this->do_hooks();
-		// 3. register our CPT
+		// 2. register our CPT
 		$this->register_cpt();
+		// 3. do hooks
+		$this->do_hooks();
 
 	}
 
@@ -112,7 +112,7 @@ class Premise_Time_tracker {
 			return;
 		}
 
-		include 'model/class.user-profile.php';
+		include 'controller/class.client-fields.php';
 		include 'model/class.time-tracker-mb.php';
 		include 'model/class.rest-api.php';
 		include 'controller/class.render.php';
@@ -147,13 +147,9 @@ class Premise_Time_tracker {
 
 		// REST API init.
 		add_action( 'rest_api_init'                    , array( PTT_Meta_Box::get_instance() , 'register_meta_fields' ) );
-		/* The following hooks are commented out for now. Will be used later to set ACL */
-		// Edit the user profile page and insert our custom fields at the bottom
-		// add_action( 'show_user_profile'                , array( PTT_User_Profile::get_inst() , 'custom_fields' ) );
-		// add_action( 'edit_user_profile'                , array( PTT_User_Profile::get_inst() , 'custom_fields' ) );
-		// Register the hook to save our fields in the user profile pages
-		// add_action( 'personal_options_update'          , array( PTT_User_Profile::get_inst() , 'save_custom_fields' ) );
-		// add_action( 'edit_user_profile_update'         , array( PTT_User_Profile::get_inst() , 'save_custom_fields' ) );
+
+		// Edit the Client user profile page and insert our custom fields at the bottom.
+		add_action( 'init'                             , array( PTT_Client_Fields::get_instance(), 'init' ) );
 	}
 
 
