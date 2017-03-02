@@ -111,7 +111,7 @@ class Premise_Time_tracker {
 			return;
 		}
 
-		include 'controller/class.client-fields.php';
+		include 'controller/class.user-fields.php';
 		include 'model/class.time-tracker-mb.php';
 		include 'model/class.rest-api.php';
 		include 'controller/class.render.php';
@@ -146,10 +146,10 @@ class Premise_Time_tracker {
 
 		// REST API init.
 		add_action( 'rest_api_init'                    , array( PTT_Meta_Box::get_instance() , 'register_meta_fields' ) );
-		add_action( 'rest_api_init'                    , array( PTT_Client_Fields::get_instance() , 'register_meta_fields' ) );
+		add_action( 'rest_api_init'                    , array( PTT_User_Fields::get_instance() , 'register_meta_fields' ) );
 
 		// Edit the Client user profile page and insert our custom fields at the bottom.
-		add_action( 'init'                             , array( PTT_Client_Fields::get_instance(), 'init' ) );
+		add_action( 'init'                             , array( PTT_User_Fields::get_instance(), 'init' ) );
 	}
 
 

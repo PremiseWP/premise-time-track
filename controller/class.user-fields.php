@@ -3,8 +3,9 @@
  * This class adds the Client profile fields to the User page.
  *
  * @package Premise Time Tracker\Controller
+ * @todo  show meta profile in REST for ALL users so we know how to limit info!
  */
-class PTT_Client_Fields {
+class PTT_User_Fields {
 
 	/**
 	 * Holds an instance of this class
@@ -160,14 +161,14 @@ class PTT_Client_Fields {
 	 */
 	public function register_meta_fields() {
 
-		$meta_keys = array( 'pwptt_clients' );
+		$meta_keys = array( 'pwptt_clients', 'pwptt_profile_rights' );
 
 		foreach ( $meta_keys as $meta_key ) {
 			register_rest_field( 'user',
 				$meta_key,
 				array(
-					'get_callback'    => array( PTT_Client_Fields::get_instance() , 'get_meta_field' ),
-					'update_callback' => array( PTT_Client_Fields::get_instance() , 'update_meta_field' ),
+					'get_callback'    => array( PTT_User_Fields::get_instance() , 'get_meta_field' ),
+					'update_callback' => array( PTT_User_Fields::get_instance() , 'update_meta_field' ),
 					'schema'          => null,
 				)
 			);
@@ -186,6 +187,12 @@ class PTT_Client_Fields {
 	 */
 	public function get_meta_field( $object, $field_name, $request ) {
 
+		if ( 'pwptt_profile_rights' === $field_name ) {
+
+			// Return profile level dynamically.
+			return $this->get_profile_level( $object['id'] );
+		}
+
 		return get_user_meta( $object['id'], $field_name, true );
 	}
 
@@ -200,11 +207,59 @@ class PTT_Client_Fields {
 	 * @return mixed
 	 */
 	function update_meta_field( $value, $object, $field_name ) {
+
+		if ( 'pwptt_profile_rights' === $field_name ) {
+
+			// No update.
+			return;
+		}
+
 		if ( ! $value ) {
 			return;
 		}
 
 		return update_user_meta( $object->ID, $field_name, strip_tags( $value ) );
+	}
+
+
+	/**
+	 * Get User profile level.
+	 *
+	 * @param  int    $user_id User ID.
+	 *
+	 * @return string Empty if no User, else administrator|freelancer|client depending on capabilities.
+	 */
+	public function get_profile_level( $user_id ) {
+
+		if ( ! $user_id ) {
+
+			return '';
+		}
+
+		$user_data = get_userdata( $user_id );
+
+		if ( empty( $user_data ) ) {
+
+			return '';
+		}
+
+		$profile_level = 'administrator';
+
+		$allcaps = $user_data->allcaps;
+
+		if ( ! isset( $allcaps['edit_others_posts'] ) ||
+			! $allcaps['edit_others_posts'] ) {
+
+			$profile_level = 'freelancer';
+		}
+
+		if ( ! isset( $allcaps['edit_posts'] )
+			|| ! $allcaps['edit_posts'] ) {
+
+			$profile_level = 'client';
+		}
+
+		return $profile_level;
 	}
 }
 
