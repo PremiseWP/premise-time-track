@@ -161,7 +161,7 @@ class PTT_User_Fields {
 	 */
 	public function register_meta_fields() {
 
-		$meta_keys = array( 'pwptt_clients', 'pwptt_profile_rights' );
+		$meta_keys = array( 'pwptt_clients', 'pwptt_profile_level' );
 
 		foreach ( $meta_keys as $meta_key ) {
 			register_rest_field( 'user',
@@ -187,7 +187,7 @@ class PTT_User_Fields {
 	 */
 	public function get_meta_field( $object, $field_name, $request ) {
 
-		if ( 'pwptt_profile_rights' === $field_name ) {
+		if ( 'pwptt_profile_level' === $field_name ) {
 
 			// Return profile level dynamically.
 			return $this->get_profile_level( $object['id'] );
@@ -208,7 +208,7 @@ class PTT_User_Fields {
 	 */
 	function update_meta_field( $value, $object, $field_name ) {
 
-		if ( 'pwptt_profile_rights' === $field_name ) {
+		if ( 'pwptt_profile_level' === $field_name ) {
 
 			// No update.
 			return;
