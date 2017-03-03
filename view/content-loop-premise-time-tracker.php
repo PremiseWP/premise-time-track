@@ -34,7 +34,7 @@ if ( isset( $_REQUEST['iframe'] )
 	<div class="pwptt-time-card-description premise-hide-on-mobile">
 		<?php the_content(); ?>
 	</div>
-	<?php if ( $is_iframe ) : ?>
+	<?php if ( $is_iframe && ! pwptt_is_client_profile( get_current_user_id() ) ) : ?>
 		<div class="pwptt-iframe-edit">
 			<a href="?step=ptt-form&amp;ptt-id=<?php the_ID(); ?>"
 				title="Edit">
