@@ -25,7 +25,7 @@ if ( isset( $_REQUEST['iframe'] )
 		</div>
 
 		<span class="pwptt-time-card-date">
-			<i><?php the_time( 'm/d/y' ); ?></i>
+			<i><?php the_time( 'l' ); ?> - <?php the_time( 'm/d/y' ); ?></i>
 		</span>
 
 		<p class="pwptt-time-card-time"><?php echo pwptt_get_timer(); ?></p>
