@@ -101,7 +101,9 @@ class Premise_Time_tracker {
 	 */
 	public function do_includes() {
 		// Require Premise WP.
-		if ( ! class_exists( 'Premise_WP' ) ) {
+		if ( ! class_exists( 'Premise_WP' )
+			|| ! class_exists( 'WP_REST_Controller' )
+			|| ! function_exists( 'rest_oauth1_init' ) ) {
 
 			// Require Premise WP plugin with the help of TGM Plugin Activation.
 			require_once PTT_PATH . 'includes/class-tgm-plugin-activation.php';
@@ -298,8 +300,9 @@ class Premise_Time_tracker {
 	/**
 	 * Register the required plugins for this theme.
 	 *
-	 * We register one plugin:
+	 * We register 2 plugins:
 	 * - Premise-WP from a GitHub repository
+	 * - WP REST API from Wordpress
 	 *
 	 * @link https://github.com/PremiseWP/Premise-WP
 	 */
@@ -314,6 +317,20 @@ class Premise_Time_tracker {
 				'name'             => 'Premise-WP',
 				'slug'             => 'Premise-WP',
 				'source'           => 'https://github.com/PremiseWP/Premise-WP/archive/master.zip',
+				'required'         => true,
+				'force_activation' => false,
+			),
+			array(
+				'name'             => 'Wordpress REST API',
+				'slug'             => 'rest-api',
+				'source'           => 'https://wordpress.org/plugins/rest-api/',
+				'required'         => true,
+				'force_activation' => false,
+			),
+			array(
+				'name'             => 'WordPress REST API - OAuth 1.0a Server',
+				'slug'             => 'rest-api-oauth1',
+				'source'           => 'https://wordpress.org/plugins/rest-api-oauth1/',
 				'required'         => true,
 				'force_activation' => false,
 			),
