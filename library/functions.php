@@ -214,7 +214,7 @@ function ptt_filter_main_loop( $wp_query ) {
 
 		if ( is_tax( 'premise_time_tracker_timesheet' ) ) {
 
-			if ( ! current_user_can( 'edit_others_posts' )
+			/*if ( ! current_user_can( 'edit_others_posts' )
 				&& is_object( $wp_query->queried_object ) ) {
 
 				$author_query = new WP_Query( array(
@@ -236,13 +236,13 @@ function ptt_filter_main_loop( $wp_query ) {
 				}
 
 				wp_reset_postdata();
-			}
+			}*/
 		}
 	}
 
 
 	// Client profile: limit access to its assigned client(s).
-	if ( ! is_admin() &&
+	/*if ( ! is_admin() &&
 		! current_user_can( 'edit_posts' ) ) {
 
 		$die = false;
@@ -285,7 +285,7 @@ function ptt_filter_main_loop( $wp_query ) {
 			// Deny access to others Timesheets to Freelancers.
 			wp_die( 'You are not allowed to view this page.' );
 		}
-	}
+	}*/
 }
 
 
@@ -301,8 +301,10 @@ function ptt_filter_main_loop( $wp_query ) {
 function pwptt_filter_terms( $args, $taxonomies ) {
 
 	global $pagenow;
-//echo json_encode(var_dump(current_user_can( 'edit_others_posts' )));
-	if ( ! current_user_can( 'edit_others_posts' )
+
+	// echo json_encode(var_dump(current_user_can( 'edit_others_posts' )));
+
+	/*if ( ! current_user_can( 'edit_others_posts' )
 		// && 'edit-tags.php' == $pagenow
 		&& 'premise_time_tracker_timesheet' == $taxonomies[0] ) {
 
@@ -332,7 +334,7 @@ function pwptt_filter_terms( $args, $taxonomies ) {
 		}
 
 		wp_reset_postdata();
-	}
+	}*/
 
 	return $args;
 }
