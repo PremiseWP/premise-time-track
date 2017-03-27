@@ -81,13 +81,13 @@ class PTT_Render {
 	public function init( $template ) {
 
 		// If timer or taxonomy, must be logged in.
-		if ( ! is_user_logged_in() &&
+		/*if ( ! is_user_logged_in() &&
 			( is_tax( $this->taxonomies ) || is_singular( 'premise_time_tracker' ) ) ) {
 
 			auth_redirect();
 
 			wp_die();
-		}
+		}*/
 
 		// No admin bar if viewed from Chrome extension / iframe.
 		if ( isset( $_GET['iframe'] )
