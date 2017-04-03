@@ -236,8 +236,8 @@ class Premise_Time_tracker {
 
 		}
 		else {
-			wp_enqueue_script( 'wp-api' );
 		}
+			wp_enqueue_script( 'wp-api' );
 	}
 
 
