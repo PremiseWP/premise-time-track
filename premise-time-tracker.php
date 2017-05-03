@@ -138,6 +138,8 @@ class Premise_Time_tracker {
 		// Register the ajax hook so that we can search for timers
 		add_action( 'wp_ajax_ptt_search_timers'        , 'ptt_search_timers' );
 		add_action( 'wp_ajax_nopriv_ptt_search_timers' , 'ptt_search_timers' );
+		// Add author rewrite rule for our CPT.
+		add_filter( 'generate_rewrite_rules'           , array( PTT_Render::get_instance()   , 'author_rewrite_rule' ) );
 		// switch the template to display ours whenever we are showing a premise time tracker page
 		add_filter( 'template_include'                 , array( PTT_Render::get_instance()   , 'init' )                  , 99 );
 		// Filter the main query when we are loading a premise time tracker taxnomy page

@@ -47,6 +47,14 @@ class PTT_Render {
 
 
 	/**
+	 * Holds the path to the author template
+	 *
+	 * @var string
+	 */
+	public static $author_view_path = PTT_PATH . 'view/author-premise-time-tracker.php';
+
+
+	/**
 	 * Holds the total hours on the group of timers queried
 	 *
 	 * @var float
@@ -106,6 +114,22 @@ class PTT_Render {
 			$new_template = locate_template( array( 'premise-time-tracker/single-premise-time-tracker.php' ) );
 			$template     = ( '' != $new_template ) ? $new_template : self::$timer_view_path;
 		}
+		// If Wordpress is about to load one of our freelancer / author.
+		else if ( get_post_type() === 'premise_time_tracker' &&
+			is_author() ) {
+
+			// Only if user has published timers!
+			$authors_timers = get_users( array(
+				'has_published_posts' => array( 'premise_time_tracker' ),
+				'fields' => 'ID',
+			) );
+
+			if ( is_author( $authors_timers ) ) {
+
+				$new_template = locate_template( array( 'premise-time-tracker/author-premise-time-tracker.php' ) );
+				$template     = ( '' != $new_template ) ? $new_template : self::$author_view_path;
+			}
+		}
 		return $template;
 	}
 
@@ -119,5 +143,25 @@ class PTT_Render {
 		self::$total += pwptt_get_timer();
 		$new_template = locate_template( array( 'premise-time-tracker/content-loop-premise-time-tracker.php' ) );
 		include ( '' != $new_template ) ? $new_template : self::$time_card_path;
+	}
+
+
+	/**
+	 * Add author rewrite rule for our CPT.
+	 * Time Trackers page by author / freelancer.
+	 *
+	 * @see generate_rewrite_rules filter.
+	 *
+	 * @param  object $wp_rewrite Wordpress rewrite rules.
+	 */
+	public function author_rewrite_rule( $wp_rewrite ) {
+
+		$key = 'time-tracker/author/([a-zA-Z0-9]+)';
+
+		$rewrite = 'index.php?post_type=premise_time_tracker&author_name=$matches[1]';
+
+		$new_rules = array( $key => $rewrite );
+
+		$wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
 	}
 }

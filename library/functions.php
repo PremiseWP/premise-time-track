@@ -22,13 +22,25 @@ function pwptt_the_search_field() {
 	// Last week.
 	$value = date( 'm/d/y', strtotime( "monday last week" ) ) . ' - ' . date( 'm/d/y', strtotime( "last sunday" ) );
 
-	// If Timesheet or Project: show all Timers.
+	// If Timesheet or Project or Author: show all Timers.
 	if ( $queried_object->taxonomy !== 'premise_time_tracker_client' ) {
 
 		$value = '';
 	}
 
-	if ( isset( $queried_object->taxonomy ) &&
+	if ( is_author() ) {
+
+		// Author timers page: Slug is user login & tax is 'author'.
+		premise_field( 'text', array(
+			'class'       => 'pwptt-search',
+			'placeholder' => 'Enter a date range',
+			'id'          => 'pwptt-search-timesheet',
+			'data-slug'   => $queried_object->ID,
+			'data-tax'    => 'author',
+			'value'       => $value,
+		) );
+	}
+	elseif ( isset( $queried_object->taxonomy ) &&
 		 in_array( $queried_object->taxonomy, $ptt_taxonomies ) ) {
 
 		premise_field( 'text', array(
@@ -58,14 +70,24 @@ function ptt_search_timers() {
 		$_query_args = array(
 			'posts_per_page' => -1,
 			'post_type'      => 'premise_time_tracker',
-			'tax_query'      => array(
+		);
+
+		if ( 'author' === $data['taxonomy'] &&
+			is_numeric( $data['slug'] ) ) {
+
+			// Author timers page: Slug is user ID & tax is 'author'.
+			$_query_args['author'] = $data['slug'];
+
+		} else {
+
+			$_query_args['tax_query'] = array(
 				array(
 					'taxonomy' => esc_attr( $data['taxonomy'] ),
 					'field'    => 'slug',
 					'terms'    => esc_attr( $data['slug'] ),
 				),
-			),
-		);
+			);
+		}
 
 		if ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) {
 			// sanitize the data
