@@ -1,225 +1,214 @@
-body.post-type-premise_time_track {}
+/**
+ * CSS for the front end of Premise Time Tracker
+ *
+ * @Global       scope: Global to any page that has premise_time_traker as a class or part of a class in the body
+ * @Taxonomies   scope: .pwptt-page
+ * @Author       scope: .pwptt-page
+ * @Single Timer scope: #pwptt-single-timer
+ * @Responsive   adjustments for tablet and desktop
+ */
 
-/* premise field hidden fix (adds additional margin) */
-#premise_time_track .premise-field-type-hidden {
+/**
+ * @Global
+ */
+
+body[class*="premise_time_tracker"] p.pwptt-error-message {
+	padding: 2em 1em;
+	text-align: center;
+}
+
+body[class*="premise_time_tracker"] p.pwptt-loading {
+	padding: 10% 1em;
+	text-align: center;
+	font-size: 2em;
+}
+
+body[class*="premise_time_tracker"] p.pwptt-disclaimer {
+	font-size: 0.7em;
+	line-height: 1.3;
+	margin: 0.8em 0;
+}
+
+/**
+ * @Taxonomies
+ */
+
+.pwptt-page {
+	font-size: inherit; /* this controls the size of every element within this container */
+}
+
+/* header */
+.pwptt-page .pwptt-header {
+	padding: 10px 10px 0 10px;
+	margin-bottom: 10px;
+}
+
+.pwptt-page .pwptt-total-wrapper,
+.pwptt-page .pwptt-search-wrapper {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+}
+
+.pwptt-page .pwptt-search-wrapper,
+.pwptt-page .pwptt-author-wrapper {
+	width: 98%;
+	float: left;
+}
+
+.pwptt-page .premise-field {
 	margin-bottom: 0;
 }
 
-/**
- * the meta box
- */
-#premise_time_track {
-	position: relative;
-}
-#premise_time_track:after {
-	content: '';
-	display: table;
-	clear: both;
-}
-
-.premise-field.ptt-left,
-.premise-field.ptt-right {
-	width: 50%;
-	display: inline-block;
-}
-.premise-field.ptt-left {
-	padding-right: 10px;
-}
-.premise-field.ptt-right {
-	padding-left: 10px;
-}
-
-/* Start button */
-#ptt_start {
-	background-color: #43A743;
-	border: 1px solid #43A743;
-}
-
-/* Stop button */
-.premise-field-type-button.ptt-right {
-	text-align: right
-}
-
-#ptt_stop {
-	background-color: #CA0D0D;
-	border: 1px solid #CA0D0D;
-}
-
-#ptt_start,
-#ptt_stop {
-	color: #fff;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	border-radius: 3px;
-	margin: 10px 5px 0;
-}
-
-/* Timer */
-.ptt-fields-wrapper .premise-field .premise-field-textarea textarea {
-	height: auto;
-}
-
-#premise_time_track .ptt-new-timer {
-	display: inline-block;
-	text-decoration: none;
-	vertical-align: middle;
-	line-height: 20px;
-	font-size: 16px;
-}
-
-
-
-/**
- * The History Meta Box
- */
-#premise_time_track_history {}
-
-.ptt-time-history-header {
-	margin-top: 20px;
-	padding-left: 10px;
-}
-
-.ptt-filter-total-container {
-	font-weight: 700;
-	font-size: 20px;
-	padding-top: 7px;
-	padding-right: 10px;
-}
-
-.ptt-description {
-	margin-bottom: 20px;
-}
-
-.ptt-time-history > div {
-	position: relative;
-	border-top: 1px solid #ccc;
-	padding: 10px 10px 0 10px;
-}
-
-.ptt-time-history > div:last-child {
-	border-bottom: 1px solid #ccc;
-	margin-bottom: 20px;
-}
-
-.ptt-time-history > div > .ptt-delete-time-history {
-	content: "\f014";
-	font-family: 'FontAwesome';
-	width: 30px;
-	height: 30px;
-	position: absolute;
-	z-index: 9999;
-	top: 1px;
-	right: -30px;
-	text-align: center;
-	line-height: 30px;
-	font-size: 20px;
-	color: #444;
-	cursor: pointer;
-	transition: all .4s ease;
-	opacity: 0;
-}
-
-.ptt-time-history > div:hover > .ptt-delete-time-history {
-	right: 0;
-	opacity: 1;
-}
-
-.ptt-time-history > div:after {
-	content: '';
-	display: table;
-	clear: both;
-}
-
-.ptt-time-history > div .premise-field:not(.premise-field-type-hidden) {
-	width: 25%;
+.pwptt-page .pwptt-quick-change-wrapper{
+	width: 98%;
 	float: left;
-	padding: 0 20px 0 0;
 }
 
-/*.ptt-time-history > div .premise-field,
-.ptt-time-history > div .premise-field:last-child {
-	padding-right: 0;
-}*/
-
-.ptt-time-history > div .premise-field.ptt-description-field {
-	width: 100%;
+.pwptt-page .pwptt-search-wrapper,
+.pwptt-page .pwptt-quick-change-wrapper,
+.pwptt-page .pwptt-author-wrapper {
+		border-bottom: 1px solid #ccc;
 }
 
-.ptt-time-history-footer {
-	margin-bottom: 20px;
+.pwptt-page #pwptt-quick-change,
+.pwptt-page #pwptt-author {
+	border: 0;
+	padding-bottom: 8px;
+	background-color: transparent;
 }
 
+.pwptt-page #pwptt-search-timesheet {
+	border: 0;
+	outline: 0;
+	padding: 8px;
+	background-color: transparent;
+	line-height: 1.437em;
+}
 
+.pwptt-page .pwptt-total-wrapper {
+	width: 98%;
+	float: left;
+	text-align: right;
+}
+
+.pwptt-page .pwptt-total {
+	padding: 8px;
+	font-size: 1em;
+	display: inline-block;
+	line-height: 1.437em;
+	margin: 0;
+}
+
+/* body */
+.pwptt-page .pwptt-body {
+	box-shadow: 0 0 1px #666;
+}
+
+/* time card */
+.pwptt-page .pwptt-time-card {
+	display: block;
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+.pwptt-page .pwptt-time-card:nth-child(odd) {
+	background-color: #f6f6f6
+}
+
+.pwptt-page .pwptt-time-card:last-child {
+	border-bottom: 0;
+}
+
+.pwptt-page .pwptt-time-card-intro {
+	/*cursor: pointer  required for JS to work on mobile */
+}
+
+.pwptt-page .pwptt-time-card-title {
+	font-size: 1.3em;
+	line-height: 1;
+	margin-bottom: 5px;
+}
+
+.pwptt-page .pwptt-time-card-date {
+	font-size: .85em;
+	opacity: 0.4;
+}
+
+.pwptt-page .pwptt-time-card-time {
+	font-size: 1em;
+	float: right;
+	margin: 0;
+}
+
+/* footer */
+.pwptt-page .pwptt-footer {
+	padding: 5px 10px 10px 10px;
+}
 
 
 /**
- * Reports Page
+ * @Single Timer
  */
-.ptt-report {
-	position: relative;
-	height: 100%;
-	margin: 20px auto;
-	border: 1px solid #888;
-	padding: 20px;
+
+#pwptt-single-timer .pwptt-timer-meta {
+	padding: 10px;
+	background-color: #f6f6f6;
+	margin-bottom: 20px;
+}
+
+.pwptt-timer-description {
+	padding: 0 10px;
+}
+
+.pwptt-iframe-edit {
+	margin-top: 20px;
+	padding: 10px;
+	padding-top: 0;
+}
+
+
+/**
+ * When viewed from Chrome extension / iframe.
+ */
+#pwptt-single-timer.iframe,
+.pwptt-page.iframe {
 	background-color: #fff;
 }
 
-.ptt-table {
-	display: table;
-	width: 100%;
+.iframe .pwptt-container {
+	padding: 4.7% 6%;
 }
 
-.ptt-table-tr {
-	display: table-row;
-}
 
-.ptt-table-td {
-	display: table-cell;
-	vertical-align: middle;
-}
+/**
+ * @Responsive
+ */
 
-.ptt-report .ptt-table {
-	border-top: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	margin-bottom: 20px;
-}
+/* iPad portrait >= 768px */
+@media screen and (min-width: 768px) {
 
-.ptt-report .ptt-table-td {
-	width: 15%;
-	line-height: 30px;
-	height: 30px;
-	border-bottom: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	padding: 0 5px;
-}
+	/* Taxonomy page */
+	.pwptt-page .pwptt-search-wrapper,
+	.pwptt-page .pwptt-quick-change-wrapper,
+	.pwptt-page .pwptt-author-wrapper {
+		border-right: 1px solid #ddd;
+	}
 
-.ptt-report .ptt-table-td.ptt-report-cell-description {
-	width: 40%
-}
+	.pwptt-page .pwptt-search-wrapper,
+	.pwptt-page .pwptt-quick-change-wrapper,
+	.pwptt-page .pwptt-total-wrapper,
+	.pwptt-page .pwptt-author-wrapper {
+		width: 25%;
+		margin: 10px 0;
+		padding: 0 10px;
+		box-sizing: border-box;
+		border-bottom: 0;
+	}
 
-.ptt-report .ptt-table-td.ptt-report-cell-timer {
-	font-weight: 700
-}
-
-.ptt-cell-value {
-	
-}
-
-.ptt-report-body {
-	max-height: 600px;
-	overflow: auto;
-}
-
-/* for the filter to update total timer we need this */
-.ptt-task-hidden .ptt-fields-wrapper {
-	display: none;
-}
-
-.ptt-report-task .ptt-message {
-	display: block;
-	line-height: 30px;
-	height: 30px;
-	border: 1px solid #ccc;
-	vertical-align: middle;
-	padding: 0 10px;
+	#pwptt-author-page .pwptt-search-wrapper,
+	#pwptt-author-page .pwptt-quick-change-wrapper,
+	#pwptt-author-page .pwptt-total-wrapper {
+		width: 33%;
+	}
 }
