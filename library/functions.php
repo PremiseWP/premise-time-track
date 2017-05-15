@@ -20,7 +20,7 @@ function pwptt_the_search_field() {
 	);
 
 	// Last week.
-	$value = date( 'm/d/y', strtotime( "monday last week" ) ) . ' - ' . date( 'm/d/y', strtotime( "last sunday" ) );
+	$value = date( 'm/d/y', strtotime( "monday this week" ) ) . ' - ' . date( 'm/d/y', strtotime( "this sunday" ) );
 
 	// If Timesheet or Project or Author: show all Timers.
 	if ( $queried_object->taxonomy !== 'premise_time_tracker_client' ) {
@@ -153,7 +153,7 @@ function pwptt_the_quick_change_field() {
 
 	premise_field( 'select', array(
 		'id'      => 'pwptt-quick-change',
-		'value'   => ( is_tax( 'premise_time_tracker_client' ) ? 'W' . ( $week_num - 1 ) : '' ),
+		'value'   => ( is_tax( 'premise_time_tracker_client' ) ? 'W' . ( $week_num ) : '' ),
 		'options' => array(
 			'All timers' => '',
 			'This month' => 'n' . $month_num,
@@ -229,9 +229,42 @@ function ptt_filter_main_loop( $wp_query ) {
 
 	if ( ! is_admin() ) {
 		if ( is_tax( 'premise_time_tracker_client' ) ) {
-
+			// start loading this week
+			$date_query = array( 'week' => date('W') );
+			// if there is adate range, lets change the date query
+			if ( $_GET['range'] ) {
+				$_rng = split( '-', $_GET['range'] );
+				$_matches = array();
+				for ($i=0; $i < count($_rng); $i++) {
+					// return $_matches[] array =>
+					// '0' => Month
+					// '1' => Day
+					// '2' => Year
+					preg_match_all( '/[0-9]+/', $_rng[$i], $matches );
+					$_matches[] = $matches[0];
+				}
+				// $_matches must have atleast 2 arrays
+				if ( 1 < count($_matches) ) {
+					$date_query = array(
+						array(
+							'after'     => array(
+								'year'  => ( 2 === strlen( $_matches[0][2] ) ) ? '20'.$_matches[0][2] : $_matches[0][2], // ad 20 if year has only 2 digits
+								'day' => $_matches[0][1],
+								'month'   => $_matches[0][0],
+							),
+							'before'    => array(
+								'year'  => ( 2 === strlen( $_matches[1][2] ) ) ? '20'.$_matches[1][2] : $_matches[1][2], // ad 20 if year has only 2 digits
+								'day' => $_matches[1][1],
+								'month'   => $_matches[1][0],
+							),
+							'inclusive' => true,
+						),
+					);
+				}
+			}
+			// var_dump($date_query);
 			// Displays the default view (current week for clients).
-			$wp_query->set( 'date_query', array( 'week' => date('W') - 1 ) );
+			$wp_query->set( 'date_query', $date_query );
 		}
 
 		if ( is_tax( 'premise_time_tracker_timesheet' ) ) {
