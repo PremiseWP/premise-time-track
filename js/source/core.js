@@ -94,34 +94,12 @@
 					// empty the search field
 					tcSearch.val('');
 
-<<<<<<< HEAD
-			var timeStamp = new Date(),
-			h = timeStamp.getHours(),
-			m = "0" + timeStamp.getMinutes(),
-			s = "0" + timeStamp.getSeconds();
-			
-			var stop = h + ":" + m.substr(-2);
-			var start = self.start.val();
-
-			self.timestampStop.val(timeStamp);
-			self.stop.val(stop);
-			
-			self.timer.val( self.recordTime(start, stop) );
-
-			// $.when( self.newTimer() ).done( self.saveTimer() );
-
-			self.newTimer(true);
-			
-			return false;
-		},
-=======
 					var ajaxPost = {
 						action:       'ptt_search_timers',
 						quick_change: $(this).val(),
 						taxonomy:     tcSearch.attr( 'data-tax' ),
 						slug:         tcSearch.attr( 'data-slug' )
 					};
->>>>>>> v2-0-0
 
 					if ( isIframe ) {
 
@@ -191,8 +169,10 @@
 					ajaxPost.iframe = true;
 				}
 
+				window.history.pushState({}, 'title', '?range='+dateRange[0].trim()+'-'+dateRange[1].trim())
 				// call our ajax search
 				$.post( wpajaxurl, ajaxPost, updateLoop );
+
 			}
 
 			return false;
@@ -204,18 +184,10 @@
 			Helpers
 		 */
 
-<<<<<<< HEAD
-		newTimer: function(save){
-			save = save || false;
-			var self = PremiseTimeTrack.resetTimer(this);
-			var count = self.countUp();
-			$('.ptt-time-history').append( '<div class="ptt-fields-wrapper ptt-time-history-'+count+'"></div>' );
-=======
 		// show loading icon
 		function loading() {
 			tcWrapper.html( loadingIcon );
 		};
->>>>>>> v2-0-0
 
 		// handle the ajax response and update total
 		function updateLoop( r ) {
@@ -224,26 +196,6 @@
 			if ( isIframe ) {
 				iframeEditClick();
 			}
-<<<<<<< HEAD
-
-			$.post(ajaxurl, data, function(resp){
-				$('.ptt-timer-fields').html(resp);
-			}).
-			done(function(){
-				self.resetTimer(this);
-				self.timeField.keyup(self.inputTime);
-				self.bindDatepicker();
-				self.updateTimerTotal();
-				if ( save ) self.saveTimer();
-			});
-			
-
-
-			// bind time fields again
-			console.log(self.timeField);
-
-=======
->>>>>>> v2-0-0
 			return false;
 		};
 
