@@ -159,7 +159,7 @@ class PTT_User_Fields {
 	 *
 	 * @return void
 	 */
-	public function register_meta_fields() {
+	public static function register_meta_fields() {
 
 		$meta_keys = array( 'pwptt_clients', 'pwptt_profile_level' );
 
@@ -167,8 +167,8 @@ class PTT_User_Fields {
 			register_rest_field( 'user',
 				$meta_key,
 				array(
-					'get_callback'    => array( PTT_User_Fields::get_instance() , 'get_meta_field' ),
-					'update_callback' => array( PTT_User_Fields::get_instance() , 'update_meta_field' ),
+					'get_callback'    => array( 'PTT_User_Fields', 'get_meta_field' ),
+					'update_callback' => array( 'PTT_User_Fields', 'update_meta_field' ),
 					'schema'          => null,
 				)
 			);
@@ -185,7 +185,7 @@ class PTT_User_Fields {
 	 *
 	 * @return mixed
 	 */
-	public function get_meta_field( $object, $field_name, $request ) {
+	public static function get_meta_field( $object, $field_name, $request ) {
 
 		if ( 'pwptt_profile_level' === $field_name ) {
 
@@ -206,7 +206,7 @@ class PTT_User_Fields {
 	 *
 	 * @return mixed
 	 */
-	function update_meta_field( $value, $object, $field_name ) {
+	public static function update_meta_field( $value, $object, $field_name ) {
 
 		if ( 'pwptt_profile_level' === $field_name ) {
 

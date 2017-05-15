@@ -139,9 +139,9 @@ class Premise_Time_tracker {
 		add_action( 'wp_ajax_ptt_search_timers'        , 'ptt_search_timers' );
 		add_action( 'wp_ajax_nopriv_ptt_search_timers' , 'ptt_search_timers' );
 		// Add author rewrite rule for our CPT.
-		add_filter( 'generate_rewrite_rules'           , array( PTT_Render::get_instance()   , 'author_rewrite_rule' ) );
+		add_filter( 'generate_rewrite_rules', array( 'PTT_Render', 'author_rewrite_rule' ) );
 		// switch the template to display ours whenever we are showing a premise time tracker page
-		add_filter( 'template_include'                 , array( PTT_Render::get_instance()   , 'init' )                  , 99 );
+		add_filter( 'template_include', array( PTT_Render::get_instance(), 'init' ), 99 );
 		// Filter the main query when we are loading a premise time tracker taxnomy page
 		add_filter( 'pre_get_posts'                    , 'ptt_filter_main_loop' );
 
@@ -149,11 +149,11 @@ class Premise_Time_tracker {
 		add_filter( 'get_terms_args', 'pwptt_filter_terms', 10, 2 );
 
 		// REST API init.
-		add_action( 'rest_api_init'                    , array( PTT_Meta_Box::get_instance() , 'register_meta_fields' ) );
-		add_action( 'rest_api_init'                    , array( PTT_User_Fields::get_instance() , 'register_meta_fields' ) );
+		add_action( 'rest_api_init', array( 'PTT_Meta_Box', 'register_meta_fields' ) );
+		add_action( 'rest_api_init', array( 'PTT_User_Fields', 'register_meta_fields' ) );
 
 		// Edit the Client user profile page and insert our custom fields at the bottom.
-		add_action( 'init'                             , array( PTT_User_Fields::get_instance(), 'init' ) );
+		add_action( 'init', array( PTT_User_Fields::get_instance(), 'init' ) );
 	}
 
 

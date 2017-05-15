@@ -19,7 +19,11 @@ class PTT_Render {
 	 *
 	 * @var array
 	 */
-	public $taxonomies = array( 'premise_time_tracker_client', 'premise_time_tracker_project', 'premise_time_tracker_timesheet' );
+	public $taxonomies = array(
+		'premise_time_tracker_client',
+		'premise_time_tracker_project',
+		'premise_time_tracker_timesheet'
+	);
 
 
 	/**
@@ -154,7 +158,7 @@ class PTT_Render {
 	 *
 	 * @param  object $wp_rewrite Wordpress rewrite rules.
 	 */
-	public function author_rewrite_rule( $wp_rewrite ) {
+	public static function author_rewrite_rule( $wp_rewrite ) {
 
 		$key = 'time-tracker/author/([a-zA-Z0-9]+)';
 

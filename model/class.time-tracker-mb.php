@@ -165,7 +165,7 @@ class PTT_Meta_Box {
 	 *
 	 * @return void
 	 */
-	public function register_meta_fields() {
+	public static function register_meta_fields() {
 
 		$meta_keys = array( 'pwptt_hours' );
 
@@ -173,8 +173,8 @@ class PTT_Meta_Box {
 			register_rest_field( $this->post_type,
 				$meta_key,
 				array(
-					'get_callback'    => array( PTT_Meta_Box::get_instance() , 'get_meta_field' ),
-					'update_callback' => array( PTT_Meta_Box::get_instance() , 'update_meta_field' ),
+					'get_callback'    => array( 'PTT_Meta_Box', 'get_meta_field' ),
+					'update_callback' => array( 'PTT_Meta_Box', 'update_meta_field' ),
 					'schema'          => null,
 				)
 			);
@@ -191,7 +191,7 @@ class PTT_Meta_Box {
 	 *
 	 * @return mixed
 	 */
-	public function get_meta_field( $object, $field_name, $request ) {
+	public static function get_meta_field( $object, $field_name, $request ) {
 
 		return get_post_meta( $object['id'], $field_name, true );
 	}
@@ -206,7 +206,7 @@ class PTT_Meta_Box {
 	 *
 	 * @return mixed
 	 */
-	function update_meta_field( $value, $object, $field_name ) {
+	public static function update_meta_field( $value, $object, $field_name ) {
 		if ( ! $value || ! is_string( $value ) ) {
 			return;
 		}
