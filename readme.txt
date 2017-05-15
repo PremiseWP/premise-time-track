@@ -1,4 +1,4 @@
-=== Premise Portfolio ===
+=== Premise Time Tracker ===
 Contributors: premisewp
 Donate link: http://premisewp.com/donate
 Tags: time tracker, tracking time, freelancers, freelance, track time, premise wp
@@ -12,7 +12,7 @@ Track time spent on projects. This plugin comes with a Chrome Extension to easil
 
 == Description ==
 
-
+This plugin creates a 'Timers' custom post type on your site that you can use to record your time spent in projects. When you add your time you can assign a client or project to keep track of things appropriately. We are introducing "Timesheets" soon where you will be able to create a timesheet from selected timers and bill from it.
 
 == Installation ==
 
