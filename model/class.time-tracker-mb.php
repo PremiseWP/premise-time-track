@@ -170,7 +170,7 @@ class PTT_Meta_Box {
 		$meta_keys = array( 'pwptt_hours' );
 
 		foreach ( $meta_keys as $meta_key ) {
-			register_rest_field( $this->post_type,
+			register_rest_field( 'premise_time_tracker',
 				$meta_key,
 				array(
 					'get_callback'    => array( 'PTT_Meta_Box', 'get_meta_field' ),
