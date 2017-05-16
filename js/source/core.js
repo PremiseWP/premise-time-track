@@ -106,6 +106,12 @@
 						ajaxPost.iframe = true;
 					}
 
+					window.history.pushState(
+						{},
+						'title',
+						'?week='+ajaxPost.quick_change
+					);
+
 					$.post( wpajaxurl, ajaxPost, updateLoop );
 
 					return false;
@@ -169,7 +175,7 @@
 					ajaxPost.iframe = true;
 				}
 
-				window.history.pushState({}, 'title', '?range='+dateRange[0].trim()+'-'+dateRange[1].trim())
+				window.history.pushState({}, 'title', '?range='+dateRange[0].trim()+'-'+dateRange[1].trim());
 				// call our ajax search
 				$.post( wpajaxurl, ajaxPost, updateLoop );
 

@@ -148,12 +148,19 @@ function ptt_search_timers() {
  * @return string html for the quick change field
  */
 function pwptt_the_quick_change_field() {
+	$week = 'W' . date( 'W' );
+	$month = 'n' . date( 'n' );
+
 	$week_num = date( 'W' );
 	$month_num = date( 'n' );
 
+	if ( $_GET['week'] ) {
+		$_w = trim( esc_attr( $_GET['week'] ) );
+	}
+
 	premise_field( 'select', array(
 		'id'      => 'pwptt-quick-change',
-		'value'   => ( is_tax( 'premise_time_tracker_client' ) ? 'W' . ( $week_num ) : '' ),
+		'value'   => ( $_w ) ? $_w : $week,
 		'options' => array(
 			'All timers' => '',
 			'This month' => 'n' . $month_num,
@@ -231,6 +238,7 @@ function ptt_filter_main_loop( $wp_query ) {
 		if ( is_tax( 'premise_time_tracker_client' ) ) {
 			// start loading this week
 			$date_query = array( 'week' => date('W') );
+
 			// if there is adate range, lets change the date query
 			if ( $_GET['range'] ) {
 				$_rng = split( '-', $_GET['range'] );
@@ -261,6 +269,11 @@ function ptt_filter_main_loop( $wp_query ) {
 						),
 					);
 				}
+			}
+			elseif ( $_GET['week'] ) {
+				$_w = trim( esc_attr( $_GET['week'] ) );
+				$week = ( strpos( $_w, 'n' ) === 0 ) ? 'month' : 'week';
+				$date_query = array( $week => esc_attr( substr( $_w, 1 ) ) );
 			}
 			// var_dump($date_query);
 			// Displays the default view (current week for clients).
