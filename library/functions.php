@@ -70,6 +70,7 @@ function ptt_search_timers() {
 		$_query_args = array(
 			'posts_per_page' => -1,
 			'post_type'      => 'premise_time_tracker',
+			'order' => 'ASC',
 		);
 
 		if ( 'author' === $data['taxonomy'] &&
@@ -278,6 +279,7 @@ function ptt_filter_main_loop( $wp_query ) {
 			// var_dump($date_query);
 			// Displays the default view (current week for clients).
 			$wp_query->set( 'date_query', $date_query );
+			$wp_query->set( 'order', 'ASC' );
 		}
 
 		if ( is_tax( 'premise_time_tracker_timesheet' ) ) {
