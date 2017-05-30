@@ -130,6 +130,10 @@ class PTT_Taxonomy_API {
 	 * @return float          Total hours.
 	 */
 	protected function calculate_project_hours( $project_id ) {
+		if ( ! $project_id ) {
+			return 0;
+		}
+
 		$project_hours = 0;
 
 		// Get each timer belonging to this project.
@@ -154,5 +158,78 @@ class PTT_Taxonomy_API {
 
 		return $project_hours;
 	}
-}
 
+
+	/**
+	 * Use postID when the post is updated via the REST API.
+	 *
+	 * @link https://developer.wordpress.org/reference/hooks/rest_delete_this-post_type/
+	 * @link https://developer.wordpress.org/reference/hooks/rest_insert_this-post_type/
+	 *
+	 * @param  WP_Post $post                    Post.
+	 * @param  WP_REST_Request|WP_REST_Response $post_after
+	 * @param  WP_REST_Request|bool             $post_before
+	 */
+	public function update_project_hours_rest( $post, $request_or_response = null, $request_or_creating = null ) {
+		$this->update_project_hours( $post->ID );
+	}
+
+
+	/**
+	 * Use post ID when the post changes
+	 *
+	 * @link https://developer.wordpress.org/reference/hooks/deleted_post/
+	 * @link https://developer.wordpress.org/reference/hooks/post_updated/
+	 *
+	 * @param  integer $post_id    Post ID.
+	 * @param  WP_Post $post_after
+	 * @param  WP_Post $post_before
+	 */
+	public function update_project_hours_post( $post_id, $post_after = null, $post_before = null ) {
+
+		$this->update_project_hours( $post_id );
+	}
+
+
+	/**
+	 * Use value of post meta pwptt_hours when the post meta changes
+	 *
+	 * @param  integer $meta_id    ID of the meta data field.
+	 * @param  integer $post_id    Post ID.
+	 * @param  string $meta_key    Name of meta field.
+	 * @param  string $meta_value  Value of meta field.
+	 */
+	public function update_project_hours_meta( $meta_id, $post_id, $meta_key = '', $meta_value = '' ) {
+
+		if ( $meta_key !== 'pwptt_hours' ) {
+			return false;
+		}
+
+		$this->update_project_hours( $post_id, true );
+	}
+
+
+	/**
+	 * Update project hours when post or meta updated.
+	 *
+	 * @param  integer $post_id    Post ID.
+	 */
+	protected function update_project_hours( $post_id, $is_meta = false ) {
+
+		if ( $is_meta ) {
+			$terms = wp_get_post_terms( $post_id, 'premise_time_tracker_project' );
+
+		} else {
+			// Update all projects.
+			$terms = get_terms( 'premise_time_tracker_project', array(
+				'hide_empty' => false,
+			) );
+		}
+
+		foreach ( (array) $terms as $project ) {
+			$project_hours = $this->calculate_project_hours( $project->term_id );
+
+			$this->update_meta_field( $project_hours, $project->term_id, 'pwptt_project_hours' );
+		}
+	}
+}

@@ -156,6 +156,17 @@ class Premise_Time_tracker {
 
 		// Edit the Client user profile page and insert our custom fields at the bottom.
 		add_action( 'init'                             , array( PTT_User_Fields::get_instance(), 'init' ) );
+
+		// Update project hours when post updated or deleted, from admin or REST API.
+		add_action( 'updated_postmeta', array( PTT_Taxonomy_API::get_instance(), 'update_project_hours_meta' ), 10, 4 );
+
+		add_action(  'post_updated', array( PTT_Taxonomy_API::get_instance() , 'update_project_hours_post' ), 10, 2 );
+
+		add_action(  'deleted_post', array( PTT_Taxonomy_API::get_instance() , 'update_project_hours_post' ), 10, 2 );
+
+		add_action(  'rest_delete_premise_time_tracker', array( PTT_Taxonomy_API::get_instance() , 'update_project_hours_rest' ), 30, 2 );
+
+		add_action(  'rest_insert_premise_time_tracker', array( PTT_Taxonomy_API::get_instance() , 'update_project_hours_rest' ), 30, 2 );
 	}
 
 
