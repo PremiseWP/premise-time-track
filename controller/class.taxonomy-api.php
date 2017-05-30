@@ -140,7 +140,7 @@ class PTT_Taxonomy_API {
 		$args = array(
 			'posts_per_page'   => -1,
 			'offset'           => 0,
-				'post_type'        => 'premise_time_tracker',
+			'post_type'        => 'premise_time_tracker',
 			'post_status'      => 'publish',
 			'tax_query' => array(
 				array(
@@ -161,21 +161,6 @@ class PTT_Taxonomy_API {
 
 
 	/**
-	 * Use postID when the post is updated via the REST API.
-	 *
-	 * @link https://developer.wordpress.org/reference/hooks/rest_delete_this-post_type/
-	 * @link https://developer.wordpress.org/reference/hooks/rest_insert_this-post_type/
-	 *
-	 * @param  WP_Post $post                    Post.
-	 * @param  WP_REST_Request|WP_REST_Response $post_after
-	 * @param  WP_REST_Request|bool             $post_before
-	 */
-	public function update_project_hours_rest( $post, $request_or_response = null, $request_or_creating = null ) {
-		$this->update_project_hours( $post->ID );
-	}
-
-
-	/**
 	 * Use post ID when the post changes
 	 *
 	 * @link https://developer.wordpress.org/reference/hooks/deleted_post/
@@ -187,7 +172,7 @@ class PTT_Taxonomy_API {
 	 */
 	public function update_project_hours_post( $post_id, $post_after = null, $post_before = null ) {
 
-		$this->update_project_hours( $post_id );
+		$this->update_project_hours();
 	}
 
 
@@ -205,7 +190,7 @@ class PTT_Taxonomy_API {
 			return false;
 		}
 
-		$this->update_project_hours( $post_id, true );
+		$this->update_project_hours( $post_id );
 	}
 
 
@@ -214,9 +199,9 @@ class PTT_Taxonomy_API {
 	 *
 	 * @param  integer $post_id    Post ID.
 	 */
-	protected function update_project_hours( $post_id, $is_meta = false ) {
+	protected function update_project_hours( $post_id = false ) {
 
-		if ( $is_meta ) {
+		if ( $post_id ) {
 			$terms = wp_get_post_terms( $post_id, 'premise_time_tracker_project' );
 
 		} else {
@@ -228,7 +213,6 @@ class PTT_Taxonomy_API {
 
 		foreach ( (array) $terms as $project ) {
 			$project_hours = $this->calculate_project_hours( $project->term_id );
-
 			$this->update_meta_field( $project_hours, $project->term_id, 'pwptt_project_hours' );
 		}
 	}
