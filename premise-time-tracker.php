@@ -152,6 +152,8 @@ class Premise_Time_tracker {
 		add_action( 'rest_api_init', array( 'PTT_Meta_Box', 'register_meta_fields' ) );
 		add_action( 'rest_api_init', array( 'PTT_User_Fields', 'register_meta_fields' ) );
 
+		// add_action( 'rest_api_init', 'ttt_current_user' );
+
 		// Edit the Client user profile page and insert our custom fields at the bottom.
 		add_action( 'init', array( PTT_User_Fields::get_instance(), 'init' ) );
 
@@ -388,4 +390,23 @@ class Premise_Time_tracker {
 
 		tgmpa( $plugins, $config );
 	}
+}
+
+function ttt_current_user() {
+	register_rest_field( 'premise_time_tracker',
+		'current_user',
+		array(
+			'get_callback'    => 'ttt_get_callback',
+			'update_callback' => 'ttt_update_callback',
+			'schema'          => null,
+		)
+	);
+}
+
+function ttt_get_callback() {
+	return (array) wp_current_user();
+}
+
+function ttt_update_callback() {
+	return null;
 }
