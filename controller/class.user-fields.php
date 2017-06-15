@@ -167,8 +167,8 @@ class PTT_User_Fields {
 			register_rest_field( 'user',
 				$meta_key,
 				array(
-					'get_callback'    => array( 'PTT_User_Fields', 'get_meta_field' ),
-					'update_callback' => array( 'PTT_User_Fields', 'update_meta_field' ),
+					'get_callback'    => array( $this, 'get_meta_field' ),
+					'update_callback' => array( $this, 'update_meta_field' ),
 					'schema'          => null,
 				)
 			);

@@ -11,7 +11,8 @@
  *
  * @package Premise Time Tracker
  */
-
+header( 'Access-Control-Allow-Origin: *' );
+error_reporting(E_ERROR);
 /**
  * Plugin path
  *
@@ -113,9 +114,9 @@ class Premise_Time_tracker {
 			return;
 		}
 
-		include 'controller/class.user-fields.php';
 		include 'model/class.time-tracker-mb.php';
 		include 'model/class.rest-api.php';
+		include 'controller/class.user-fields.php';
 		include 'controller/class.render.php';
 		include 'library/functions.php';
 	}
@@ -155,36 +156,39 @@ class Premise_Time_tracker {
 		// add_action( 'rest_api_init', 'ttt_current_user' );
 
 		// Edit the Client user profile page and insert our custom fields at the bottom.
-		add_action( 'init', array( PTT_User_Fields::get_instance(), 'init' ) );
+		// for now, dont call this.
+		// add_action( 'init', array( PTT_User_Fields::get_instance(), 'init' ) );
 
 		// Use * for origin
-		add_action( 'rest_api_init', function() {
+		// add_action( 'rest_api_init', function() {
 
-			remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
-			add_filter( 'rest_pre_serve_request', function( $value ) {
-				header( 'Access-Control-Allow-Origin: *' );
-				header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
-				header( 'Access-Control-Allow-Credentials: true' );
+		// 	remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
 
-				return $value;
+		// 	add_filter( 'rest_pre_serve_request', function( $value ) {
+		// 		header( 'Access-Control-Allow-Origin: *' );
+		// 		header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
+		// 		header( 'Access-Control-Allow-Credentials: true' );
 
-			});
-		}, 15 );
+		// 		return $value;
+
+		// 	});
+		// } );
 
 		// TODO Ability to set origins from backend.
 		// add_action( 'rest_api_init', function() {
 
 		// 	remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
+
 		// 	add_filter( 'rest_pre_serve_request', function( $value ) {
 
 		// 		$origin = get_http_origin();
-		// 		if ( $origin && in_array( $origin, array(
-		// 				//define some origins!
-		// 			) ) ) {
 		// 			header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
 		// 			header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
 		// 			header( 'Access-Control-Allow-Credentials: true' );
-		// 		}
+		// 		// if ( $origin && in_array( $origin, array(
+		// 		// 		//define some origins!
+		// 		// 	) ) ) {
+		// 		// }
 
 		// 		return $value;
 
