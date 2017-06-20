@@ -11,8 +11,11 @@
  *
  * @package Premise Time Tracker
  */
+
+// TODO find proper way to bind these two
 header( 'Access-Control-Allow-Origin: *' );
 error_reporting(E_ERROR);
+
 /**
  * Plugin path
  *
@@ -153,6 +156,8 @@ class Premise_Time_tracker {
 		add_action( 'rest_api_init', array( 'PTT_Meta_Box', 'register_meta_fields' ) );
 		add_action( 'rest_api_init', array( 'PTT_User_Fields', 'register_meta_fields' ) );
 
+		// add_action( 'init', array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
+
 		// add_action( 'rest_api_init', 'ttt_current_user' );
 
 		// Edit the Client user profile page and insert our custom fields at the bottom.
@@ -174,26 +179,22 @@ class Premise_Time_tracker {
 		// 	});
 		// } );
 
+			// add_filter( 'rest_pre_serve_request', function( $value ) {
+
+			// 	$origin = get_http_origin();
+			// 		header( 'Access-Control-Allow-Origin: *' /*. esc_url_raw( $origin )*/ );
+			// 		header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
+			// 		header( 'Access-Control-Allow-Credentials: true' );
+
+			// 	return $value;
+
+			// });
 		// TODO Ability to set origins from backend.
 		// add_action( 'rest_api_init', function() {
 
 		// 	remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
 
-		// 	add_filter( 'rest_pre_serve_request', function( $value ) {
-
-		// 		$origin = get_http_origin();
-		// 			header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
-		// 			header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
-		// 			header( 'Access-Control-Allow-Credentials: true' );
-		// 		// if ( $origin && in_array( $origin, array(
-		// 		// 		//define some origins!
-		// 		// 	) ) ) {
-		// 		// }
-
-		// 		return $value;
-
-		// 	});
-		// }, 15 );
+		// }, 9 );
 	}
 
 
@@ -218,6 +219,7 @@ class Premise_Time_tracker {
 					'title',
 					'editor',
 					'custom-fields',
+					'author',
 				),
 				'menu_icon'    => 'dashicons-clock',
 			) );
