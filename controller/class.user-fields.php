@@ -93,9 +93,9 @@ class PTT_User_Fields {
 		$client_fields = $this->get_client_fields();
 
 		$args = array(
-			'title' => 'Premise Time Tracker Options',
+			'title'       => 'Premise Time Tracker Options',
 			'description' => 'Assign Client Access:',
-			'fields' => $client_fields,
+			'fields'      => $client_fields,
 		);
 
 		foreach ( (array) $client_fields as $client_field ) {
@@ -167,8 +167,8 @@ class PTT_User_Fields {
 			register_rest_field( 'user',
 				$meta_key,
 				array(
-					'get_callback'    => array( $this, 'get_meta_field' ),
-					'update_callback' => array( $this, 'update_meta_field' ),
+					'get_callback'    => array( 'PTT_User_Fields', 'get_meta_field' ),
+					'update_callback' => array( 'PTT_User_Fields', 'update_meta_field' ),
 					'schema'          => null,
 				)
 			);
@@ -190,7 +190,7 @@ class PTT_User_Fields {
 		if ( 'pwptt_profile_level' === $field_name ) {
 
 			// Return profile level dynamically.
-			return $this->get_profile_level( $object['id'] );
+			return self::get_profile_level( $object['id'] );
 		}
 
 		return get_user_meta( $object['id'], $field_name, true );
