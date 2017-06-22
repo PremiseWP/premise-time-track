@@ -156,6 +156,13 @@ class Premise_Time_tracker {
 		add_action( 'rest_api_init', array( 'PTT_Meta_Box', 'register_meta_fields' ) );
 		add_action( 'rest_api_init', array( 'PTT_User_Fields', 'register_meta_fields' ) );
 
+		add_action( 'rest_api_init', function () {
+		  register_rest_route( 'premise_time_tracker/v2', '/currentuser', array(
+		    'methods' => 'GET',
+		    'callback' => 'ttt_current_user',
+		  ) );
+		} );
+
 		// add_action( 'init', array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
 
 		// add_action( 'rest_api_init', 'ttt_current_user' );
@@ -399,14 +406,11 @@ class Premise_Time_tracker {
 }
 
 function ttt_current_user() {
-	register_rest_field( 'premise_time_tracker',
-		'current_user',
-		array(
-			'get_callback'    => 'ttt_get_callback',
-			'update_callback' => 'ttt_update_callback',
-			'schema'          => null,
-		)
-	);
+	$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+	// Set one or more request query parameters
+	// $request->set_param( 'per_page', 20 );
+	$response = rest_do_request( $request );
+	return $response;
 }
 
 function ttt_get_callback() {
