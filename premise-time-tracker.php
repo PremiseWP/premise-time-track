@@ -35,8 +35,7 @@ define( 'PTT_URL',  plugin_dir_url( __FILE__ ) );
 /**
  * When activating plugin, create Freelancer & Client roles.
  */
-register_activation_hook( __FILE__, array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
-register_activation_hook( __FILE__, array( Premise_Time_tracker::get_instance(), 'add_client_role' ) );
+register_activation_hook( __FILE__, array( Premise_Time_tracker::get_instance(), 'add_user_roles' ) );
 
 
 /**
@@ -160,6 +159,12 @@ class Premise_Time_tracker {
 		  register_rest_route( 'premise_time_tracker/v2', '/currentuser', array(
 		    'methods' => 'GET',
 		    'callback' => 'ttt_current_user',
+		  ) );
+		} );
+		add_action( 'rest_api_init', function () {
+		  register_rest_route( 'premise_time_tracker/v2', '/register', array(
+		    'methods' => 'POST',
+		    'callback' => 'ttt_register_user',
 		  ) );
 		} );
 
@@ -293,15 +298,21 @@ class Premise_Time_tracker {
 
 
 	/**
-	 * Add our Freelancer role.
-	 *
-	 * @link https://developer.wordpress.org/reference/functions/add_role/
-	 *
-	 * @link https://codex.wordpress.org/Roles_and_Capabilities#Author
-	 * Author – somebody who can publish and manage their own posts.
+	 * Add user roles
 	 */
-	public function add_freelancer_role() {
+	public function add_user_roles() {
+		// client
+		remove_role( 'pwptt_client' );
 
+		add_role(
+			'pwptt_client',
+			'Client',
+			array(
+				'read' => true,
+			)
+		);
+
+		// freelancer
 		remove_role( 'pwptt_freelancer' );
 
 		add_role(
@@ -317,30 +328,6 @@ class Premise_Time_tracker {
 				'read' => true,
 				// Needed for Freelancers to add Client / Project / Timesheet to Timer in REST.
 				'manage_categories' => true,
-			)
-		);
-	}
-
-
-
-
-	/**
-	 * Add our Client role.
-	 *
-	 * @link https://developer.wordpress.org/reference/functions/add_role/
-	 *
-	 * @link https://codex.wordpress.org/Roles_and_Capabilities#Subscriber
-	 * Subscriber – somebody who can only manage their profile.
-	 */
-	public function add_client_role() {
-
-		remove_role( 'pwptt_client' );
-
-		add_role(
-			'pwptt_client',
-			'Client',
-			array(
-				'read' => true,
 			)
 		);
 	}
@@ -408,6 +395,14 @@ class Premise_Time_tracker {
 }
 
 function ttt_current_user() {
+	$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+	// Set one or more request query parameters
+	// $request->set_param( 'per_page', 20 );
+	$response = rest_do_request( $request );
+	return $response;
+}
+
+function ttt_register_user() {
 	$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
 	// Set one or more request query parameters
 	// $request->set_param( 'per_page', 20 );
