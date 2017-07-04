@@ -161,7 +161,7 @@ class PTT_User_Fields {
 	 */
 	public static function register_meta_fields() {
 
-		$meta_keys = array( 'pwptt_clients', 'pwptt_profile_level' );
+		$meta_keys = array( 'pwptt_clients', 'pwptt_profile_level', 'email', 'first_name', 'last_name' );
 
 		foreach ( $meta_keys as $meta_key ) {
 			register_rest_field( 'user',

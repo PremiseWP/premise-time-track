@@ -163,6 +163,8 @@ class Premise_Time_tracker {
 		  ) );
 		} );
 
+		remove_filter( 'the_content', 'wpautop' );
+
 		// add_action( 'init', array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
 
 		// add_action( 'rest_api_init', 'ttt_current_user' );
