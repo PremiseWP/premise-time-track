@@ -163,14 +163,19 @@ class Premise_Time_tracker {
 		} );
 		add_action( 'rest_api_init', function () {
 		  register_rest_route( 'premise_time_tracker/v2', '/register', array(
-		    'methods' => 'POST',
+		    'methods' => WP_REST_Server::CREATABLE,
 		    'callback' => 'ttt_register_user',
+		    'args' => array(
+		    	'organization',
+		    	'username',
+		    	'password',
+		    ),
 		  ) );
 		} );
 
 		remove_filter( 'the_content', 'wpautop' );
 
-		add_action( 'init', array( Premise_Time_tracker::get_instance(), 'add_freelancer_role' ) );
+		add_action( 'init', array( Premise_Time_tracker::get_instance(), 'add_user_roles' ) );
 
 		// add_action( 'rest_api_init', 'ttt_current_user' );
 
@@ -302,15 +307,15 @@ class Premise_Time_tracker {
 	 */
 	public function add_user_roles() {
 		// client
-		remove_role( 'pwptt_client' );
+		// remove_role( 'pwptt_client' );
 
-		add_role(
-			'pwptt_client',
-			'Client',
-			array(
-				'read' => true,
-			)
-		);
+		// add_role(
+		// 	'pwptt_client',
+		// 	'Client',
+		// 	array(
+		// 		'read' => true,
+		// 	)
+		// );
 
 		// freelancer
 		remove_role( 'pwptt_freelancer' );
@@ -394,20 +399,65 @@ class Premise_Time_tracker {
 	}
 }
 
+
 function ttt_current_user() {
-	$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
-	// Set one or more request query parameters
-	// $request->set_param( 'per_page', 20 );
+	// 1. Try Logging in the user
+	$request  = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
 	$response = rest_do_request( $request );
-	return $response;
+	if ( $response->is_error() ) {
+		// not sucessful.
+		// return response.
+		return $response;
+	}
+	// Successful
+	// get user from the response
+	$user = $response->get_data();
+	// 2. check this user has access to this blog
+	$has_access = false;
+	$blog_id    = get_current_blog_id();
+	$user_blogs = get_blogs_of_user( $user['id'] );
+	foreach ($user_blogs as $blog) {
+		if ( (int) $blog_id === (int) $blog->userblog_id ) {
+			$has_access = true;
+		}
+	}
+	// if no access return error
+	if ( ! $has_access ) {
+		return wp_send_json_error( array(
+			'message' => 'You do no have access to this organization.'
+		) );
+	}
+	// 3. return the user and the site info
+	return wp_send_json(array(
+		'user' => $user,
+		'site' => get_blog_details( $blog_id ),
+	));
 }
 
 function ttt_register_user() {
-	$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
-	// Set one or more request query parameters
-	// $request->set_param( 'per_page', 20 );
-	$response = rest_do_request( $request );
-	return $response;
+	if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+		var_dump('expression');
+	}
+	else {
+
+		// $user_id = wp_create_user(
+		// 	'createdonthefly',
+		// 	'$passwordcreatedonthefly',
+		// 	'laksjdfhaksdjfhalsdkfj@email.com'
+		// );
+		// $blog_id = wpmu_create_blog(
+		// 	'http://test.time.dev',
+		// 	'/',
+		// 	'$title',
+		// 	1
+		// );
+		// return json_encode( $user_id );
+	}
+	// $request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+	// // Set one or more request query parameters
+	// // $request->set_param( 'per_page', 20 );
+	// $response = rest_do_request( $request );
+	// return $response;
 }
 
 function ttt_get_callback() {
