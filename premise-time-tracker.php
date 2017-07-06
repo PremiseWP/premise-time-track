@@ -155,21 +155,22 @@ class Premise_Time_tracker {
 		add_action( 'rest_api_init', array( 'PTT_Meta_Box', 'register_meta_fields' ) );
 		add_action( 'rest_api_init', array( 'PTT_User_Fields', 'register_meta_fields' ) );
 
+		// register endpoint for loging in from ap
 		add_action( 'rest_api_init', function () {
 		  register_rest_route( 'premise_time_tracker/v2', '/currentuser', array(
 		    'methods' => 'GET',
 		    'callback' => 'ttt_current_user',
+		    // 'args' => array( 'username', 'password', 'email'),
 		  ) );
 		} );
+		// register endpoint for loging in from ap
 		add_action( 'rest_api_init', function () {
-		  register_rest_route( 'premise_time_tracker/v2', '/register', array(
-		    'methods' => WP_REST_Server::CREATABLE,
-		    'callback' => 'ttt_register_user',
-		    'args' => array(
-		    	'organization',
-		    	'username',
-		    	'password',
-		    ),
+		  register_rest_route( 'premise_time_tracker/v2',
+		  	'/newuser',
+		  	// .'/(?P<username>[a-zA-Z0-9-_]+)'.'&(?P<password>[\w*$!-?:]+)'.'&(?P<email>([\w-\.]@[\w]\.[\w]{2,3})+)
+		  	array(
+		    'methods' => 'POST',
+		    'callback' => 'ttt_new_user',
 		  ) );
 		} );
 
@@ -434,31 +435,71 @@ function ttt_current_user() {
 	));
 }
 
-function ttt_register_user() {
-	if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
-		var_dump('expression');
-	}
-	else {
+function ttt_new_user() {
+	// return wp_send_json( $_REQUEST );
+	// TODO: check HTTP_REFERER
+	if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		// TODO: sanitize data
+		$username = isset( $_REQUEST['username'] ) ? $_REQUEST['username'] : null;
+		$password = isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
+		$email    = isset( $_REQUEST['email'] )    ? $_REQUEST['email']    : null;
+		$blog_id  = get_current_blog_id();
 
-		// $user_id = wp_create_user(
-		// 	'createdonthefly',
-		// 	'$passwordcreatedonthefly',
-		// 	'laksjdfhaksdjfhalsdkfj@email.com'
-		// );
-		// $blog_id = wpmu_create_blog(
-		// 	'http://test.time.dev',
-		// 	'/',
-		// 	'$title',
-		// 	1
-		// );
-		// return json_encode( $user_id );
+		// 1. create the user
+		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request->set_param( 'username', $username );
+		$request->set_param( 'email', $email );
+		$request->set_param( 'password', $password );
+		$response = rest_do_request( $request );
+		if ( $response->is_error() ) {
+			// not sucessful.
+			// return response.
+			return wp_send_json_error( $response );
+		}
+		// we have a user
+		$user = $response->get_data();
+
+		// 2. Let's add user to this site
+		$add_to_blog = add_user_to_blog($blog_id, $user['id'], 'pwptt_freelancer');
+
+		// 3. handle response
+		if ( ! is_wp_error( $add_to_blog ) ) {
+			return wp_send_json( $user );
+		}
+		else {
+			return wp_send_json_error( array(
+				'message' => 'The user was created but they could not be added to your organization.',
+			) );
+		}
 	}
-	// $request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
-	// // Set one or more request query parameters
-	// // $request->set_param( 'per_page', 20 );
-	// $response = rest_do_request( $request );
-	// return $response;
+	die();
 }
+
+// function ttt_new_user() {
+// 	if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+// 		var_dump('expression');
+// 	}
+// 	else {
+
+// 		$user_id = wp_create_user(
+// 			'createdonthefly',
+// 			'$passwordcreatedonthefly',
+// 			'laksjdfhaksdjfhalsdkfj@email.com'
+// 		);
+// 		$blog_id = wpmu_create_blog(
+// 			'http://test.time.dev',
+// 			'/',
+// 			'$title',
+// 			1
+// 		);
+// 		return json_encode( $user_id );
+// 	}
+// 	// $request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+// 	// // Set one or more request query parameters
+// 	// // $request->set_param( 'per_page', 20 );
+// 	// $response = rest_do_request( $request );
+// 	// return $response;
+// }
 
 function ttt_get_callback() {
 	return (array) wp_current_user();
