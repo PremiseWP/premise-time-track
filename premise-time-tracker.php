@@ -439,37 +439,48 @@ function ttt_new_user() {
 	// return wp_send_json( $_REQUEST );
 	// TODO: check HTTP_REFERER
 	if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
-		// TODO: sanitize data
-		$username = isset( $_REQUEST['username'] ) ? $_REQUEST['username'] : null;
-		$password = isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
-		$email    = isset( $_REQUEST['email'] )    ? $_REQUEST['email']    : null;
-		$blog_id  = get_current_blog_id();
 
-		// 1. create the user
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
-		$request->set_param( 'username', $username );
-		$request->set_param( 'email', $email );
-		$request->set_param( 'password', $password );
-		$response = rest_do_request( $request );
-		if ( $response->is_error() ) {
-			// not sucessful.
-			// return response.
-			return wp_send_json_error( $response );
-		}
-		// we have a user
-		$user = $response->get_data();
-
-		// 2. Let's add user to this site
-		$add_to_blog = add_user_to_blog($blog_id, $user['id'], 'pwptt_freelancer');
-
-		// 3. handle response
-		if ( ! is_wp_error( $add_to_blog ) ) {
-			return wp_send_json( $user );
-		}
-		else {
-			return wp_send_json_error( array(
-				'message' => 'The user was created but they could not be added to your organization.',
+		if ( 'check_user' === $_REQUEST['action'] ) {
+			$users = new WP_User_Query( array(
+				'search' => $_REQUEST['s'],
+				'search_columns' => array( 'user_email' ),
 			) );
+			return wp_send_json( $users->get_results() );
+		}
+
+		elseif ( 'new_user' === $_REQUEST['action'] ) {
+			// TODO: sanitize data
+			$username = isset( $_REQUEST['username'] ) ? $_REQUEST['username'] : null;
+			$password = isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
+			$email    = isset( $_REQUEST['email'] )    ? $_REQUEST['email']    : null;
+			$blog_id  = get_current_blog_id();
+
+			// 1. create the user
+			$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+			$request->set_param( 'username', $username );
+			$request->set_param( 'email', $email );
+			$request->set_param( 'password', $password );
+			$response = rest_do_request( $request );
+			if ( $response->is_error() ) {
+				// not sucessful.
+				// return response.
+				return wp_send_json_error( $response );
+			}
+			// we have a user
+			$user = $response->get_data();
+
+			// 2. Let's add user to this site
+			$add_to_blog = add_user_to_blog($blog_id, $user['id'], 'pwptt_freelancer');
+
+			// 3. handle response
+			if ( ! is_wp_error( $add_to_blog ) ) {
+				return wp_send_json( $user );
+			}
+			else {
+				return wp_send_json_error( array(
+					'message' => 'The user was created but they could not be added to your organization.',
+				) );
+			}
 		}
 	}
 	die();
