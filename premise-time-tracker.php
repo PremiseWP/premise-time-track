@@ -442,17 +442,42 @@ function ttt_new_user() {
 
 		if ( 'check_user' === $_REQUEST['action'] ) {
 			$users = new WP_User_Query( array(
-				'search' => $_REQUEST['s'],
-				'search_columns' => array( 'user_email' ),
+				'search' => '*'.esc_html($_REQUEST['s']).'*',
+				'search_columns' => array( 'user_login', 'user_email' ),
+				'exclude' => esc_html($_REQUEST['current_user']),
+				'blog_id' => 0,
 			) );
 			return wp_send_json( $users->get_results() );
 		}
+		elseif ( 'add_user' === $_REQUEST['action'] ) {
+			$user_id = isset( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : null;
+			$blog_id  = get_current_blog_id();
 
+			if ( $user_id ) {
+				// 1. Let's add user to this site
+				$add_to_blog = add_user_to_blog($blog_id, $user_id, 'pwptt_freelancer');
+
+				// 2. handle response
+				if ( ! is_wp_error( $add_to_blog ) ) {
+					return wp_send_json( $add_to_blog );
+				}
+				else {
+					return wp_send_json_error( array(
+						'message' => 'The user could not be added to your organization.',
+					) );
+				}
+			}
+			else {
+				return wp_send_json_error( array(
+					'message' => 'No user ID supplied.',
+				) );
+			}
+		}
 		elseif ( 'new_user' === $_REQUEST['action'] ) {
 			// TODO: sanitize data
-			$username = isset( $_REQUEST['username'] ) ? $_REQUEST['username'] : null;
-			$password = isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
 			$email    = isset( $_REQUEST['email'] )    ? $_REQUEST['email']    : null;
+			$username = isset( $_REQUEST['username'] ) ? $_REQUEST['username'] : null;
+			$password = wp_generate_password(); // isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
 			$blog_id  = get_current_blog_id();
 
 			// 1. create the user
@@ -474,6 +499,8 @@ function ttt_new_user() {
 
 			// 3. handle response
 			if ( ! is_wp_error( $add_to_blog ) ) {
+				// 4. send email to user about with password and login info
+				wp_mail( $email, 'New Account', "Username: {$username} & password: {$password}" );
 				return wp_send_json( $user );
 			}
 			else {
@@ -481,6 +508,14 @@ function ttt_new_user() {
 					'message' => 'The user was created but they could not be added to your organization.',
 				) );
 			}
+		}
+		elseif ( 'remove_user' === $_REQUEST['action'] ) {
+			$user_id = isset( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : null;
+			$blog_id  = get_current_blog_id();
+
+			remove_user_from_blog($user_id, $blog_id);
+
+			return wp_send_json( array( 'message' => 'done.' ) );
 		}
 	}
 	die();
