@@ -173,10 +173,32 @@ class Premise_Time_tracker {
 		    'callback' => 'ttt_new_user',
 		  ) );
 		} );
+		// register endpoint to remove taxonomies
+		add_action( 'rest_api_init', function () {
+		  register_rest_route( 'premise_time_tracker/v2',
+		  	'/remove_client_or_project',
+		  	array(
+		    'methods' => 'GET',
+		    'callback' => 'ttt_remove_client_or_project',
+		  ) );
+		} );
+
+		add_action( 'rest_api_init', function () {
+		  register_rest_route( 'premise_time_tracker/v2',
+		  	'/forgot_password',
+		  	array(
+		    'methods' => 'GET',
+		    'callback' => 'ttt_forgot_password',
+		  ) );
+		} );
 
 		remove_filter( 'the_content', 'wpautop' );
 
 		add_action( 'init', array( Premise_Time_tracker::get_instance(), 'add_user_roles' ) );
+
+		// add_action( 'phpmailer_init', 'ttt_mailer_config', 10, 1);
+		// add_action('wp_mail_failed', 'ttt_log_mailer_errors', 10, 1);
+
 
 		// add_action( 'rest_api_init', 'ttt_current_user' );
 
@@ -400,6 +422,50 @@ class Premise_Time_tracker {
 	}
 }
 
+function ttt_forgot_password() {
+	$username = isset( $_GET['username'] ) ? sanitize_text_field( $_GET['username'] ) : false;
+	$email = isset( $_GET['email'] ) ? sanitize_email( $_GET['email'] ) : false;
+
+	if ( ! $username && ! $email ) {
+		return wp_send_json_error( array( 'message' => 'No params supplied.') );
+	}
+
+	$user = ($username) ? get_user_by('login', $username) : get_user_by('email', $email);
+
+	if ( ! $user ) {
+		return wp_send_json_error( array( 'message' => 'We cannot find your user.') );
+	}
+
+	if ( $username ) {
+		$password = wp_generate_password();
+		wp_set_password( $password, $user->ID );
+
+		ttt_send_new_pw($user->user_email, $user->user_login, $password);
+	}
+	else if ( $email ) {
+		ttt_send_username( $email, $user->user_login );
+	}
+
+	return true;
+}
+
+function ttt_remove_client_or_project() {
+	// 1. authenticate the user
+	$request  = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+	$response = rest_do_request( $request );
+	if ( $response->is_error() ) {
+		// not sucessful.
+		// return response.
+		return $response;
+	}
+
+	$removed = wp_delete_term( $_GET['id'], $_GET['tax'] );
+
+	if ( ! is_wp_error( $removed ) ) {
+		return wp_send_json( array( 'success' => true ) );
+	}
+	return wp_send_json_error();
+}
 
 function ttt_current_user() {
 	// 1. Try Logging in the user
@@ -440,89 +506,94 @@ function ttt_new_user() {
 	// TODO: check HTTP_REFERER
 	if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
-		if ( 'check_user' === $_REQUEST['action'] ) {
-			$users = new WP_User_Query( array(
-				'search' => '*'.esc_html($_REQUEST['s']).'*',
-				'search_columns' => array( 'user_login', 'user_email' ),
-				'exclude' => esc_html($_REQUEST['current_user']),
-				'blog_id' => 0,
-			) );
-			return wp_send_json( $users->get_results() );
-		}
-		elseif ( 'add_user' === $_REQUEST['action'] ) {
-			$user_id = isset( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : null;
-			$blog_id  = get_current_blog_id();
+		switch ( $_REQUEST['action'] ) {
+			case 'check_user' :
+				$users = new WP_User_Query( array(
+					'search' => '*'.sanitize_text_field($_REQUEST['s']).'*',
+					'search_columns' => array( 'user_login', 'user_email' ),
+					'exclude' => sanitize_text_field($_REQUEST['current_user']),
+					'blog_id' => 0,
+				) );
+				return wp_send_json( $users->get_results() );
+			break;
+			case 'add_user' :
+				$user_id = isset( $_REQUEST['user_id'] ) ? (int)$_REQUEST['user_id'] : null;
+				$blog_id  = get_current_blog_id();
 
-			if ( $user_id ) {
-				// 1. Let's add user to this site
-				$add_to_blog = add_user_to_blog($blog_id, $user_id, 'pwptt_freelancer');
+				if ( $user_id ) {
+					// 1. Let's add user to this site
+					$add_to_blog = add_user_to_blog($blog_id, $user_id, 'pwptt_freelancer');
 
-				// 2. handle response
-				if ( ! is_wp_error( $add_to_blog ) ) {
-					$user = get_userdata( $user_id );
-					ttt_send_new_user($user->user_email, $blog_id, $user->user_login );
-					return wp_send_json( $add_to_blog );
+					// 2. handle response
+					if ( ! is_wp_error( $add_to_blog ) ) {
+						$user = get_userdata( $user_id );
+						ttt_send_new_user($user->user_email, $blog_id, $user->user_login );
+						return wp_send_json( $add_to_blog );
+					}
+					else {
+						return wp_send_json_error( array(
+							'message' => 'The user could not be added to your organization.',
+						) );
+					}
 				}
 				else {
 					return wp_send_json_error( array(
-						'message' => 'The user could not be added to your organization.',
+						'message' => 'No user ID supplied.',
 					) );
 				}
-			}
-			else {
-				return wp_send_json_error( array(
-					'message' => 'No user ID supplied.',
-				) );
-			}
-		}
-		elseif ( 'new_user' === $_REQUEST['action'] ) {
-			// TODO: sanitize data
-			$email    = isset( $_REQUEST['email'] )    ? $_REQUEST['email']    : null;
-			$username = isset( $_REQUEST['username'] ) ? $_REQUEST['username'] : null;
-			$password = wp_generate_password(); // isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
-			$blog_id  = get_current_blog_id();
+			break;
+			case 'new_user' :
+				// TODO: sanitize data
+				$email    = isset( $_REQUEST['email'] )    ? sanitize_email( $_REQUEST['email'] )    : null;
+				$username = isset( $_REQUEST['username'] ) ? sanitize_text_field( $_REQUEST['username'] ) : null;
+				$password = wp_generate_password(); // isset( $_REQUEST['password'] ) ? $_REQUEST['password'] : null;
+				$blog_id  = get_current_blog_id();
 
-			// 1. create the user
-			// do not send password change email
-			add_filter( 'send_password_change_email', false );
-			$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
-			$request->set_param( 'username', $username );
-			$request->set_param( 'email', $email );
-			$request->set_param( 'password', $password );
-			$response = rest_do_request( $request );
-			if ( $response->is_error() ) {
-				// not sucessful.
-				// return response.
-				return wp_send_json_error( $response );
-			}
-			// we have a user
-			$user = $response->get_data();
-			// revert back this filter.
-			add_filter( 'send_password_change_email', true );
+				// 1. create the user
+				// do not send password change email
+				add_filter( 'send_password_change_email', false );
+				$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+				$request->set_param( 'username', $username );
+				$request->set_param( 'email', $email );
+				$request->set_param( 'password', $password );
+				$response = rest_do_request( $request );
+				if ( $response->is_error() ) {
+					// not sucessful.
+					// return response.
+					return wp_send_json_error( $response );
+				}
+				// we have a user
+				$user = $response->get_data();
+				// revert back this filter.
+				add_filter( 'send_password_change_email', true );
 
-			// 2. Let's add user to this site
-			$add_to_blog = add_user_to_blog($blog_id, $user['id'], 'pwptt_freelancer');
+				// 2. Let's add user to this site
+				$add_to_blog = add_user_to_blog($blog_id, $user['id'], 'pwptt_freelancer');
 
-			// 3. handle response
-			if ( ! is_wp_error( $add_to_blog ) ) {
-				// 4. send email to user about with password and login info
-				ttt_send_new_user($email, $blog_id, $username, $password);
+				// 3. handle response
+				if ( ! is_wp_error( $add_to_blog ) ) {
+					// 4. send email to user about with password and login info
+					ttt_send_new_user($email, $blog_id, $username, $password);
 
-				return wp_send_json( $user );
-			}
-			else {
-				return wp_send_json_error( array(
-					'message' => 'The user was created but they could not be added to your organization.',
-				) );
-			}
-		}
-		elseif ( 'remove_user' === $_REQUEST['action'] ) {
-			$user_id = isset( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : null;
-			$blog_id  = get_current_blog_id();
+					return wp_send_json( $user );
+				}
+				else {
+					return wp_send_json_error( array(
+						'message' => 'The user was created but they could not be added to your organization.',
+					) );
+				}
+			break;
+			case 'remove_user' :
+				$user_id = isset( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : null;
+				$blog_id  = get_current_blog_id();
 
-			remove_user_from_blog($user_id, $blog_id);
+				remove_user_from_blog($user_id, $blog_id);
 
-			return wp_send_json( array( 'message' => 'done.' ) );
+				return wp_send_json( array( 'message' => 'done.' ) );
+			break;
+			default :
+				// handle registrations
+			break;
 		}
 	}
 	die();
@@ -551,10 +622,71 @@ function ttt_send_new_user($email, $blog_id, $username ='', $password='Your curr
 	wp_mail( $to, $subject, $body, $headers );
 }
 
+function ttt_send_new_pw($email, $username ='', $password='') {
+	$blog_id    = get_current_blog_id();
+	$blog = get_blog_details( $blog_id );
+	$url = str_replace('.api.', '.', $blog->siteurl);
+	$to = $email;
+	$subject = 'Password Reset';
+	$headers = array('Content-Type: text/html; charset=UTF-8','From: Premise Time Tracker <no-reply@premisetimetracker.com');
+	$body = "
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>{$subject}</title>
+		</head>
+		<body>
+			<h1>Hi {$username},</h1>
+			<p>Your password has been reset and a new password has been generated for you. Please log into your account at {$url} to change your password to something you would like.</p>
+			<p>New password: {$password}</p>
+		</body>
+		</html>
+	";
+
+	wp_mail( $to, $subject, $body, $headers );
+}
+
+function ttt_send_username($email, $username ='') {
+	$blog_id    = get_current_blog_id();
+	$blog = get_blog_details( $blog_id );
+	$url = str_replace('.api.', '.', $blog->siteurl);
+	$to = $email;
+	$subject = 'Here is you username';
+	$headers = array('Content-Type: text/html; charset=UTF-8','From: Premise Time Tracker <no-reply@premisetimetracker.com');
+	$body = "
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>{$subject}</title>
+		</head>
+		<body>
+			<p>Your username is {$username}. Go to {$url} to login.</p>
+		</body>
+		</html>
+	";
+
+	wp_mail( $to, $subject, $body, $headers );
+}
+
 function ttt_get_callback() {
 	return (array) wp_current_user();
 }
 
 function ttt_update_callback() {
 	return null;
+}
+
+function ttt_mailer_config(PHPMailer $mailer){
+  $mailer->IsSMTP();
+  $mailer->Host = "smtp.gmail.com"; // your SMTP server
+  $mailer->Port = 465;
+  $mailer->SMTPDebug = 2; // write 0 if you don't want to see client/server communication in page
+  $mailer->CharSet  = "utf-8";
+}
+
+function ttt_log_mailer_errors(){
+  $fn = ABSPATH . '/mail.log'; // say you've got a mail.log file in your server root
+  $fp = fopen($fn, 'a');
+  fputs($fp, "Mailer Error: " . $mailer->ErrorInfo ."\n");
+  fclose($fp);
 }
