@@ -459,6 +459,8 @@ function ttt_new_user() {
 
 				// 2. handle response
 				if ( ! is_wp_error( $add_to_blog ) ) {
+					$user = get_userdata( $user_id );
+					ttt_send_new_user($user->user_email, $blog_id, $user->user_login );
 					return wp_send_json( $add_to_blog );
 				}
 				else {
@@ -481,6 +483,8 @@ function ttt_new_user() {
 			$blog_id  = get_current_blog_id();
 
 			// 1. create the user
+			// do not send password change email
+			add_filter( 'send_password_change_email', false );
 			$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
 			$request->set_param( 'username', $username );
 			$request->set_param( 'email', $email );
@@ -493,6 +497,8 @@ function ttt_new_user() {
 			}
 			// we have a user
 			$user = $response->get_data();
+			// revert back this filter.
+			add_filter( 'send_password_change_email', true );
 
 			// 2. Let's add user to this site
 			$add_to_blog = add_user_to_blog($blog_id, $user['id'], 'pwptt_freelancer');
@@ -500,7 +506,8 @@ function ttt_new_user() {
 			// 3. handle response
 			if ( ! is_wp_error( $add_to_blog ) ) {
 				// 4. send email to user about with password and login info
-				wp_mail( $email, 'New Account', "Username: {$username} & password: {$password}" );
+				ttt_send_new_user($email, $blog_id, $username, $password);
+
 				return wp_send_json( $user );
 			}
 			else {
@@ -521,31 +528,28 @@ function ttt_new_user() {
 	die();
 }
 
-// function ttt_new_user() {
-// 	if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
-// 		var_dump('expression');
-// 	}
-// 	else {
+function ttt_send_new_user($email, $blog_id, $username ='', $password='Your current password') {
+	$_blog = get_blog_details( $blog_id );
+	$to = $email;
+	$subject = 'You have been added to ' . $_blog->blogname;
+	$headers = array('Content-Type: text/html; charset=UTF-8','From: Premise Time Tracker <no-reply@premisetimetracker.com');
+	$body = "
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>{$subject}</title>
+		</head>
+		<body>
+			<h1>Hi {$username},</h1>
+			<p>You have been added to the organization {$_blog->blogname}. To log in and begin tracking your time <a href='http://app.premisetimetracker.com'>click here</a>, your username and password are below.</p>
+			<p>Username: {$username}<br>
+				password: {$password}</p>
+		</body>
+		</html>
+	";
 
-// 		$user_id = wp_create_user(
-// 			'createdonthefly',
-// 			'$passwordcreatedonthefly',
-// 			'laksjdfhaksdjfhalsdkfj@email.com'
-// 		);
-// 		$blog_id = wpmu_create_blog(
-// 			'http://test.time.dev',
-// 			'/',
-// 			'$title',
-// 			1
-// 		);
-// 		return json_encode( $user_id );
-// 	}
-// 	// $request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
-// 	// // Set one or more request query parameters
-// 	// // $request->set_param( 'per_page', 20 );
-// 	// $response = rest_do_request( $request );
-// 	// return $response;
-// }
+	wp_mail( $to, $subject, $body, $headers );
+}
 
 function ttt_get_callback() {
 	return (array) wp_current_user();
