@@ -6,11 +6,57 @@
  */
 class PTT_Rest {
 
+	protected static $inst = NULL;
+
 	/**
 	 * leve construct empty and blank on purpose
 	 */
 	function __construct(){}
 
+	/**
+	 * instantiate our class
+	 */
+	public static function get_inst() {
+		if ( self::$inst === NULL ) {
+			self::$inst = new self;
+		}
+		return self::$inst;
+	}
+
+	public function register_routes() {
+		register_rest_route( 'premise_time_tracker/v2', '/currentuser', array(
+	    'methods' => 'GET',
+	    'callback' => array(PTT_Rest_Users::get_inst(), 'current_user'),
+	  ) );
+
+		register_rest_route( 'premise_time_tracker/v2',
+			'/newuser',
+			array(
+		  'methods' => 'POST',
+		  'callback' => array(PTT_Rest_Users::get_inst(), 'new_user'),
+		) );
+
+		register_rest_route( 'premise_time_tracker/v2',
+			'/remove_client_or_project',
+			array(
+		  'methods' => 'GET',
+		  'callback' => array( PTT_Rest_Taxonomies::get_inst(), 'remove' ),
+		) );
+
+		register_rest_route( 'premise_time_tracker/v2',
+			'/forgot_password',
+			array(
+		  'methods' => 'GET',
+		  'callback' => 'ttt_forgot_password',
+		) );
+
+		register_rest_route( 'premise_time_tracker/v2',
+			'/register_organization',
+			array(
+		  'methods' => array('GET', 'POST'),
+		  'callback' => array(PTT_Rest_Users::get_inst(), 'register_organization'),
+		) );
+	}
 
 	/**
 	 * Creates a new post via the Restful API.

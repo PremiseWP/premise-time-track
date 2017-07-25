@@ -118,6 +118,8 @@ class Premise_Time_tracker {
 
 		include 'model/class.time-tracker-mb.php';
 		include 'model/class.rest-api.php';
+		include 'controller/class.rest-users.php';
+		include 'controller/class.rest-taxonomies.php';
 		include 'controller/class.user-fields.php';
 		include 'controller/class.render.php';
 		include 'library/functions.php';
@@ -156,41 +158,36 @@ class Premise_Time_tracker {
 		add_action( 'rest_api_init', array( 'PTT_User_Fields', 'register_meta_fields' ) );
 
 		// register endpoint for loging in from ap
-		add_action( 'rest_api_init', function () {
-		  register_rest_route( 'premise_time_tracker/v2', '/currentuser', array(
-		    'methods' => 'GET',
-		    'callback' => 'ttt_current_user',
-		    // 'args' => array( 'username', 'password', 'email'),
-		  ) );
-		} );
-		// register endpoint for loging in from ap
-		add_action( 'rest_api_init', function () {
-		  register_rest_route( 'premise_time_tracker/v2',
-		  	'/newuser',
-		  	// .'/(?P<username>[a-zA-Z0-9-_]+)'.'&(?P<password>[\w*$!-?:]+)'.'&(?P<email>([\w-\.]@[\w]\.[\w]{2,3})+)
-		  	array(
-		    'methods' => 'POST',
-		    'callback' => 'ttt_new_user',
-		  ) );
-		} );
-		// register endpoint to remove taxonomies
-		add_action( 'rest_api_init', function () {
-		  register_rest_route( 'premise_time_tracker/v2',
-		  	'/remove_client_or_project',
-		  	array(
-		    'methods' => 'GET',
-		    'callback' => 'ttt_remove_client_or_project',
-		  ) );
-		} );
+		add_action( 'rest_api_init', array( PTT_Rest::get_inst(), 'register_routes') );
 
-		add_action( 'rest_api_init', function () {
-		  register_rest_route( 'premise_time_tracker/v2',
-		  	'/forgot_password',
-		  	array(
-		    'methods' => 'GET',
-		    'callback' => 'ttt_forgot_password',
-		  ) );
-		} );
+		// register endpoint for loging in from ap
+		// add_action( 'rest_api_init', function () {
+		//   register_rest_route( 'premise_time_tracker/v2',
+		//   	'/newuser',
+		//   	// .'/(?P<username>[a-zA-Z0-9-_]+)'.'&(?P<password>[\w*$!-?:]+)'.'&(?P<email>([\w-\.]@[\w]\.[\w]{2,3})+)
+		//   	array(
+		//     'methods' => 'POST',
+		//     'callback' => 'ttt_new_user',
+		//   ) );
+		// } );
+		// // register endpoint to remove taxonomies
+		// add_action( 'rest_api_init', function () {
+		//   register_rest_route( 'premise_time_tracker/v2',
+		//   	'/remove_client_or_project',
+		//   	array(
+		//     'methods' => 'GET',
+		//     'callback' => 'ttt_remove_client_or_project',
+		//   ) );
+		// } );
+
+		// add_action( 'rest_api_init', function () {
+		//   register_rest_route( 'premise_time_tracker/v2',
+		//   	'/forgot_password',
+		//   	array(
+		//     'methods' => 'GET',
+		//     'callback' => 'ttt_forgot_password',
+		//   ) );
+		// } );
 
 		remove_filter( 'the_content', 'wpautop' );
 
