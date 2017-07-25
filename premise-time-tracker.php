@@ -609,7 +609,7 @@ function ttt_send_new_user($email, $blog_id, $username ='', $password='Your curr
 		</head>
 		<body>
 			<h1>Hi {$username},</h1>
-			<p>You have been added to the organization {$_blog->blogname}. To log in and begin tracking your time <a href='http://app.premisetimetracker.com'>click here</a>, your username and password are below.</p>
+			<p>You have been added to the organization {$_blog->blogname}. To log in and begin tracking your time <a href='http://premisetimetracker.com'>click here</a>, your username and password are below.</p>
 			<p>Username: {$username}<br>
 				password: {$password}</p>
 		</body>
