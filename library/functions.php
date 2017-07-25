@@ -434,7 +434,9 @@ function pwptt_get_timer() {
 		$hours = premise_get_value( 'pwptt_timer[time]', 'post' );
 	}
 
-	return (float) $hours;
+	$label = (1.00 < (float) $hours) ? ' hours' : ' hour';
+
+	return (float) $hours . $label;
 }
 
 

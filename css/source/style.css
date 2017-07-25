@@ -121,7 +121,16 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 }
 
 .pwptt-page .pwptt-time-card-intro {
-	/*cursor: pointer  required for JS to work on mobile */
+	display: block;
+	margin-bottom: 1em;
+}
+
+.pwptt-page .pwptt-time-card-project {
+	font-size: 1.1em;
+	line-height: 1;
+	margin-bottom: 5px;
+	font-weight: 700;
+	margin-top: 0;
 }
 
 .pwptt-page .pwptt-time-card-title {
@@ -139,6 +148,12 @@ body[class*="premise_time_tracker"] p.pwptt-disclaimer {
 	font-size: 1em;
 	float: right;
 	margin: 0;
+	clear: right;
+}
+
+.pwptt-page .pwptt-time-card-desription {
+	display: block;
+	margin-top: 1em;
 }
 
 /* footer */
