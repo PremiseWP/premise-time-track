@@ -29,6 +29,16 @@ class PTT_Rest {
 	    'callback' => array(PTT_Rest_Users::get_inst(), 'current_user'),
 	  ) );
 
+	  register_rest_route( 'premise_time_tracker/v2', '/trydemo', array(
+	    'methods' => 'POST',
+	    'callback' => array(PTT_Rest_Users::get_inst(), 'try_demo'),
+	  ) );
+
+	  register_rest_route( 'premise_time_tracker/v2', '/checkuser', array(
+	    'methods' => 'GET',
+	    'callback' => array(PTT_Rest_Users::get_inst(), 'check_user'),
+	  ) );
+
 		register_rest_route( 'premise_time_tracker/v2',
 			'/newuser',
 			array(

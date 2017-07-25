@@ -88,10 +88,10 @@ class PTT_Rest_Users extends PTT_Rest {
 	 * @param  int    $exclude user id to exclude
 	 * @return array           an array of json objects for each user found.
 	 */
-	public function exists($user, $exclude) {
+	public function exists($user, $exclude, $columns = array( 'user_login', 'user_email' ), $exact = false) {
 		$users = new WP_User_Query( array(
-			'search' => '*'.sanitize_text_field($user).'*',
-			'search_columns' => array( 'user_login', 'user_email' ),
+			'search' => $exact ? sanitize_text_field($user) : '*'.sanitize_text_field($user).'*',
+			'search_columns' => $columns,
 			'exclude' => sanitize_text_field($exclude),
 			'blog_id' => 0,
 		) );
@@ -197,8 +197,22 @@ class PTT_Rest_Users extends PTT_Rest {
 		}
 	}
 
-	public function remove_user() {
+	public function check_user() {
+		if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+			if ( ! isset( $_GET['username'] )
+				&& ! isset( $_GET['email'] ) ) {
+				return wp_send_json_error( array(
+					'message' => 'Not enough info',
+				) );
+			}
 
+			if ( isset( $_GET['username'] ) ) {
+				return $this->exists( $_REQUEST['username'], '', array('user_login'), true);
+			}
+			elseif ( isset( $_GET['email'] ) ) {
+				return $this->exists( $_REQUEST['email'], '', array('user_email'), true);
+			}
+		}
 	}
 
 	public function forgot_password() {
@@ -284,6 +298,45 @@ class PTT_Rest_Users extends PTT_Rest {
 			}
 		}
 
+		die();
+	}
+
+	public function try_demo() {
+		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+			$username = isset( $_REQUEST['username'] ) ? sanitize_text_field( $_REQUEST['username'] ) : false;
+			$email = isset( $_REQUEST['email'] ) ? sanitize_email( $_REQUEST['email'] ) : false;
+			$password = isset( $_REQUEST['password'] ) ? sanitize_text_field( $_REQUEST['password'] ) : false;
+
+			if (! $username
+			|| ! $email
+			|| ! $email ) {
+				return wp_send_json_error( array(
+					'message' => 'Username, email and password cannot be empty.',
+				) );
+			}
+
+			$user_id = wpmu_create_user($username, $password, $email);
+
+			if ( ! $user_id ) {
+				return wp_send_json_error( array(
+					'message' => 'This email address already exisits. You can\'t join the demo if you already have an account.',
+				) );
+			}
+
+			$add_to_blog = add_user_to_blog(6, $user_id, 'pwptt_freelancer');
+
+			if ( ! is_wp_error( $add_to_blog ) ) {
+				// 4. send email to user about with password and login info
+				ttt_send_new_user($email, $blog_id, $username, $password);
+
+				return wp_send_json( $user_id );
+			}
+			else {
+				return wp_send_json_error( array(
+					'message' => 'The user was created but they could not be added to your organization.',
+				) );
+			}
+		}
 		die();
 	}
 }
