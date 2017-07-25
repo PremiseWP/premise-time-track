@@ -30,9 +30,7 @@ $project_or_client = ! empty( $terms_array ) ? esc_attr( $terms_array[0]->name )
 			<div class="pwp-float-right">
 				<h4 class="pwptt-time-card-project"><?php echo $project_or_client; ?></h4>
 			</div>
-			<a href="<?php the_permalink(); ?>" class="pwptt-time-card-permalink premise-inline-block">
-				<h3 class="pwptt-time-card-title"><?php the_title(); ?></h3>
-			</a>
+			<h3 class="pwptt-time-card-title"><?php the_title(); ?></h3>
 		</div>
 
 		<span class="pwptt-time-card-date">
