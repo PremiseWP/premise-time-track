@@ -55,6 +55,39 @@ function pwptt_the_search_field() {
 }
 
 
+function ptt_get_date_query_from_date_range($range) {
+	$_rng = explode( '-', $range );
+	$_matches = array();
+	for ($i=0; $i < count($_rng); $i++) {
+		// return $_matches[] array =>
+		// '0' => Month
+		// '1' => Day
+		// '2' => Year
+		preg_match_all( '/[0-9]+/', $_rng[$i], $matches );
+		$_matches[] = $matches[0];
+	}
+	// $_matches must have atleast 2 arrays
+	if ( 1 < count($_matches) ) {
+		return array(
+			array(
+				'after'     => array(
+					'year'  => ( 2 === strlen( $_matches[0][2] ) ) ? '20'.$_matches[0][2] : $_matches[0][2], // ad 20 if year has only 2 digits
+					'day' => $_matches[0][1],
+					'month'   => $_matches[0][0],
+				),
+				'before'    => array(
+					'year'  => ( 2 === strlen( $_matches[1][2] ) ) ? '20'.$_matches[1][2] : $_matches[1][2], // ad 20 if year has only 2 digits
+					'day' => $_matches[1][1],
+					'month'   => $_matches[1][0],
+				),
+				'inclusive' => true,
+			),
+		);
+	}
+	return false;
+}
+
+
 /**
  * search for items for a specific client project or timesheet within a date range
  *
@@ -97,11 +130,7 @@ function ptt_search_timers() {
 			$date_range = array_map( 'sanitize_text_field', $data['date_range'] );
 
 			if ( $date_range ) {
-				$_query_args['date_query'] = array(
-					'inclusive' => true,
-					'after'     => ( ! empty( $date_range['from'] ) ) ? $date_range['from'] : '',
-					'before'    => ( ! empty( $date_range['to'] ) )   ? $date_range['to']   : '',
-				);
+				$_query_args['date_query'] = ptt_get_date_query_from_date_range( $date_range['from'].'-'.$date_range['to'] );
 			}
 		}
 
@@ -254,34 +283,7 @@ function ptt_filter_main_loop( $wp_query ) {
 
 			// if there is adate range, lets change the date query
 			if ( $_GET['range'] ) {
-				$_rng = explode( '-', $_GET['range'] );
-				$_matches = array();
-				for ($i=0; $i < count($_rng); $i++) {
-					// return $_matches[] array =>
-					// '0' => Month
-					// '1' => Day
-					// '2' => Year
-					preg_match_all( '/[0-9]+/', $_rng[$i], $matches );
-					$_matches[] = $matches[0];
-				}
-				// $_matches must have atleast 2 arrays
-				if ( 1 < count($_matches) ) {
-					$date_query = array(
-						array(
-							'after'     => array(
-								'year'  => ( 2 === strlen( $_matches[0][2] ) ) ? '20'.$_matches[0][2] : $_matches[0][2], // ad 20 if year has only 2 digits
-								'day' => $_matches[0][1],
-								'month'   => $_matches[0][0],
-							),
-							'before'    => array(
-								'year'  => ( 2 === strlen( $_matches[1][2] ) ) ? '20'.$_matches[1][2] : $_matches[1][2], // ad 20 if year has only 2 digits
-								'day' => $_matches[1][1],
-								'month'   => $_matches[1][0],
-							),
-							'inclusive' => true,
-						),
-					);
-				}
+				$date_query = ptt_get_date_query_from_date_range( $_GET['range'] );
 			}
 			elseif ( $_GET['week'] ) {
 				$_w = trim( esc_attr( $_GET['week'] ) );
