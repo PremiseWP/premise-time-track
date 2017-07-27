@@ -88,6 +88,8 @@ function ptt_search_timers() {
 					'terms'    => esc_attr( $data['slug'] ),
 				),
 			);
+
+			add_filter( 'ptt_taxonomy_being_loaded', 'ptt_taxonomy_being_loaded' );
 		}
 
 		if ( isset( $data['date_range'] ) && is_array( $data['date_range'] ) ) {
@@ -140,6 +142,16 @@ function ptt_search_timers() {
 	}
 
 	die();
+}
+
+/**
+ * filter the taxonomy being loaded
+ *
+ * @param  string $tax empty string
+ * @return string      taxonomy being loaded
+ */
+function ptt_taxonomy_being_loaded( $tax ) {
+	return esc_attr( $_POST['taxonomy'] );
 }
 
 
@@ -242,7 +254,7 @@ function ptt_filter_main_loop( $wp_query ) {
 
 			// if there is adate range, lets change the date query
 			if ( $_GET['range'] ) {
-				$_rng = split( '-', $_GET['range'] );
+				$_rng = explode( '-', $_GET['range'] );
 				$_matches = array();
 				for ($i=0; $i < count($_rng); $i++) {
 					// return $_matches[] array =>
