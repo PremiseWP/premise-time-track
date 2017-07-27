@@ -16,10 +16,17 @@ if ( isset( $_REQUEST['iframe'] )
 	$is_iframe = false;
 }
 
+// check which taxonomy is being loaded
+// the filter helps check when a search is being performed
+if ( ! empty( $tax_being_loaded = apply_filters( 'ptt_taxonomy_being_loaded', '' ) ) ) {
+	$tax_to_get	= $tax_being_loaded == 'premise_time_tracker_client' ? 'project' : 'client';
+}
+else {
+	$tax_to_get = is_tax('premise_time_tracker_client') ? 'project' : 'client';
+}
+// get the client or project
 global $post;
-
-$tax_to_get = is_tax('premise_time_tracker_client') ? 'project' : 'client';
-$terms_array = wp_get_post_terms( $post->ID, 'premise_time_tracker_'.$tax_to_get );
+$terms_array       = wp_get_post_terms( $post->ID, 'premise_time_tracker_'.$tax_to_get );
 $project_or_client = ! empty( $terms_array ) ? esc_attr( $terms_array[0]->name ) : '';
 
 ?>
