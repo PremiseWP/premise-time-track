@@ -323,6 +323,8 @@ class PTT_Rest_Users extends PTT_Rest {
 				) );
 			}
 
+			// 6 is the ID for the demo organzation.
+			// we hard code it here because it should never change
 			$add_to_blog = add_user_to_blog(6, $user_id, 'pwptt_freelancer');
 
 			if ( ! is_wp_error( $add_to_blog ) ) {
